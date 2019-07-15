@@ -13,6 +13,7 @@ require (
 	github.com/coreos/etcd v3.3.13+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20190612170431-362f06ec6bc1 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/go-critic/go-critic v0.3.4 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
@@ -42,6 +43,7 @@ require (
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mailru/easyjson v0.0.0-20190614124828-94de47d64c63 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
+	github.com/mendsley/gojwk v0.0.0-20141217222730-4d5ec6e58103
 	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect

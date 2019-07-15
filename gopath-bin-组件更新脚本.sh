@@ -11,3 +11,5 @@ go get -u -v github.com/spf13/cobra/cobra
 go get -u -v github.com/google/pprof
 
 go get -u -v github.com/smartystreets/goconvey
+
+go get -u github.com/swaggo/swag/cmd/swag

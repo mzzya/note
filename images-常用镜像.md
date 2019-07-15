@@ -1,8 +1,7 @@
-我的收藏 https://hub.docker.com/u/smgqk/starred
----
+# [我的收藏](https://hub.docker.com/u/smgqk/starred)
 
-- grafana 标准 https://hub.docker.com/r/grafana/grafana
-- prometheus 标准 https://hub.docker.com/r/prom/prometheus
+- [grafana 标准](https://hub.docker.com/r/grafana/grafana)
+- [prometheus 标准](https://hub.docker.com/r/prom/prometheus)
   - docker run -p 9090:9090 -v /tmp/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus:v2.8.2
 
 
