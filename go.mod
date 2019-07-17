@@ -36,7 +36,7 @@ require (
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
 	github.com/jondot/goweight v1.0.5 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
-	github.com/klauspost/compress v1.7.2 // indirect
+	github.com/klauspost/compress v1.7.4 // indirect
 	github.com/klauspost/cpuid v1.2.1 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pty v1.1.8 // indirect
@@ -46,6 +46,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-zglob v0.0.1 // indirect
 	github.com/mendsley/gojwk v0.0.0-20141217222730-4d5ec6e58103
+	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
@@ -65,13 +66,14 @@ require (
 	github.com/spf13/viper v1.4.0 // indirect
 	github.com/swaggo/swag v1.6.2 // indirect
 	github.com/thoas/go-funk v0.4.0 // indirect
+	github.com/timakin/bodyclose v0.0.0-20190713050349-d96ec0dee822 // indirect
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/valyala/fasthttp v1.4.0 // indirect
 	go.etcd.io/bbolt v1.3.3 // indirect
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/exp v0.0.0-20190627132806-fd42eb6b336f // indirect
 	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
-	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
+	golang.org/x/mobile v0.0.0-20190711165009-e47acb2ca7f9 // indirect
 	golang.org/x/mod v0.1.0 // indirect
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7 // indirect
