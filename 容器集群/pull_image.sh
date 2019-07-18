@@ -1,5 +1,10 @@
 #! /bin/bash
 
+mkdir ~/.minikube/cache/images/
+mkdir ~/.minikube/cache/images/k8s.gcr.io/
+mkdir ~/.minikube/cache/images/gcr.io/
+mkdir ~/.minikube/cache/images/gcr.io/k8s-minikube/
+
 # minikube k8s.grc.io 缓存目录
 minikube_cache_k8s_grc_io_dir=~/.minikube/cache/images/k8s.gcr.io/
 
