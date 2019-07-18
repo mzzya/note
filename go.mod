@@ -1,4 +1,4 @@
-module github.com/hellojqk/blog
+module blog
 
 go 1.12
 
@@ -46,6 +46,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-zglob v0.0.1 // indirect
 	github.com/mendsley/gojwk v0.0.0-20141217222730-4d5ec6e58103
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
@@ -61,9 +62,9 @@ require (
 	github.com/smartystreets/assertions v1.0.0 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190710185942-9d28bd7c0945 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
-	github.com/spf13/cobra v0.0.5 // indirect
+	github.com/spf13/cobra v0.0.5
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/viper v1.4.0 // indirect
+	github.com/spf13/viper v1.4.0
 	github.com/swaggo/swag v1.6.2 // indirect
 	github.com/thoas/go-funk v0.4.0 // indirect
 	github.com/timakin/bodyclose v0.0.0-20190713050349-d96ec0dee822 // indirect
