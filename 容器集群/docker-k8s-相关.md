@@ -1,15 +1,21 @@
 # docker
+
 ## mac
+
 ### mac宿主机 路由表 localhost->docker.for.mac.host.internal
 
 ### prometheus
+
 docker run -e TZ=Asia/Shanghai -p 9090:9090 -d -v /tmp/prometheus.yml:/etc/prometheus/prometheus.yml --name=prometheus prom/prometheus:v2.9.2
 
 ### grafana
+
 docker run -d -p 3000:3000 --name=grafana grafana/grafana:6.1.6
 
 # k8s
+
 ## dashboard
+
 文档:https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/  
 启动命令:kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
 登录界面:http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/  
@@ -40,14 +46,18 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
   - Namespace
 
 ## 实战
+
 ### namespace
 
 #### 新增 kubectl create -f ./my-namespace.yaml
+
 ```yaml
 apiVersion: v1
 kind: Namespace
 metadata:
   name: <insert-namespace-name-here>
 ```
+
 kubectl config set-context dev --namespace=development --cluster=docker-desktop --user=docker-desktop
+
 kubectl config set-context prod --namespace=production --cluster=docker-desktop --user=docker-desktop
