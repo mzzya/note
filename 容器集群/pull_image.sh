@@ -1,5 +1,7 @@
 #! /bin/bash
 
+# 参考文章 https://github.com/kubernetes/minikube/blob/master/docs/offline.md
+
 mkdir -p ~/.minikube/cache/images/k8s.gcr.io/
 mkdir -p ~/.minikube/cache/images/gcr.io/k8s-minikube/
 
@@ -42,7 +44,7 @@ target_grc_io=gcr.io/
 
 for image in ${grc_io_images[@]}; do
     docker pull ${source}${image}
-    docker tag ${source}${image} ${target_grc_io}${image}
+    docker tag ${source}${image} ${target_grc_io}k8s-minikube/${image}
     docker rmi ${source}${image}
     docker save -o ${minikube_cache_grc_io_dir}${image//:/_} ${target_grc_io}${image}
 done
@@ -53,3 +55,9 @@ docker images | grep ${target_grc_io}
 
 ls -l ${minikube_cache_k8s_grc_io_dir}
 ls -l ${minikube_cache_grc_io_dir}
+
+echo "已知问题！！！！！！"
+echo "已知问题！！！！！！"
+echo "已知问题！！！！！！"
+
+echo "gcr.io/k8s-minikube/storage-provisioner:v1.8.1这个镜像无法顺利的提取到minikube中，但不影响K8S启动"

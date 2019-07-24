@@ -60,3 +60,34 @@ Server Version: version.Info{Major:"1", Minor:"15", GitVersion:"v1.15.0", GitCom
 至此 minibube方式安装完毕
 
 `也可采用docker自带的方式安装，同样前提需拉docker支持的版本镜像`
+
+### 已知问题
+
+如果`minikube status`查看未正常启动,`minikube delete`删除重新执行启动命令
+
+```shell
+kubectl get pods -A
+#部分结果
+# kube-system   storage-provisioner                     0/1     ErrImagePull   0          20s
+
+minikube docker-env
+
+eval $(minikube docker-env)
+
+docker ps
+#部分结果
+# gcr.io/storage-provisioner                v1.8.1              4689081edb10        20 months ago       80.8MB
+```
+
+K8S启动后执行查看所有pods会发现`storage-provisioner`启动失败，原因是`gcr.io/k8s-minikube/storage-provisioner:v1.8.1`被错误的从`cache`中提取成了`gcr.io/storage-provisioner:v1.8.1`
+
+需要手动补充执行
+
+```shell
+docker tag gcr.io/storage-provisioner:v1.8.1 gcr.io/k8s-minikube/storage-provisioner:v1.8.1
+docker rmi gcr.io/storage-provisioner:v1.8.1
+```
+
+### 参考文章
+
+- https://github.com/kubernetes/minikube/blob/master/docs/offline.md
