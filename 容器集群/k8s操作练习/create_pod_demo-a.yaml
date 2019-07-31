@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-a
+  labels:
+    name: demo-a
+spec:
+  containers:
+  - name: demo-a-1
+    image: smgqk/helloworld:latest
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+  - name: demo-a-2
+    image: smgqk/helloworld:latest
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 81
+

@@ -2,7 +2,9 @@
 
 ## 拉取镜像
 
-mac或win10(git bash)执行pull_image.sh从阿里云拉取k8s相关镜像（当前文档k8s版本v1.15.0，时间2019.7.19）并重新打标签为k8s镜像
+笨方法：mac或win10(git bash)执行pull_image.sh从阿里云拉取k8s相关镜像（当前文档k8s版本v1.15.0，时间2019.7.19）并重新打标签为k8s镜像
+
+新方法：`minikube start`时指定`--registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers`无需手动拉去镜像
 
 ## 安装虚拟机软件
 
@@ -22,6 +24,8 @@ minikube start
 
 ```shell
 minikube start --vm-driver=hyperv --hyperv-virtual-switch="Default Switch"
+# 这种方法启动无需自己去拉镜像
+minikube start --registry-mirror=https://registry.docker-cn.com --vm-driver="hyperv" --memory=4096 --hyperv-virtual-switch="Default Switch" --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
 ```
 
 注意：`Default Switch`是`hyper-v管理器`中默认的虚拟交换机，网上有些启动示例使用的是`minikube`虚拟交换机【这个会导致无法启动，无法绑定到apiserver上】
@@ -87,6 +91,44 @@ K8S启动后执行查看所有pods会发现`storage-provisioner`启动失败，�
 docker tag gcr.io/storage-provisioner:v1.8.1 gcr.io/k8s-minikube/storage-provisioner:v1.8.1
 docker rmi gcr.io/storage-provisioner:v1.8.1
 ```
+
+### 启动控制台
+
+启动命令
+
+```shell
+minikube dashboard
+```
+
+常见问题
+
+```shell
+#启动失败先查看pod状态
+kubectl get pods -A
+#kube-system   kubernetes-dashboard-7b8ddcb5d6-jl296   0/1     CrashLoopBackOff   8          17m
+#说明这个pods启动时崩溃了
+
+#查看pods详细描述
+kubectl describe pod kubernetes-dashboard-7b8ddcb5d6-jl296 -n kube-system
+#看最后的Events没看出来什么问题
+
+#查看pods运行log
+kubectl logs -f kubernetes-dashboard-7b8ddcb5d6-jl296 -n kube-system
+#panic: secrets is forbidden: User "system:serviceaccount:kube-system:default" cannot create resource "secrets" in API group "" in the namespace "kube-system"
+#说的是当前也就是minikube使用的用户没有权限创建资源
+#搜索结果 github上
+# kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+#没卵用
+#mac正常启动 win10 无法启动 祭大招 重新安装
+minikube delete
+minikube start ......
+minikube dashobard
+#这次成功了
+```
+
+或者使用下方链接创建 dashboard 不推荐
+https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
 
 ### 参考文章
 
