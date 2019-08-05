@@ -1,6 +1,6 @@
 package Sort
 
-import "github.com/smgqk/Study/Algorithm"
+import "github.com/hellojqk/Study/Algorithm"
 
 //选择排序
 //思想 每次遍历集合 将最小值的与首位互换

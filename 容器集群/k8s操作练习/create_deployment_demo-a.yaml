@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: demo-a
-        image: smgqk/helloworld:latest
+        image: hellojqk/helloworld:latest
         resources:
           limits:
             memory: "20Mi"

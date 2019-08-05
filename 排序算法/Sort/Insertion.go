@@ -1,6 +1,6 @@
 package Sort
 
-import "github.com/smgqk/Study/Algorithm"
+import "github.com/hellojqk/Study/Algorithm"
 
 // func main() {
 // 	Straight(Algorithm.ArrayA)

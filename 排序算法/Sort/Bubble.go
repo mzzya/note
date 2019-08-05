@@ -1,7 +1,7 @@
 package Sort
 
 import (
-	"github.com/smgqk/Study/Algorithm"
+	"github.com/hellojqk/Study/Algorithm"
 )
 
 var Count int

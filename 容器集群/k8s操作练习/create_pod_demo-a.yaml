@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: demo-a-1
-    image: smgqk/helloworld:latest
+    image: hellojqk/helloworld:latest
     resources:
       limits:
         memory: "128Mi"
@@ -15,7 +15,7 @@ spec:
     ports:
       - containerPort: 80
   - name: demo-a-2
-    image: smgqk/helloworld:latest
+    image: hellojqk/helloworld:latest
     resources:
       limits:
         memory: "128Mi"

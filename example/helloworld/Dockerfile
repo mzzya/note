@@ -1,8 +1,8 @@
 FROM alpine
 
-WORKDIR /go/src/app
+WORKDIR /app
 
-COPY ./hello /go/src/app/hello
+COPY ./hello /app/hello
 
 EXPOSE 80
 

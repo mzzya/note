@@ -3,7 +3,7 @@ package Sort
 import (
 	"log"
 
-	"github.com/smgqk/Study/Algorithm"
+	"github.com/hellojqk/Study/Algorithm"
 )
 
 // //堆排序
