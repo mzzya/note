@@ -26,7 +26,11 @@ spec:
         - containerPort: 80
         imagePullPolicy: Always
   replicas: 5
-
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
 ---
 
 kind: Service
@@ -38,6 +42,7 @@ spec:
     app:  demo-a
   type: LoadBalancer
   ports:
-  - name:  name-of-the-port
-    port:  8080
+  - name: demo-aa
+    port:  80
     targetPort:  80
+    nodePort: 31111
