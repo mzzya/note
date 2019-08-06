@@ -1,5 +1,21 @@
 # minikube安装
 
+1. 使用地址 https://kubernetes.io/docs/tasks/tools/install-minikube/ 安装minikube
+2. 使用迅雷下载 https://storage.googleapis.com/minikube/iso/minikube-v1.3.0.iso 
+
+```shell
+mv ~/Downloads/minikube-v1.3.0.iso ~/.minikube/cache/iso/
+```
+
+清理镜像
+docker rmi $(docker image ls|grep none|awk '{print $3}') -f
+docker rmi $(docker image ls|grep "1.14"|awk '{print $3}') -f
+docker rmi $(docker image ls|grep "k8s"|awk '{print $3}') -f
+docker rmi $(docker image ls|grep "kube-"|awk '{print $3}') -f
+
+清理容器
+docker rm $(docker ps -a|grep 'Exited'|awk '{print $1}')
+
 ## 拉取镜像
 
 笨方法：mac或win10(git bash)执行pull_image.sh从阿里云拉取k8s相关镜像（当前文档k8s版本v1.15.0，时间2019.7.19）并重新打标签为k8s镜像
@@ -13,7 +29,7 @@
 官方推荐 virtualbox
 
 ```shell
-minikube start
+minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
 ```
 
 ### win10 启动命令
@@ -25,7 +41,14 @@ minikube start
 ```shell
 minikube start --vm-driver=hyperv --hyperv-virtual-switch="Default Switch"
 # 这种方法启动无需自己去拉镜像
-minikube start --registry-mirror=https://registry.docker-cn.com --vm-driver="hyperv" --memory=4096 --hyperv-virtual-switch="Default Switch" --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
+minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=4096 --vm-driver="hyperv" --hyperv-virtual-switch="Default Switch" --alsologtostderr
+```
+
+### linux 启动命令
+
+```shell
+#不使用虚拟机
+minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=4096 --vm-driver=none --alsologtostderr
 ```
 
 注意：`Default Switch`是`hyper-v管理器`中默认的虚拟交换机，网上有些启动示例使用的是`minikube`虚拟交换机【这个会导致无法启动，无法绑定到apiserver上】
