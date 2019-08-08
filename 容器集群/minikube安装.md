@@ -34,7 +34,7 @@ minikube start --registry-mirror=https://registry.docker-cn.com --image-reposito
 ```shell
 minikube start --vm-driver=hyperv --hyperv-virtual-switch="Default Switch"
 # 这种方法启动无需自己去拉镜像
-minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=4096 --vm-driver="hyperv" --hyperv-virtual-switch="Default Switch" --alsologtostderr
+minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=8192 --vm-driver="hyperv" --hyperv-virtual-switch="Default Switch" --alsologtostderr
 ```
 
 ### linux 启动命令

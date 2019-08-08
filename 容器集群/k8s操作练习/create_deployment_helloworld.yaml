@@ -1,62 +1,11 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-srv
-  namespace: demo
-  labels:
-    app: redis
-spec:
-  selector:
-    app: redis
-  type: LoadBalancer
-  ports:
-  - port: 6379
-    name: redis-srv-port
-    targetPort: 6379
-    nodePort: 31111
-
----
-
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: redis
-  namespace: demo
-spec:
-  serviceName: redis
-  selector:
-    matchLabels:
-      app: redis
-  template:
-    metadata:
-      labels:
-        app: redis
-    spec:
-      containers:
-      - name: redis
-        image: redis
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "0.2"
-          requests:
-            memory: "128Mi"
-            cpu: "0.1"
-        ports:
-        - containerPort: 6379
-  replicas: 1
-  updateStrategy:
-    type: RollingUpdate
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: helloworld
-  namespace: demo
+  namespace: default
   labels:
-    app: helloworld
-    type: what
+    environment: test
+    app: hello
 spec:
   selector:
     matchLabels:
@@ -66,6 +15,10 @@ spec:
       labels:
         app: helloworld
     spec:
+      initContainers:
+        - name: init-container
+          image: hellojqk/alpine:3.10.1
+          command: ["echo"," 我随便写一个文件 >> a.txt"]
       containers:
       - name: helloworld
         image: hellojqk/helloworld:latest
@@ -79,14 +32,19 @@ spec:
         args:
           - "-port"
           - "8888"
+          - "-redis_ss"
+          - "redis-srv-s.demo:6379"
+          - "-redis_d"
+          - "redis-srv-d.demo:6379"
         ports:
         - containerPort: 8888
         imagePullPolicy: Always
-        # lifecycle:
-        #   postStart:
-        #     exec:
-        #       command:
-        #         - "ls -l"
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "ls"
+                - "-l"
       restartPolicy: Always
   revisionHistoryLimit: 10
   replicas: 3
@@ -101,14 +59,19 @@ kind: Service
 apiVersion: v1
 metadata:
   name:  helloworld-srv
-  namespace: demo
+  namespace: default
+  labels:
+    environment: test
+    app: hello
 spec:
   selector:
     app:  helloworld
   type: LoadBalancer
   ports:
-  - name: helloworldport
+  - name: http
     protocol: TCP
     port:  8888
     targetPort:  8888
-    nodePort: 32540
+    nodePort: 31112
+
+---
