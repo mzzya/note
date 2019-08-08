@@ -7,20 +7,13 @@
 mv ~/Downloads/minikube-v1.3.0.iso ~/.minikube/cache/iso/
 ```
 
-清理镜像
-docker rmi $(docker image ls|grep none|awk '{print $3}') -f
-docker rmi $(docker image ls|grep "1.14"|awk '{print $3}') -f
-docker rmi $(docker image ls|grep "k8s"|awk '{print $3}') -f
-docker rmi $(docker image ls|grep "kube-"|awk '{print $3}') -f
-
-清理容器
-docker rm $(docker ps -a|grep 'Exited'|awk '{print $1}')
-
 ## 拉取镜像
 
 笨方法：mac或win10(git bash)执行pull_image.sh从阿里云拉取k8s相关镜像（当前文档k8s版本v1.15.0，时间2019.7.19）并重新打标签为k8s镜像
 
 新方法：`minikube start`时指定`--registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers`无需手动拉去镜像
+
+还有：https://hub.docker.com/u/mirrorgooglecontainers
 
 ## 安装虚拟机软件
 

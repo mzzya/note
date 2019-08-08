@@ -2,10 +2,12 @@ FROM alpine:3.10.1
 
 ENV TZ=Asia/Shanghai
 
-RUN echo "https://mirrors.aliyun.com/alpine/latest-stable/main" > /etc/apk/repositories \
-    && echo "https://mirrors.aliyun.com/alpine/latest-stable/community" >> /etc/apk/repositories \
-    apk update \
+RUN cat /etc/apk/repositories \
+    && sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories\
+    && cat /etc/apk/repositories \
+    && apk update \
     && apk upgrade \
+    && apk add --no-cache ca-certificates \
     && apk add --no-cache bash \
     bash-doc \
     bash-completion \
