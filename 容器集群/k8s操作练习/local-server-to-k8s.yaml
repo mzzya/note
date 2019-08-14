@@ -1,0 +1,68 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  uat-srv
+spec:
+  ports:
+    - name: api-uat
+      protocol: TCP
+      port:  7777
+      targetPort:  7777
+      nodePort: 31777
+    - name: srv-uat
+      protocol: TCP
+      port:  7778
+      targetPort:  7778
+      nodePort: 31778
+    - name: web-uat
+      protocol: TCP
+      port:  9001
+      targetPort:  9001
+      nodePort: 31001
+  type: NodePort
+
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: uat-srv
+subsets:
+  - addresses:
+      - ip: 10.10.112.50
+    ports:
+      - name: api-uat
+        port: 7777
+      - name: srv-uat
+        port: 7778
+      - name: web-uat
+        port: 9001
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: uat-srv
+spec:
+  rules:
+    - host: api-uat.hellojqk.com
+      http:
+        paths:
+          - backend:
+              serviceName: uat-srv
+              servicePort: 7777
+            path: /
+    - host: srv-uat.hellojqk.com
+      http:
+        paths:
+          - backend:
+              serviceName: uat-srv
+              servicePort: 7778
+            path: /
+    - host: web-uat.hellojqk.com
+      http:
+        paths:
+          - backend:
+              serviceName: uat-srv
+              servicePort: 9001
+            path: /
+        
