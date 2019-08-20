@@ -142,6 +142,12 @@ minikube dashobard
 #这次成功了
 ```
 
+启动衡量指标服务
+
+```shell
+minikube addons enable metrics-server
+```
+
 或者使用下方链接创建 dashboard 不推荐
 https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 

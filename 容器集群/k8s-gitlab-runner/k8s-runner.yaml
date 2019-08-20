@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-runner
+spec:
+  selector:
+    matchLabels:
+      app: gitlab-runner
+  template:
+    metadata:
+      labels:
+        app: gitlab-runner
+    spec:
+      volumes:
+        - name: config
+          emptyDir: {}
+      initContainers:
+        - name: gitlab-runner-register
+          image: gitlab/gitlab-runner:alpine-v12.1.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          volumeMounts:
+              - mountPath: /etc/gitlab-runner
+                name: config
+          command:
+            - "/entrypoint"
+          args:
+            - "register"
+            - "--url"
+            - "{{YOUR_GITLAB_HOST}}" 
+            - "--registration-token" 
+            - "{{YOUR_GITLAB_RUNNER_SECREAT}}" 
+            - "--description"
+            - "k8s-runner" 
+            - "--tag-list" 
+            - "k8s-runner" 
+            - "--docker-privileged"
+            - "--executor"
+            - "docker" 
+            - "--non-interactive"
+            - "--docker-image"
+            - "docker:stable"
+            - "--run-untagged"
+            - “true" 
+            - "--locked"
+            - "false" 
+            - "--access-level"
+            - "not_protected"
+      containers:
+      - name: gitlab-runner
+        image: gitlab/gitlab-runner:alpine-v12.1.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        volumeMounts:
+            - mountPath: /etc/gitlab-runner
+              name: config 
+      
