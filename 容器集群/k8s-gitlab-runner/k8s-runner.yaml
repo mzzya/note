@@ -61,3 +61,5 @@ spec:
             - mountPath: /etc/gitlab-runner
               name: config 
       
+---
+kube

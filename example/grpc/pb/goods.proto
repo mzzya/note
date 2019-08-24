@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+
+message Goods {
+  uint64 ID = 1;
+  string Name = 2;
+  string Bn = 3;
+  float Price = 4;
+  string Pic = 5;
+  string Content = 6;
+  string CreateTime = 7;
+  string UpdateTime = 8;
+}
+
+message IDRequest { uint64 ID = 1; }
+
+message PageRequest {
+  uint32 PageIndex = 1;
+  uint32 PageSize = 2;
+}
+
+// The greeting service definition.
+service GoodsSvc {
+  // Sends a greeting
+  rpc Create(Goods) returns (BaseResponse) {
+    option (google.api.http) = {
+      post : "/v1/Goods"
+      body : "*"
+    };
+  }
+  rpc Update(Goods) returns (BaseResponse) {
+    option (google.api.http) = {
+      put : "/v1/Goods"
+      body : "*"
+    };
+  }
+  rpc Delete(Goods) returns (BaseResponse) {
+    option (google.api.http) = {
+      delete : "/v1/Goods"
+      body : "*"
+    };
+  }
+  rpc Get(IDRequest) returns (GoodsResponse) {
+    option (google.api.http) = {
+      get : "/v1/Goods/{id}"
+      body : "*"
+    };
+  }
+  rpc List(PageRequest) returns (GoodsListResponse) {
+    option (google.api.http) = {
+      get : "/v1/Goods"
+      body : "*"
+    };
+  }
+}
+
+// The response message containing the greetings
+message BaseResponse {
+  string RequestID = 1;
+  string Status = 2;
+  string Code = 3;
+  string Msg = 4;
+}
+
+message GoodsResponse {
+  BaseResponse BaseResponse = 1;
+  Goods Data = 2;
+}
+message GoodsListResponse {
+  BaseResponse BaseResponse = 1;
+  Goods Data = 2;
+}

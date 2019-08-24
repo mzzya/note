@@ -9,8 +9,8 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: User #假设每个命名空间只需要一个这样的用户 gitlab-runner用户场景
-    name: wy #用户名
+    name: wy #用户名 阿里云子账号好像是一串数字 258761152893427443 https://help.aliyun.com/document_detail/87656.html?spm=a2c4g.11186623.6.592.7211201bBtWnxx
     apiGroup: rbac.authorization.k8s.io #todo ？仅用来驱动授权决策 参考 https://kubernetes.io/docs/reference/access-authn-authz/rbac/ 第一屏
   # - kind: Group #对应证书中的用户组 假设开发组 运维组 测试组等
-  #   name: group1
+  #   name: group1 
   #   apiGroup: rbac.authorization.k8s.io
