@@ -8,11 +8,11 @@ message Goods {
   uint64 ID = 1;
   string Name = 2;
   string Bn = 3;
-  float Price = 4;
+  double Price = 4;
   string Pic = 5;
   string Content = 6;
-  string CreateTime = 7;
-  string UpdateTime = 8;
+  int64 CreateTime = 7;
+  int64 UpdateTime = 8;
 }
 
 message IDRequest { uint64 ID = 1; }
@@ -27,32 +27,29 @@ service GoodsSvc {
   // Sends a greeting
   rpc Create(Goods) returns (BaseResponse) {
     option (google.api.http) = {
-      post : "/v1/Goods"
+      post : "/v1/goods"
       body : "*"
     };
   }
   rpc Update(Goods) returns (BaseResponse) {
     option (google.api.http) = {
-      put : "/v1/Goods"
+      put : "/v1/goods"
       body : "*"
     };
   }
   rpc Delete(Goods) returns (BaseResponse) {
     option (google.api.http) = {
-      delete : "/v1/Goods"
-      body : "*"
+      delete : "/v1/goods"
     };
   }
   rpc Get(IDRequest) returns (GoodsResponse) {
     option (google.api.http) = {
-      get : "/v1/Goods/{id}"
-      body : "*"
+      get : "/v1/goods/{ID}"
     };
   }
   rpc List(PageRequest) returns (GoodsListResponse) {
     option (google.api.http) = {
-      get : "/v1/Goods"
-      body : "*"
+      get : "/v1/goods"
     };
   }
 }
@@ -60,7 +57,7 @@ service GoodsSvc {
 // The response message containing the greetings
 message BaseResponse {
   string RequestID = 1;
-  string Status = 2;
+  bool Status = 2;
   string Code = 3;
   string Msg = 4;
 }
@@ -71,5 +68,5 @@ message GoodsResponse {
 }
 message GoodsListResponse {
   BaseResponse BaseResponse = 1;
-  Goods Data = 2;
+  repeated Goods Data = 2;
 }

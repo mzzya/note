@@ -1,0 +1,272 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "goods.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/goods": {
+      "get": {
+        "operationId": "List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGoodsListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "GoodsSvc"
+        ]
+      },
+      "delete": {
+        "operationId": "Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbBaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "Name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Bn",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Price",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "Pic",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Content",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "CreateTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "UpdateTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "GoodsSvc"
+        ]
+      },
+      "post": {
+        "summary": "Sends a greeting",
+        "operationId": "Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbBaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbGoods"
+            }
+          }
+        ],
+        "tags": [
+          "GoodsSvc"
+        ]
+      },
+      "put": {
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbBaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbGoods"
+            }
+          }
+        ],
+        "tags": [
+          "GoodsSvc"
+        ]
+      }
+    },
+    "/v1/goods/{ID}": {
+      "get": {
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGoodsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "GoodsSvc"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbBaseResponse": {
+      "type": "object",
+      "properties": {
+        "RequestID": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "Code": {
+          "type": "string"
+        },
+        "Msg": {
+          "type": "string"
+        }
+      },
+      "title": "The response message containing the greetings"
+    },
+    "pbGoods": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Bn": {
+          "type": "string"
+        },
+        "Price": {
+          "type": "number",
+          "format": "double"
+        },
+        "Pic": {
+          "type": "string"
+        },
+        "Content": {
+          "type": "string"
+        },
+        "CreateTime": {
+          "type": "string",
+          "format": "int64"
+        },
+        "UpdateTime": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbGoodsListResponse": {
+      "type": "object",
+      "properties": {
+        "BaseResponse": {
+          "$ref": "#/definitions/pbBaseResponse"
+        },
+        "Data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbGoods"
+          }
+        }
+      }
+    },
+    "pbGoodsResponse": {
+      "type": "object",
+      "properties": {
+        "BaseResponse": {
+          "$ref": "#/definitions/pbBaseResponse"
+        },
+        "Data": {
+          "$ref": "#/definitions/pbGoods"
+        }
+      }
+    }
+  }
+}
