@@ -249,6 +249,10 @@
         "BaseResponse": {
           "$ref": "#/definitions/pbBaseResponse"
         },
+        "Total": {
+          "type": "string",
+          "format": "uint64"
+        },
         "Data": {
           "type": "array",
           "items": {

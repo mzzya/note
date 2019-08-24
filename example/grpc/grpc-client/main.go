@@ -53,4 +53,9 @@ func main() {
 		log.Printf("create_error:%s\n", err)
 	}
 	log.Printf("%#v\n", g.Data)
+	list, err := gs.List(ctx, &pb.PageRequest{PageIndex: 1, PageSize: 2})
+	if err != nil {
+		log.Printf("create_error:%s\n", err)
+	}
+	log.Printf("List:%#v\n", list)
 }

@@ -68,5 +68,6 @@ message GoodsResponse {
 }
 message GoodsListResponse {
   BaseResponse BaseResponse = 1;
-  repeated Goods Data = 2;
+  uint64 Total = 2;
+  repeated Goods Data = 3;
 }

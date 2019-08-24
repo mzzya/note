@@ -1,0 +1,29 @@
+<button nz-button nzType="primary" (click)="add()" [nzLoading]="addLoading">新增</button>
+<nz-list [nzDataSource]="data" [nzItemLayout]="'vertical'" [nzRenderItem]="item" [nzPagination]="pagination"
+  [nzFooter]="footer" [nzLoading]="dataLoading">
+  <ng-template #item let-item>
+    <nz-list-item [nzContent]="item.content" [nzActions]="[starAction, likeAction, msgAction, ctAction]"
+      [nzExtra]="extra">
+      <ng-template #starAction><i nz-icon nzType="star-o" style="margin-right: 8px;"></i>ID: {{ item.ID }}</ng-template>
+      <ng-template #likeAction><i nz-icon nzType="like-o" style="margin-right: 8px;"></i>货号: {{ item.Bn }}</ng-template>
+      <ng-template #msgAction><i nz-icon nzType="message" style="margin-right: 8px;"></i>价格: ￥{{ item.Price }}
+      </ng-template>
+      <ng-template #ctAction><i nz-icon nzType="message" style="margin-right: 8px;"></i>创建时间:
+        {{ timeFormat(item.CreateTime) }}
+      </ng-template>
+      <nz-list-item-meta [nzTitle]="nzTitle" [nzDescription]="item.Content">
+        <ng-template #nzTitle><a href="{{ item.href }}">{{ item.Name }}</a></ng-template>
+      </nz-list-item-meta>
+      <ng-template #extra>
+        <img width="100" height="100" alt="logo" src="{{ item.Pic }}" />
+      </ng-template>
+    </nz-list-item>
+  </ng-template>
+  <ng-template #footer>
+    <!-- <div><b>ant design</b> footer part</div> -->
+  </ng-template>
+  <ng-template #pagination>
+    <nz-pagination [nzPageIndex]="pageIndex" [nzPageSize]="pageSize" [nzPageSizeOptions]="[10,50,100,200,500,1000]"
+      [nzTotal]="total" nzShowSizeChanger nzShowQuickJumper (nzPageIndexChange)="pageIndexChange($event)" (nzPageSizeChange)="pageSizeChange($event)"></nz-pagination>
+  </ng-template>
+</nz-list>

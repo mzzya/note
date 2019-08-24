@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"log"
 	"net"
 	"os"
@@ -19,10 +20,22 @@ import (
 )
 
 var db *gorm.DB
+var mysqlhost = ""
 
 func init() {
+	flag.StringVar(&mysqlhost, "mysqlhost", "localhost", "mysql")
+	flag.Parse()
 	var err error
-	db, err = gorm.Open("mysql", "root:123123@tcp(localhost:3306)/db?charset=utf8mb4&parseTime=True&loc=Local")
+	var retry int
+loop:
+	db, err = gorm.Open("mysql", "root:123123@tcp("+mysqlhost+":3306)/db?charset=utf8mb4&parseTime=True&loc=Local")
+	if err != nil {
+		retry++
+		log.Printf("connect db error,retry:%d\n", retry)
+		time.Sleep(time.Second)
+		goto loop
+	}
+	err = db.DB().Ping()
 	if err != nil {
 		panic(err)
 		os.Exit(1)
@@ -30,11 +43,7 @@ func init() {
 	db.DB().SetConnMaxLifetime(time.Hour)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
-	err = db.DB().Ping()
-	if err != nil {
-		panic(err)
-		os.Exit(1)
-	}
+	log.Println("数据库连接成功")
 	g := &dbmodel.Goods{}
 	if !db.HasTable(g) {
 		err = db.CreateTable(g).Error
@@ -124,17 +133,26 @@ func (s *GoodsServer) Get(ctx context.Context, in *pb.IDRequest) (*pb.GoodsRespo
 // List 分页获取商品
 func (s *GoodsServer) List(ctx context.Context, in *pb.PageRequest) (*pb.GoodsListResponse, error) {
 	goods := make([]dbmodel.Goods, 0, in.PageSize)
-	err := db.Limit(in.PageSize).Offset((in.PageIndex - 1) * in.PageSize).Find(&goods).Error
+	err := db.Limit(in.PageSize).Offset((in.PageIndex - 1) * in.PageSize).Order("create_time desc").Find(&goods).Error
 	if err != nil {
 		return nil, errors.WithMessage(err, "db_find")
 	}
 	result := &pb.GoodsListResponse{
-		Data: make([]*pb.Goods, 0, len(goods)),
+		Data: make([]*pb.Goods, len(goods)),
 	}
-	err = Convert(goods, result.Data)
+	for index, g := range goods {
+		result.Data[index] = &pb.Goods{}
+		err = Convert(g, result.Data[index])
+		if err != nil {
+			return nil, errors.WithMessage(err, "convert")
+		}
+	}
+	var count uint64
+	err = db.Model(&dbmodel.Goods{}).Count(&count).Error
 	if err != nil {
-		return nil, errors.WithMessage(err, "convert")
+		return nil, errors.WithMessage(err, "db_count")
 	}
+	result.Total = count
 	result.BaseResponse = &pb.BaseResponse{Status: true}
 	return result, nil
 }
