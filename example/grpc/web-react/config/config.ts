@@ -106,7 +106,7 @@ export default {
           routes: [
             {
               path: '/',
-              redirect: '/list/basic-list',
+              redirect: '/list/goods',
             },
             {
               path: '/welcome',
@@ -115,9 +115,9 @@ export default {
               component: './Welcome',
             },
             {
-              name: 'basic-list',
-              path: '/list/basic-list',
-              component: './list/basic-list',
+              name: 'list.goods',
+              path: '/list/goods',
+              component: './list/goods',
             },
             {
               component: './404',

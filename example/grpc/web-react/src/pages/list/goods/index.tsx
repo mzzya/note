@@ -198,20 +198,20 @@ class BasicList extends Component<BasicListProps, BasicListState> {
     }: {
       data: BasicListItemDataType;
     }) => (
-      <div className={styles.listContent}>
-        <div className={styles.listContentItem}>
-          <span>Owner</span>
-          <p>{owner}</p>
+        <div className={styles.listContent}>
+          <div className={styles.listContentItem}>
+            <span>Owner</span>
+            <p>{owner}</p>
+          </div>
+          <div className={styles.listContentItem}>
+            <span>开始时间</span>
+            <p>{moment(createdAt).format('YYYY-MM-DD HH:mm')}</p>
+          </div>
+          <div className={styles.listContentItem}>
+            <Progress percent={percent} status={status} strokeWidth={6} style={{ width: 180 }} />
+          </div>
         </div>
-        <div className={styles.listContentItem}>
-          <span>开始时间</span>
-          <p>{moment(createdAt).format('YYYY-MM-DD HH:mm')}</p>
-        </div>
-        <div className={styles.listContentItem}>
-          <Progress percent={percent} status={status} strokeWidth={6} style={{ width: 180 }} />
-        </div>
-      </div>
-    );
+      );
 
     const MoreBtn: React.FC<{
       item: BasicListItemDataType;
@@ -290,21 +290,7 @@ class BasicList extends Component<BasicListProps, BasicListState> {
     return (
       <>
         <PageHeaderWrapper>
-          <div className={styles.standardList}>
-            <Card bordered={false}>
-              <Row>
-                <Col sm={8} xs={24}>
-                  <Info title="我的待办" value="8个任务" bordered />
-                </Col>
-                <Col sm={8} xs={24}>
-                  <Info title="本周任务平均处理时间" value="32分钟" bordered />
-                </Col>
-                <Col sm={8} xs={24}>
-                  <Info title="本周完成任务数" value="24个任务" />
-                </Col>
-              </Row>
-            </Card>
-
+          <div className={styles.standardList}>            
             <Card
               className={styles.listCard}
               bordered={false}

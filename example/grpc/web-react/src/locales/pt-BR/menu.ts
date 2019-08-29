@@ -22,7 +22,7 @@ export default {
   'menu.form.advanced-form': 'Formulário Avançado',
   'menu.list': 'Lista',
   'menu.list.table-list': 'Tabela de Busca',
-  'menu.list.basic-list': 'Lista Básica',
+  'menu.list.goods': 'Lista Básica',
   'menu.list.card-list': 'Lista de Card',
   'menu.list.search-list': 'Lista de Busca',
   'menu.list.search-list.articles': 'Lista de Busca(artigos)',
