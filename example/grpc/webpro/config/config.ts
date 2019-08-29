@@ -106,13 +106,18 @@ export default {
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/list/basic-list',
             },
             {
               path: '/welcome',
               name: 'welcome',
               icon: 'smile',
               component: './Welcome',
+            },
+            {
+              name: 'basic-list',
+              path: '/list/basic-list',
+              component: './list/basic-list',
             },
             {
               component: './404',
@@ -124,7 +129,6 @@ export default {
         },
       ],
     },
-
     {
       component: './404',
     },
