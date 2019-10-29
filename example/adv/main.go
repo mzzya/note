@@ -1,33 +1,13 @@
 package main
 
 import (
-	"log"
-	"time"
+	"fmt"
+	"math"
 )
 
-type student struct {
-	ID   int
-	Name string
-}
-
 func main() {
-	t, _ := time.Now().MarshalJSON()
-	log.Printf("%s\n", t)
-	var stu = student{}
-	St(&stu)
-	println(stu == student{})
-	s := make([]struct{}, 10)
-	print(s)
-	a := 1
-	b := 2
-	c := Add(a, b)
-	print(c)
-}
-
-func Add(a int, b int) int {
-	return a + b
-}
-
-func St(s *student) {
-	return
+	var v = 71.5150
+	var v2 = 71.60
+	fmt.Printf("%d\t%d\t%d\t%d\n", int(math.RoundToEven(v*100)), int(v*100), int(math.Round(71.40*100)), int(71.40*100))
+	fmt.Printf("%d\t%d\t%d\t%d\n", int(math.RoundToEven(v2*100)), int(v2*100), int(math.Round(71.60*100)), int(71.60*100))
 }

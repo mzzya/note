@@ -1,4 +1,10 @@
 # minikube安装
+```
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64 \
+  && chmod +x minikube
+sudo mv minikube /usr/local/bin
+```
+
 
 1. 使用地址 https://kubernetes.io/docs/tasks/tools/install-minikube/ 安装minikube
 2. 使用迅雷下载 https://storage.googleapis.com/minikube/iso/minikube-v1.3.0.iso 
