@@ -24,3 +24,4 @@ docker pull rabbitmq:3.8.1-alpine
 docker pull rabbitmq:3.8.1-management-alpine
 docker pull kafkamanager/kafka-manager:2.0.0.2
 docker pull wurstmeister/kafka:2.12-2.3.0
+docker pull rancher/server:v1.6.29
