@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go v0.44.3 // indirect
 	github.com/acroca/go-symbols v0.1.1 // indirect
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
-	github.com/bombsimon/wsl v1.2.6 // indirect
+	github.com/bombsimon/wsl v1.2.8 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cosiner/argv v0.0.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
@@ -73,14 +73,14 @@ require (
 	github.com/zmb3/gogetdoc v0.0.0-20190228002656-b37376c5da6a // indirect
 	go.starlark.net v0.0.0-20190820173200-988906f77f65 // indirect
 	golang.org/x/arch v0.0.0-20190815191158-8a70ba74b3a1 // indirect
-	golang.org/x/net v0.0.0-20191105084925-a882066a44e0 // indirect
-	golang.org/x/sys v0.0.0-20191105231009-c1f44814a5cd // indirect
-	golang.org/x/tools v0.0.0-20191107235519-f7ea15e60b12 // indirect
-	google.golang.org/genproto v0.0.0-20191028173616-919d9bdd9fe6
+	golang.org/x/net v0.0.0-20191112182307-2180aed22343 // indirect
+	golang.org/x/sys v0.0.0-20191113165036-4c7a9d0fe056 // indirect
+	golang.org/x/tools v0.0.0-20191114222411-4191b8cbba09 // indirect
+	google.golang.org/genproto v0.0.0-20191114150713-6bbd007550de
 	google.golang.org/grpc v1.24.0
 	gopkg.in/yaml.v2 v2.2.5 // indirect
 	grpc.go4.org v0.0.0-20170609214715-11d0a25b4919 // indirect
 	istio.io/api v0.0.0-20190826165737-1c58b135ae92
-	mvdan.cc/unparam v0.0.0-20190917161559-b83a221c10a2 // indirect
+	mvdan.cc/unparam v0.0.0-20191111180625-960b1ec0f2c2 // indirect
 	sourcegraph.com/sqs/pbtypes v1.0.0 // indirect
 )

@@ -1,6 +1,3 @@
-#! /bin/bash
-
-#!/bin/bash
 # 代码检查
 go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 # swag文档生成

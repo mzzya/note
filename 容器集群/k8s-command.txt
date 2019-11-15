@@ -1,5 +1,3 @@
-#! /bin/bash
-
 # 查看 deploy 的资源分配情况
 kubectl get deploy -o=custom-columns=name:.metadata.name,replicas:.spec.replicas,\
 request-cpu:.spec.template.spec.containers[0].resources.requests.cpu,\

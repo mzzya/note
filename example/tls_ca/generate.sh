@@ -1,5 +1,3 @@
-#! /bin/bash
-
 openssl genrsa -out ca.key 2048
 
 # 默认-----BEGIN CERTIFICATE REQUEST-----

@@ -1,5 +1,3 @@
-#! /bin/bash
-
 kubectl config use-context minikube
 
 kubectl apply -f ./cluster_role.yaml

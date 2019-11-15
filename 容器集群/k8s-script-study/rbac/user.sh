@@ -1,5 +1,3 @@
-#! /bin/bash
-
 # 创建用户私钥 -----BEGIN RSA PRIVATE KEY-----
 openssl genrsa -out wy.key 2048
 

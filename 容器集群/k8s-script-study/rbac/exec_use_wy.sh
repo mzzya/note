@@ -1,5 +1,3 @@
-#! /bin/bash
-
 kubectl delete -f ./redis.yaml
 
 kubectl config use-context wy-context

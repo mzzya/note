@@ -1,5 +1,3 @@
-#! /bin/bash
-
 # 参考文章 https://github.com/kubernetes/minikube/blob/master/docs/offline.md
 
 mkdir -p ~/.minikube/cache/images/k8s.gcr.io/
