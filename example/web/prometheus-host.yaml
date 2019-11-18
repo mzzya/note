@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: prometheus-svc
+subsets:
+  - addresses:
+      - ip: 192.168.64.1
+    ports:
+      - port: 9090
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-svc
+  namespace: default
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 31909
+  type: NodePort

@@ -1,4 +1,4 @@
-FROM hellojqk/alpine:3.10.1
+FROM hellojqk/alpine:3.10.3
 
 WORKDIR /app
 

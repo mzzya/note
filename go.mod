@@ -16,6 +16,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fatih/gomodifytags v1.0.0 // indirect
 	github.com/fatih/structtag v1.1.0 // indirect
+	github.com/gin-gonic/gin v1.4.0
 	github.com/go-delve/delve v1.3.0 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/spec v0.19.4 // indirect
@@ -53,6 +54,8 @@ require (
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/peterh/liner v1.1.0 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/prometheus/client_golang v0.9.3
+	github.com/prometheus/common v0.4.0
 	github.com/ramya-rao-a/go-outline v0.0.0-20181122025142-7182a932836a // indirect
 	github.com/rogpeppe/godef v1.1.1 // indirect
 	github.com/securego/gosec v0.0.0-20191104154532-b4c76d4234af // indirect
