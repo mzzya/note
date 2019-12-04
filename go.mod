@@ -15,8 +15,8 @@ require (
 	github.com/davidrjenni/reftools v0.0.0-20190827201643-0605d60846fb // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fatih/gomodifytags v1.0.0 // indirect
-	github.com/fatih/structtag v1.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
+	github.com/go-critic/go-critic v0.4.0 // indirect
 	github.com/go-delve/delve v1.3.0 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/spec v0.19.4 // indirect
@@ -44,12 +44,10 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
-	github.com/mattn/go-runewidth v0.0.6 // indirect
+	github.com/mattn/go-runewidth v0.0.7 // indirect
 	github.com/mattn/go-zglob v0.0.1 // indirect
 	github.com/mdempsky/gocode v0.0.0-20190203001940-7fb65232883f // indirect
-	github.com/mgechev/dots v0.0.0-20190921121421-c36f7dcfbb81 // indirect
-	github.com/mgechev/revive v0.0.0-20191017201419-88015ccf8e97 // indirect
-	github.com/olekukonko/tablewriter v0.0.2 // indirect
+	github.com/mgechev/revive v0.0.0-20191203172002-03a82c7df346 // indirect
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/peterh/liner v1.1.0 // indirect
@@ -58,7 +56,7 @@ require (
 	github.com/prometheus/common v0.4.0
 	github.com/ramya-rao-a/go-outline v0.0.0-20181122025142-7182a932836a // indirect
 	github.com/rogpeppe/godef v1.1.1 // indirect
-	github.com/securego/gosec v0.0.0-20191104154532-b4c76d4234af // indirect
+	github.com/securego/gosec v0.0.0-20191119104125-df484bfa9e9f // indirect
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
 	github.com/spf13/afero v1.2.2 // indirect
@@ -66,22 +64,25 @@ require (
 	github.com/spf13/viper v1.5.0 // indirect
 	github.com/stamblerre/gocode v0.0.0-20190327203809-810592086997 // indirect
 	github.com/swaggo/swag v1.6.3 // indirect
-	github.com/thoas/go-funk v0.4.0 // indirect
+	github.com/thoas/go-funk v0.5.0 // indirect
 	github.com/uber/jaeger-client-go v2.16.0+incompatible
 	github.com/uber/jaeger-lib v2.0.0+incompatible // indirect
-	github.com/urfave/cli v1.22.1 // indirect
+	github.com/urfave/cli v1.22.2 // indirect
 	github.com/uudashr/gocognit v1.0.0 // indirect
 	github.com/uudashr/gopkgs v2.0.1+incompatible // indirect
 	github.com/willf/bitset v1.1.10 // indirect
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v1.0.0 // indirect
 	github.com/zmb3/gogetdoc v0.0.0-20190228002656-b37376c5da6a // indirect
+	go.mongodb.org/mongo-driver v1.1.3 // indirect
 	go.starlark.net v0.0.0-20190820173200-988906f77f65 // indirect
 	golang.org/x/arch v0.0.0-20190815191158-8a70ba74b3a1 // indirect
-	golang.org/x/net v0.0.0-20191112182307-2180aed22343 // indirect
-	golang.org/x/sys v0.0.0-20191113165036-4c7a9d0fe056 // indirect
-	golang.org/x/tools v0.0.0-20191114222411-4191b8cbba09 // indirect
-	google.golang.org/genproto v0.0.0-20191114150713-6bbd007550de
+	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933 // indirect
+	golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9 // indirect
+	golang.org/x/tools v0.0.0-20191204011308-9611592c72f6 // indirect
+	google.golang.org/genproto v0.0.0-20191203220235-3fa9dbf08042
 	google.golang.org/grpc v1.24.0
-	gopkg.in/yaml.v2 v2.2.5 // indirect
+	gopkg.in/yaml.v2 v2.2.7 // indirect
 	grpc.go4.org v0.0.0-20170609214715-11d0a25b4919 // indirect
 	istio.io/api v0.0.0-20190826165737-1c58b135ae92
 	mvdan.cc/unparam v0.0.0-20191111180625-960b1ec0f2c2 // indirect
