@@ -1,0 +1,2 @@
+docker rm nginx -f
+docker run -it -p 8888:8888 -v /Users/wangyang/blog/scripts/nginx/nginx-docker.conf:/etc/nginx/conf.d/default.conf -v /Users/wangyang/blog/scripts/nginx/logs/:/etc/nginx/logs/ --name nginx nginx:1.17.6-alpine

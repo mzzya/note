@@ -1,0 +1,105 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: smb-pre-api
+    environment: pre
+  name: smb-pre-api
+  namespace: tr
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: smb-pre-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: smb-pre-api
+    spec:
+      containers:
+      - args:
+        - -port=7777
+        - -enableTask=false
+        env:
+        - name: APP_ENV
+          value: prd
+        - name: CONFIG_SOURCE
+          value: file
+        - name: APP_NAME
+          value: api
+        - name: JAEGER_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: JAEGER_AGENT_PORT
+          value: "31831"
+        - name: JAEGER_SERVICE_NAME
+          value: smb-pre-api
+        - name: JAEGER_REPORTER_LOG_SPANS
+          value: "true"
+        - name: JAEGER_SAMPLER_TYPE
+          value: const
+        - name: JAEGER_SAMPLER_PARAM
+          value: "1"
+        - name: debug
+          value: "true"
+        image: registry.cn-shanghai.aliyuncs.com/clp-prd/tr-smb-internal-api:f1d80491-201912111418
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /v
+            port: 7777
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 60
+        name: smb-prd-api
+        ports:
+        - containerPort: 7777
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /v
+            port: 7777
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 60
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /app/config/prd.yaml
+          name: config-volume
+          subPath: prd.yaml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: registry.cn-shanghai.aliyuncs.com
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: acm
+            path: prd.yaml
+          name: smb-prd
+        name: config-volume

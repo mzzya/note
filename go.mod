@@ -32,6 +32,7 @@ require (
 	github.com/golangci/revgrep v0.0.0-20180812185044-276a5c0a1039 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/pprof v0.0.0-20191105193234-27840fff0d09 // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20191106031601-ce3c9ade29de // indirect
 	github.com/gostaticanalysis/analysisutil v0.0.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.12.1
 	github.com/haya14busa/goplay v1.0.0 // indirect
@@ -58,7 +59,8 @@ require (
 	github.com/rogpeppe/godef v1.1.1 // indirect
 	github.com/securego/gosec v0.0.0-20191119104125-df484bfa9e9f // indirect
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e // indirect
-	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
+	github.com/smartystreets/assertions v1.0.1 // indirect
+	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.5.0 // indirect
@@ -79,7 +81,7 @@ require (
 	golang.org/x/arch v0.0.0-20190815191158-8a70ba74b3a1 // indirect
 	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933 // indirect
 	golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9 // indirect
-	golang.org/x/tools v0.0.0-20191204011308-9611592c72f6 // indirect
+	golang.org/x/tools v0.0.0-20191205012623-e84277c2c008 // indirect
 	google.golang.org/genproto v0.0.0-20191203220235-3fa9dbf08042
 	google.golang.org/grpc v1.24.0
 	gopkg.in/yaml.v2 v2.2.7 // indirect

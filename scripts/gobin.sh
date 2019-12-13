@@ -18,3 +18,5 @@ go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 go get -u github.com/mgechev/revive
 # Simple utility for extracting a JSON representation of the declarations in a Go source file.
 go get -u github.com/ramya-rao-a/go-outline
+
+go get -u github.com/smartystreets/goconvey

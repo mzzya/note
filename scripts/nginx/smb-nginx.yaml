@@ -1,0 +1,134 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: smb-nginx-lb
+  name: smb-nginx-lb
+  namespace: tr
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: smb-nginx-lb
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: smb-nginx-lb
+    spec:
+      containers:
+        - image: nginx:1.17.6-alpine
+          imagePullPolicy: IfNotPresent
+          name: smb-nginx-lb
+          ports:
+            - containerPort: 7777
+              name: api
+              protocol: TCP
+            - containerPort: 7778
+              name: srv
+              protocol: TCP
+            - containerPort: 9000
+              name: web
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/app.conf
+              name: config-volume
+              subPath: app.conf
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
+          readinessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: config-lb
+                path: app.conf
+            name: smb-nginx
+          name: config-volume
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: smb-nginx-lb-api-svc
+  namespace: tr
+spec:
+  ports:
+    - port: 7777
+      protocol: TCP
+      targetPort: 7777
+  selector:
+    app: smb-nginx-lb
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: smb-nginx-lb-srv-svc
+#   namespace: tr
+# spec:
+#   ports:
+#     - port: 7778
+#       protocol: TCP
+#       targetPort: 7778
+#   selector:
+#     app: smb-nginx-lb
+#   sessionAffinity: None
+#   type: NodePort
+# status:
+#   loadBalancer: {}
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: smb-nginx-lb-web-svc
+#   namespace: tr
+# spec:
+#   ports:
+#     - port: 9000
+#       protocol: TCP
+#       targetPort: 9000
+#   selector:
+#     app: smb-nginx-lb
+#   sessionAffinity: None
+#   type: NodePort
+# status:
+#   loadBalancer: {}
+
