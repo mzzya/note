@@ -9,6 +9,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
 	github.com/bombsimon/wsl v1.2.8 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
+	github.com/clpopen/go-mssqldb v0.0.0-20191222153919-9c394e24bc43
 	github.com/cosiner/argv v0.0.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/cweill/gotests v1.5.3 // indirect
@@ -37,7 +38,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.12.1
 	github.com/haya14busa/goplay v1.0.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
-	github.com/jinzhu/gorm v1.9.10
+	github.com/jinzhu/gorm v1.9.11
 	github.com/jondot/goweight v1.0.5 // indirect
 	github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372 // indirect
 	github.com/karrick/godirwalk v1.10.12 // indirect
@@ -79,6 +80,7 @@ require (
 	go.mongodb.org/mongo-driver v1.1.3 // indirect
 	go.starlark.net v0.0.0-20190820173200-988906f77f65 // indirect
 	golang.org/x/arch v0.0.0-20190815191158-8a70ba74b3a1 // indirect
+	golang.org/x/crypto v0.0.0-20191219195013-becbf705a915 // indirect
 	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933 // indirect
 	golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9 // indirect
 	golang.org/x/tools v0.0.0-20191205012623-e84277c2c008 // indirect
