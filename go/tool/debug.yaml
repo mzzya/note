@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: smb-prd-api-7ccb65bbc6-tgxv8-svc
+  labels:
+    debug: smb-prd-api-7ccb65bbc6-tgxv8
+spec:
+  selector:
+    debug: smb-prd-api-7ccb65bbc6-tgxv8
+  ports:
+  - port: 6060
+    targetPort: 6060
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: smb-prd-api-7ccb65bbc6-tgxv8-route
+  labels:
+    debug: smb-prd-api-7ccb65bbc6-tgxv8
+  namespace: tr
+spec:
+  rules:
+    - host: smb-prd-api-7ccb65bbc6-tgxv8.cab7b4da4476242bc9ac8743854ce1325.cn-shanghai.alicontainer.com
+      http:
+        paths:
+          - backend:
+              serviceName: smb-prd-api-7ccb65bbc6-tgxv8-svc
+              servicePort: 6060
+            path: /
+  

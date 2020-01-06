@@ -1,0 +1,28 @@
+#创建集群级别metrics角色
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clp-metrics
+rules:
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+
+--- 
+#集群级别metrics角色绑定到指定用户和指定命名空间
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: clp-tr-smb-metrics
+  namespace: tr
+subjects:
+- kind: User
+  name: "258761152893427443"
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: "205181757041742484" #徐刚
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: clp-metrics
+  apiGroup: rbac.authorization.k8s.io

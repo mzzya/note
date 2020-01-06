@@ -14,6 +14,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/cweill/gotests v1.5.3 // indirect
 	github.com/davidrjenni/reftools v0.0.0-20190827201643-0605d60846fb // indirect
+	github.com/denisenkom/go-mssqldb v0.0.0-20191128021309-1d7a30a10f73
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fatih/gomodifytags v1.0.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
@@ -80,7 +81,7 @@ require (
 	go.mongodb.org/mongo-driver v1.1.3 // indirect
 	go.starlark.net v0.0.0-20190820173200-988906f77f65 // indirect
 	golang.org/x/arch v0.0.0-20190815191158-8a70ba74b3a1 // indirect
-	golang.org/x/crypto v0.0.0-20191219195013-becbf705a915 // indirect
+	golang.org/x/crypto v0.0.0-20191227163750-53104e6ec876 // indirect
 	golang.org/x/net v0.0.0-20191126235420-ef20fe5d7933 // indirect
 	golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9 // indirect
 	golang.org/x/tools v0.0.0-20191205012623-e84277c2c008 // indirect

@@ -8,9 +8,9 @@ openssl req -new -key wy.key -out wy.pem -subj "/CN=wy/O=group1"
 openssl x509 -req -in wy.pem -CA /Users/wangyang/.minikube/ca.crt -CAkey /Users/wangyang/.minikube/ca.key -CAcreateserial -out wy.crt -days 9999
 
 # 配置 kubectl 用户证书信息
-kubectl config set-credentials wy --client-certificate=/Users/wangyang/blog/容器集群/k8s操作练习/rbac/wy.crt  --client-key=/Users/wangyang/blog/容器集群/k8s操作练习/rbac/wy.key
+kubectl config set-credentials wy --client-certificate=/Users/wangyang/blog/容器集群/k8s-script-study/rbac/wy.crt  --client-key=/Users/wangyang/blog/容器集群/k8s-script-study/rbac/wy.key
 
 # 配置 kubectl 用户上下文
-kubectl config set-context wy-context --cluster=minikube --user=wy
+kubectl config set-context minikube-wy --cluster=minikube --user=wy
 
 cat ~/.kube/config
