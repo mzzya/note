@@ -1,1 +1,2 @@
-minikube start --extra-config=kubelet.authentication-token-webhook=true --vm-driver=hyperkit --memory=16384 --cpus=4 --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
+minikube start --extra-config=kubelet.authentication-token-webhook=true --vm-driver=hyperkit --memory=16384 --cpus=4 --registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
+minikube start --memory=16384 --cpus=4 --registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr

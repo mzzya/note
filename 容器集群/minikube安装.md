@@ -7,7 +7,7 @@ sudo mv minikube /usr/local/bin
 
 
 1. 使用地址 https://kubernetes.io/docs/tasks/tools/install-minikube/ 安装minikube
-2. 使用迅雷下载 https://storage.googleapis.com/minikube/iso/minikube-v1.3.0.iso 
+2. 使用迅雷下载 https://storage.googleapis.com/minikube/iso/minikube-v1.3.0.iso
 
 ```shell
 mv ~/Downloads/minikube-v1.3.0.iso ~/.minikube/cache/iso/
@@ -17,7 +17,7 @@ mv ~/Downloads/minikube-v1.3.0.iso ~/.minikube/cache/iso/
 
 笨方法：mac或win10(git bash)执行pull_image.sh从阿里云拉取k8s相关镜像（当前文档k8s版本v1.15.0，时间2019.7.19）并重新打标签为k8s镜像
 
-新方法：`minikube start`时指定`--registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers`无需手动拉去镜像
+新方法：`minikube start`时指定`--registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers`无需手动拉去镜像
 
 还有：https://hub.docker.com/u/mirrorgooglecontainers
 
@@ -28,7 +28,7 @@ mv ~/Downloads/minikube-v1.3.0.iso ~/.minikube/cache/iso/
 官方推荐 virtualbox
 
 ```shell
-minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
+minikube start --registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --alsologtostderr
 ```
 
 ### win10 启动命令
@@ -40,14 +40,14 @@ minikube start --registry-mirror=https://registry.docker-cn.com --image-reposito
 ```shell
 minikube start --vm-driver=hyperv --hyperv-virtual-switch="Default Switch"
 # 这种方法启动无需自己去拉镜像
-minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=8192 --vm-driver="hyperv" --hyperv-virtual-switch="Default Switch" --alsologtostderr
+minikube start --registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=8192 --vm-driver="hyperv" --hyperv-virtual-switch="Default Switch" --alsologtostderr
 ```
 
 ### linux 启动命令
 
 ```shell
 #不使用虚拟机
-minikube start --registry-mirror=https://registry.docker-cn.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=4096 --vm-driver=none --alsologtostderr
+minikube start --registry-mirror=https://o40mvhma.mirror.aliyuncs.com --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --memory=4096 --vm-driver=none --alsologtostderr
 ```
 
 注意：`Default Switch`是`hyper-v管理器`中默认的虚拟交换机，网上有些启动示例使用的是`minikube`虚拟交换机【这个会导致无法启动，无法绑定到apiserver上】
@@ -80,7 +80,7 @@ Server Version: version.Info{Major:"1", Minor:"15", GitVersion:"v1.15.0", GitCom
 - minikube 附带
 - docker 附带
 - 自己安装
-  
+
 按需求创建软连接 或 配置 PATH优先级
 
 至此 minibube方式安装完毕
@@ -162,7 +162,7 @@ https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 
 文档
 
-https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/  
+https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 
 启动命令
 
@@ -172,31 +172,31 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/a
 
 登录界面
 
-http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/  
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
 授权文档
 
-https://github.com/kubernetes/dashboard/wiki/Creating-sample-user  
+https://github.com/kubernetes/dashboard/wiki/Creating-sample-user
 
 获取令牌命令:
-kubectl create serviceaccount admin-user  
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')  
+kubectl create serviceaccount admin-user
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
 随便复制一个token就行
 
 ### 相关概念
 
 - Kubernetes Master 主节点
   - kube-apiserver
-  - kube-controller-manager 
+  - kube-controller-manager
   - and kube-scheduler
 - Kubernetes Node 子节点
   - kubelet，与Kubernetes Master进行通信。
   - kube-proxy，一个网络代理，反映每个节点上的Kubernetes网络服务。
-- Kubernetes Objects 
+- Kubernetes Objects
   - Pod `豆荚` 封装应用程序容器（或者，在某些情况下，多个容器），存储资源，唯一的网络IP以及控制容器应如何运行的选项 代表者 docker
-  - Service `服务` 它定义了一个逻辑集Pods 和一个访问它们的策略 - 有时称为微服务。Podsa 的目标集合Service（通常）由a确定.  
+  - Service `服务` 它定义了一个逻辑集Pods 和一个访问它们的策略 - 有时称为微服务。Podsa 的目标集合Service（通常）由a确定.
     - 外部访问web应用通过service转交给具体的Pod执行。
-    - 
+    -
   - Volume
   - Namespace
 
