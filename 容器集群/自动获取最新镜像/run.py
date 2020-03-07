@@ -6,8 +6,7 @@ import subprocess
 import os
 
 # 想要获取的镜像
-imageNames = ["mysql", "redis", "mongo",
-              "busybox", "alpine", "hellojqk/alpine", "prom/prometheus",
+imageNames = ["mysql", "redis", "mongo", "busybox", "alpine", "hellojqk/alpine", "prom/prometheus",
               "jaegertracing/all-in-one", "grafana/grafana", "prom/prometheus", "nginx", "gitlab/gitlab-ce",
               "jenkins/jenkins", "docker", "rabbitmq", "kafka", "logstash", "kibana", "elasticsearch", "jenkins"]
 
@@ -16,15 +15,25 @@ patterns = ["^v\d+\.\d+\.\d+$", "^\d+\.\d+\.\d+$",
             "^v\d+\.\d+$", "^\d+\.\d+$", "^\d+$", "^v\d+$"]
 
 # 获取镜像列表url
-url = "https://hub.docker.com/v2/repositories/library/{}/tags/?page_size=50&page=1"
+url = "https://hub.docker.com/v2/repositories/{}/tags/?page_size=50&page=1"
 
 imagesMap = {}
 
 # 遍历镜像列表
 for imageName in imageNames:
     # 获取结果
-    resp = requests.get(url.format(imageName))
-    results = resp.json()["results"]
+    remoteName = imageName
+    if not str.__contains__(imageName, "/"):
+        remoteName = "library/"+remoteName
+    resp = requests.get(url.format(remoteName))
+    body = []
+    # print(resp.text)
+    try:
+        body = resp.json()
+    except BaseException:
+        exit(0)
+
+    results = body["results"]
 
     # 最大版本号
     maxTag = ""
@@ -58,6 +67,8 @@ for imageName in imageNames:
                 tagStrs[0] = tagStrs[0].replace("v", "")
                 tagStrs[0] = tagStrs[0].replace("V", "")
                 first = int(tagStrs[0])
+                if first > 100:
+                    continue
                 second = -1
                 three = -1
                 if len(tagStrs) > 1:
@@ -93,4 +104,6 @@ for imageName in imageNames:
     # 获取镜像
     getCmd = "docker pull {}:{}".format(imageName, maxTag)
     print(getCmd)
-    os.system(getCmd)
+    # s = subprocess.Popen(getCmd, shell=True)
+    # print(s)
+    # os.system(getCmd)
