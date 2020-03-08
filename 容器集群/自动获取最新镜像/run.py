@@ -8,7 +8,7 @@ import os
 # 想要获取的镜像
 imageNames = ["mysql", "redis", "mongo", "busybox", "alpine", "hellojqk/alpine", "prom/prometheus",
               "jaegertracing/all-in-one", "grafana/grafana", "prom/prometheus", "nginx", "gitlab/gitlab-ce",
-              "jenkins/jenkins", "docker", "rabbitmq", "kafka", "logstash", "kibana", "elasticsearch", "jenkins"]
+              "jenkins/jenkins", "docker", "rabbitmq", "wurstmeister/kafka", "logstash", "kibana", "elasticsearch", "jenkins"]
 
 # 要匹配的版本号正则 纯v数字版本号
 patterns = ["^v\d+\.\d+\.\d+$", "^\d+\.\d+\.\d+$",
@@ -49,6 +49,7 @@ for imageName in imageNames:
                 break
 
     if len(tags) == 0:
+        maxTag = "latest"
         # print("{}没有匹配的版本号请检查正则".format(imageName))
         pass
     elif len(tags) == 1:
@@ -104,6 +105,7 @@ for imageName in imageNames:
     # 获取镜像
     getCmd = "docker pull {}:{}".format(imageName, maxTag)
     print(getCmd)
+    print("docker images list")
     # s = subprocess.Popen(getCmd, shell=True)
     # print(s)
     # os.system(getCmd)
