@@ -1,0 +1,96 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_sku_id": {
+            "type": "number",
+            "ui": {
+              "label": "商品id",
+              "description": "商品id",
+              "placeholder": "请输入商品id"
+            },
+            "rules": {
+              "required": true
+            }
+          },
+          "goods_name_on_web": {
+            "type": "string",
+            "ui": {
+              "label": "商品名称",
+              "description": "商品名称",
+              "placeholder": "请输入商品名称"
+            }
+          },
+          "inner_packing_on_web": {
+            "type": "string",
+            "ui": {
+              "label": "内包装",
+              "description": "内包装",
+              "placeholder": "请输入内包装"
+            }
+          },
+          "recommended_weight": {
+            "type": "number",
+            "ui": {
+              "label": "商品权重",
+              "description": "商品权重",
+              "placeholder": "请输入商权重(1-100)"
+            }
+          },
+          "is_delivery_in_remote_areas": {
+            "type": "boolean",
+            "value": true,
+            "ui": {
+              "label": "偏远地区发货",
+              "help": {
+                "show": false,
+                "text": "?",
+                "content": "偏远地区是否发货"
+              }
+            }
+          },
+          "commission_rate": {
+            "type": "number",
+            "ui": {
+              "label": "佣金比例",
+              "description": "佣金比例",
+              "placeholder": "请输入佣金比例百分比"
+            }
+          },
+          "secondary_classification_on_web": {
+            "type": "string",
+            "ui": {
+              "label": "产品级别",
+              "widget": "select",
+              "widgetConfig": {
+                "placeholder": "产品级别",
+                "enumSource": [
+                  {
+                    "value": "1",
+                    "label": "一级"
+                  },
+                  {
+                    "value": "2",
+                    "label": "二级"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "ui": {
+        "noLabelSpace": true,
+        "widget": "array-table",
+        "widgetConfig": {
+          "disableCollapse": true,
+          "showOneIfEmpty": true
+        }
+      }
+    }
+  }
+}

@@ -1,11 +1,18 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
+	"time"
 
-	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
-	sql.Open("sqlserver", "")
+
+	c := cron.New()
+	c.AddFunc("@every 1s", func() {
+		fmt.Println(time.Now().Unix())
+		time.Sleep(time.Minute)
+	})
+	c.Run()
 }
