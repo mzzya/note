@@ -105,7 +105,8 @@ for imageName in imageNames:
     # 获取镜像
     getCmd = "docker pull {}:{}".format(imageName, maxTag)
     print(getCmd)
-    print("docker images list")
     # s = subprocess.Popen(getCmd, shell=True)
     # print(s)
     # os.system(getCmd)
+
+print("docker images list")
