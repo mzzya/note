@@ -38,6 +38,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.12.1
 	github.com/haya14busa/goplay v1.0.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
+	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/jinzhu/gorm v1.9.11
 	github.com/jondot/goweight v1.0.5 // indirect
 	github.com/josharian/impl v0.0.0-20190715203526-f0d59e96e372 // indirect
@@ -85,9 +86,12 @@ require (
 	google.golang.org/genproto v0.0.0-20191203220235-3fa9dbf08042
 	google.golang.org/grpc v1.24.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
-	gopkg.in/yaml.v2 v2.2.7 // indirect
 	grpc.go4.org v0.0.0-20170609214715-11d0a25b4919 // indirect
 	istio.io/api v0.0.0-20190826165737-1c58b135ae92
+	k8s.io/api v0.17.3 // indirect
+	k8s.io/apimachinery v0.17.3
+	k8s.io/client-go v11.0.0+incompatible
+	k8s.io/utils v0.0.0-20200229041039-0a110f9eb7ab // indirect
 	mvdan.cc/unparam v0.0.0-20191111180625-960b1ec0f2c2 // indirect
 	sourcegraph.com/sqs/pbtypes v1.0.0 // indirect
 )

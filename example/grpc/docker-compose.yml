@@ -1,12 +1,12 @@
-version: '3'
-services: #docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 -v ~/mysql:/var/lib/mysql -d mysql:8.0.17
+version: "3"
+services: #docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 -v ~/DockerVolumes/mysql:/var/lib/mysql -d mysql:8.0.17
   mysql:
     image: mysql:8.0.17
     ports:
       - "3306:3306"
       - "33060:33060"
     volumes:
-      - "~/mysql:/var/lib/mysql"
+      - "~/DockerVolumes/mysql:/var/lib/mysql"
   grpc-svc:
     image: hellojqk/grpc-svc:0.0.1
     ports:
@@ -23,7 +23,7 @@ services: #docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 
       - "8081:8081"
     command:
       - "-grpc-svc=grpc-svc:50051"
-    depends_on: 
+    depends_on:
       - grpc-svc
     links:
       - grpc-svc
