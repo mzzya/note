@@ -9,7 +9,7 @@ cp ./Template Dockerfile
 sed -i "s!\$BASE_IMAGE!hellojqk/${base_image}!g" Dockerfile
 
 #改造后镜像TAG
-image_full_name=hellojqk/${base_image}
+image_full_name=hellojqk/kubectl:${kubectl_version}
 
 # alpine 加速 https://blog.csdn.net/freeking101/article/details/80795752
 docker build --no-cache --build-arg kubectl_version=${kubectl_version} -t ${image_full_name} .
