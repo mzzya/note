@@ -7,10 +7,10 @@ sudo docker run --detach \
   --volume ~/gitlab/config:/etc/gitlab \
   --volume ~/gitlab/logs:/var/log/gitlab \
   --volume ~/gitlab/data:/var/opt/gitlab \
-  gitlab/gitlab-ce:12.4.3-ce.0
+  gitlab/gitlab-ce:12.9.2-ce.0
 
 
-  GROUP_NAME="smb" #组名
+
 
 #部署runner
     docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
@@ -18,6 +18,7 @@ sudo docker run --detach \
         -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
         gitlab/gitlab-runner:alpine-v12.4.1
 
+GROUP_NAME="smb" #组名
 #标准构建分支
 branchs=('dev' 'test' 'uat' 'prd')
 for branch in ${branchs[@]}; do
