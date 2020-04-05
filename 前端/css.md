@@ -72,3 +72,13 @@
   - none 与 0 0 auto 相同。
 - flex-basis 容器初始长度 支持百分比。
 
+### filter 滤镜
+
+最近的网站变黑实现方法，不同浏览器要带兼容性前缀。
+
+- blur(px) 高斯模糊。实现模糊度（马赛克），px代表多少个像素融合到一起。
+- brightness(%)	亮度 黑0<1亮<更亮
+- contrast(%)	对比度 黑0<1亮<更亮
+- drop-shadow 阴影
+- grayscale 灰度
+- opacity 透明度
