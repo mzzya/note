@@ -33,46 +33,59 @@
   - auto 如果内容被修剪，则浏览器会显示滚动条以便查看其余的内容。
   - inherit 规定应该从父元素继承 overflow 属性的值。
 
-## display
+- word-spacing 字体之间的间距
 
-### flex
+- word-break 字体换行方式（针对英文单词） break-all 直接切断
+
+## flex
 
 - flex-direction 决定布局方向 横竖正反向
   - row 默认值 从左向右
   - row-reverse 从右向左
   - column 从上到下
   - column-reserve 从下到上
+
 - flex-wrap  超长换行规则
   - nowrap 默认值 不换行 挤一挤
   - wrap 换行到下一行
   - wrap-reverse 换行到上方
+
 - flex-flow: flex-direction flex-wrap; 合并两者
+
+
 - justify-content X轴 对齐方式
   - flex-start 起点对齐 row 从左开始 row-reverse 从右开始
-  - center 居中
-  - space-between 两端贴边  容器相同间距
-  - space-around  容器左右两边距离一样 假设有三个元素那么是 0.5 元素 1 元素 1 元素 0.5
+  - flex-end 终点对齐
+  - center 1 元素元素 1
+  - space-between 0 1 1 0
+  - space-around 0.5 1 1 0.5
+  - space-evenly 1 1 1 1
+
 - align-items Y轴 对齐方式
   - flex-start 起点对齐 column 从上开始 column-reverse 从下开始
   - center 居中
   - baseline  容器第一行文字 对齐
   - stretch 无高度时顶格
+
 - align-content 多根轴线 flex-wrap 多行时生效
   - flex-start 起点对齐
   - flex-end 终点对齐
   - center 中心轴对齐
   - space-between 边轴贴边 子轴间距相等
   - space-around 轴间距 按 0.5 1 1 1 0.5
+
 - align-self 轴内 容器的对齐方式
-  - 同 align-items
+  - 摆脱父级flex限制 参数有 flex-start  flex-end 等
+
 - flex: flex-grow、flex-shrink flex-basis; 简写 类似border
   - flex-grow 扩展量
   - flex-shrink 收缩量 所有容器超过长度各自收缩比例。
   - auto 与 1 1 auto 相同。
   - none 与 0 0 auto 相同。
+
 - flex-basis 容器初始长度 支持百分比。
 
-### filter 滤镜
+## filter 滤镜
 
 最近的网站变黑实现方法，不同浏览器要带兼容性前缀。
 
@@ -82,3 +95,44 @@
 - drop-shadow 阴影
 - grayscale 灰度
 - opacity 透明度
+
+
+## visibility hidden 隐藏元素但是保持坑位
+
+visible 默认 可见
+
+## position
+
+- static 默认值
+  - top right bottom left 不可用
+
+- absolute 绝对定位 相对于离元素最近的设置了绝对或相对定位的父元素决定的
+  - top right bottom left 可用
+  - 一旦元素设置了就会脱离文档流 后边的兄弟元素就会占领他的位置，重叠
+
+- relative 相对自身正常位置定位
+  - top right bottom left 可用
+
+- fixed 相对于浏览器定位
+  - top right bottom left 可用
+
+## z-index
+
+一旦使用了 position: absolute,relative,fixed就可能出现样式重叠问题
+
+z-index值越高 越优先显示
+
+## 选择器
+
+- div p
+  - div下的所有p元素
+- div>p
+  - div下的所有一级p元素
+- div+p
+  - div后边的第一个p元素
+- div~p
+  - div后边的所有p元素
+
+## [伪类](https://www.runoob.com/css/css-pseudo-classes.html)
+
+## 内联样式（行内）> 页级样式（页面style）> 外联样式（外部文件）

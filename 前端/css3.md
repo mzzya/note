@@ -22,7 +22,6 @@
   - circle 表示圆形，ellipse 表示椭圆形
   - red 5%
 
-
 ## 动画
 
 ```css3
@@ -36,7 +35,10 @@
 }
 ```
 
+## box-sizing: 盒子尺寸 default content-box
 
-## box-sizing: border-box;
+假设 width:100px; border:10px solid red; padding:10px;
 
-内边距也包含在width height 中
+content-box 总宽度 100+10*2+10*2=140 内部可用宽度100px
+
+border-box 总宽度 100px 内部可用 100-10*2-10*2=60px
