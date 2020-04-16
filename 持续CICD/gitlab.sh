@@ -9,22 +9,19 @@ sudo docker run --detach \
   --volume ~/gitlab/data:/var/opt/gitlab \
   gitlab/gitlab-ce:12.9.2-ce.0
 
-
-
-
 #部署runner
-    docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
-        gitlab/gitlab-runner:alpine-v12.4.1
+docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
+  gitlab/gitlab-runner:alpine-v12.4.1
 
 GROUP_NAME="smb" #组名
 #标准构建分支
 branchs=('dev' 'test' 'uat' 'prd')
 for branch in ${branchs[@]}; do
-    echo ${branch} #分支名
-    #注册
-    docker run --rm \
+  echo ${branch} #分支名
+  #注册
+  docker run --rm \
     -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
     gitlab/gitlab-runner:alpine-v12.4.1 register \
     --tag-list "${GROUP_NAME}-${branch}" \
@@ -39,8 +36,17 @@ for branch in ${branchs[@]}; do
     --url "https://gitlab.example.com/" \
     --executor "docker" \
     --docker-tlsverify="true" \
-    --docker-image "docker:19.03.4" \
+    --docker-image "docker:19.03.8" \
     --docker-privileged="true" \
     --docker-volumes '/certs/client' \
-    --docker-volumes '/cache'
+    --docker-volumes '/cache' \
+    --docker-volumes '/etc/docker/daemon.json:/etc/docker/daemon.json'
 done
+
+$()$(
+  toml
+  [runners.machine]
+  MachineOptions = [
+  "engine-registry-mirror=https://o40mvhma.mirror.aliyuncs.com/"
+  ]
+)$()

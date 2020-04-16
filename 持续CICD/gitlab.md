@@ -36,7 +36,7 @@ docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
         ${RUNNER_IMAGE}
 ```
 
-## 注册4个runner
+## 注册4个runner worker
 
 ```shell
 RUNNER_IMAGE="gitlab/gitlab-runner:alpine-v12.9.0"
@@ -61,9 +61,77 @@ for branch in ${branchs[@]}; do
     --url "https://gitlab.example.com/" \
     --executor "docker" \
     --docker-tlsverify="true" \
-    --docker-image "docker:19.03.4" \
+    --docker-image "docker:19.03.8" \
     --docker-privileged="true" \
     --docker-volumes '/certs/client' \
-    --docker-volumes '/cache'
+    --docker-volumes '/cache' \
+    --docker-volumes '/etc/docker/daemon.json:/etc/docker/daemon.json'
 done
 ```
+
+### 常见问题和优化
+
+大原则：并发进行时 cache目录 GIT_CLONE_PATH目录要带上特定情况下唯一的标识，如环境字段
+
+#### cache问题
+
+concurrent不等于1时需要指定不同的key 否则可能还会出现严重问题
+
+```yaml
+cache:
+    key: ${CI_COMMIT_REF_NAME}-h5-node_modules
+    paths:
+      - node_modules/
+```
+
+宿主机执行 find / -name '*cache.zip' 观察前后缓存文件变化
+
+#### 自动运行问题
+
+```yaml
+rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME == "dev" || $CI_COMMIT_REF_NAME == "test" || $CI_COMMIT_REF_NAME == "prd" || $CI_COMMIT_REF_NAME == "uat"'
+      when: always
+```
+
+如果不配置 $CI_PIPELINE_SOURCE == "merge_request_event" never
+
+则merge_request点击时就会执行，此时代码尚未合并到分支中
+
+#### docker构建步骤时docker仓库代理问题
+
+docker宿主机配置 /etc/docker/daemon.json
+
+然后worker映射 --docker-volumes '/etc/docker/daemon.json:/etc/docker/daemon.json'
+
+官方暂时不支持直接配置
+
+#### 多环境构建问题
+
+假设有 dev test uat prd 4个分支 有 api和web两个项目
+
+想法 各环境可以并行运行 即运行 dev-api时可运行 test-web或test-api
+
+gitlab-ci.yaml 中 steg tag 用环境标识（dev test ...）
+
+limit=1 concurrent=4 会有一个问题
+
+构建目录会交叉 被同时使用！！！
+
+默认构建目录 /builds/组名/项目名
+
+则需要配置
+config.toml
+custom_build_dir-enabled =true
+
+gitlab-ci.yaml
+
+GIT_CLONE_PATH: /builds{环境}/组名/项目名
+
+以下针对于go语言不使用代理构建
+
+GOPATH: "/builds{环境}"
+
+GOBIN: "/builds{环境}/bin"
