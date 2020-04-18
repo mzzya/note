@@ -1,9 +1,10 @@
+#网络问题时 关闭网络共享 WIFI 使用有线连接试试
+
 minikube start \
---extra-config=kubelet.authentication-token-webhook=true \
---vm-driver=hyperkit \
---memory=16384 --cpus=4 \
---iso-url='https://kubernetes.oss-cn-hangzhou.aliyuncs.com/minikube/iso/minikube-v1.8.0.iso' \
---registry-mirror=https://o40mvhma.mirror.aliyuncs.com \
---image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers \
---kubernetes-version='1.18.0' \
---alsologtostderr
+    --alsologtostderr \
+    --memory=16384 --cpus=4 --nodes=3 \
+    --extra-config=kubelet.authentication-token-webhook=true \
+    --image-mirror-country=cn \
+    --registry-mirror="https://o40mvhma.mirror.aliyuncs.com" \
+    --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers \
+    --kubernetes-version='1.18.0'
