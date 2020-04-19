@@ -6,8 +6,9 @@
 
 # export PATH=$PWD/bin:$PATH
 
-curl -L -C - -o istio.tar.gz -O https://github.com/istio/istio/releases/download/1.4.5/istio-1.4.5-osx.tar.gz
+rm -rf ./istio.tar.gz && curl -L -C - -o istio.tar.gz -O https://github.com/istio/istio/releases/download/1.5.1/istio-1.5.1-osx.tar.gz
 rm -rf ~/istio && mkdir ~/istio && tar -zxf istio.tar.gz -C ~/istio --strip-components 1
+# 以上步骤下载不动的话可使用NDM+8888 8844DNS配合下载
 
 istioctl manifest apply --set profile=demo
 
