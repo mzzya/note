@@ -1,10 +1,14 @@
-# gitlab-ci在晨光科力普中应用
+# gitlab-ci/cd在晨光科力普中应用
 
-## 项目部署方式演进
+## 项目部署方式
 
 ### 背景介绍
 
-科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的B2B电商平台，面向中小企业客群，具有”轻快“的特点。项目启动之前，公司项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。部署过程中，人工打包偶发文件不正确导致系统可用性的降低。
+科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的B2B电商平台，面向中小企业客群。省心购项目启动之前，公司其他项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。多达五套的运行环境使得我们需要一款能够保证省心购项目顺利快速准确迭代的CI/CD工具。
+
+### 为什么选择gitlab-ci
+
+首先是公司选择了gitlab作为代码仓库。gitlab-ci运行状况界面深度集成在了gitlab仓库页面左侧导航栏，查看运行状况非常方便，只需配置ci/cd文件`.gitlab-ci.yml`和`dockerfile`文件即可满足我们的自动化需求。使用了大半年的时间再看，官方对于gitlab和gitlab-ci的迭代速度也是非常快，基本上每个月都会有新特性的加入。
 
 ### 主要编程语言：golang+nodejs
 
@@ -16,7 +20,7 @@
 - pre 预发布环境 等同于生产环境，”金丝雀“
 - prd 生产环境
 
-#### 容器集群
+#### K8S集群
 
 - test集群 对应 test 环境
 - uat集群 对应 uat环境 dev环境（早期仅有uat集群）
@@ -24,11 +28,13 @@
 
 ### git分支
 
+我们采用合并到对于分支，部署对应环境的方式来进行迭代。
+
 - dev 开发分支
 - test 集成测试分支
 - uat 验收测试分支
 - prd 生产分支
-- feature-*需求分支
+- feature-* 需求分支
 
 ### 开发流程
 
@@ -40,44 +46,71 @@
 
 测试团队测试通过后，合并`feature-*分支`到`uat分支`进行验收测试。
 
-验收通过后按需使用`feature-*分支`或者`uat分支`合并到`prd`。
+验收通过后按需使用`feature-*分支`或`uat分支`合并到`prd`。
 
+### gitlab-runner
 
-### gitlab-ci
+gitlab包含了用于协调作业的开源持续集成服务`gitlab-ci/cd`。
 
-每个环境部署基本上可以简化为3个步骤`stage`:`complie`编译，`docker-build`镜像构建，`deployment`部署。
+`gitlab-runner`是`gitlab-ci/cd`的处理程序，采用轮询的方式获取gitlab项目变更，执行相应的作业并将结果返回给gitlab。支持二进制，docker,docker-machine,k8s等方式部署。
+
+我们采用docker作为gitlab-runner的运行环境，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
+
+#### 常用菜单介绍
+
+- CI/CD
+  - Pipelines 管道页面，展示所有的CI/CD过程，运行状态，结果。
+  - Schedules 可以配置定时触发管道运行。
+- Setting
+  - CI/CD
+    - Runners 选择项目使用的runner，一般使用`Group Runners`组级别runner。
+    - Variables 一般用于存放镜像仓库的地址，账号，密码，kubectl配置文件等信息。
+
+ci/cd的过程可以简化为3个`stage`阶段:`complie`编译，`docker-build`镜像构建，`deployment`部署。这三个阶段组合在一起就是`pipeline`。每个阶段都会启动各自的运行容器,容器运行时生成的缓存文件和编译文件需指定保存，否则下个阶段无法获取到。
+
+阶段必须包含的关键参数：
+
+- image 运行镜像 例如：golang:1.14.2
+- script 执行的命令 `go build`、`docker build`、`kubectl patch`
+- stage 属于哪个阶段 `compile`、`docker-build`、`deployment`
+
+比较实用的可选参数：
+
+- artifacts 工件 例如：编译阶段生成的二进制文件应提供给镜像构建阶段使用。
+
+一个简单的示例
 
 ```yaml
+# .gitlab-ci.yml
 stages:
   - compile
   - docker-build
   - deployment
 
-job-compile-dev:
+compile:
   stage: compile
+  image: golang:1.14.2
   script:
-      - npm run ci #或go build 等
+      - go build #或npm ci 等
   artifacts:
     paths:
       - bin/
 
-
-job-docker-build-dev:
+docker-build:
   stage: docker-build
+  image: docker:19.03.8
+  services:
+    - docker:19.03.8-dind
   script:
     - docker build -t registry.*.com/clp-dev/project:CI_COMMIT_SHORT_SHA-YYYYMMDDHHmm
 
-job-deployment-dev:
+deployment:
   stage: deployment
+  image: registry.*.com/kubectl:v1.17.3 #需要自己构建
   script:
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
+
 ```
-
-其中每个stage必须项：
-
-- image 运行镜像名称
-- script 执行的命令 `go build`、`docker build`、`kubectl patch`
-- stage 属于哪个阶段 `compile`、`docker-build`、`deployment`
 
 ## 多项目CI/CD配置管理
 
@@ -170,4 +203,6 @@ concurrent = 4
     [runners.cache.gcs]
 ```
 
-## 功能探索
+## 思考与探索
+
+1.
