@@ -174,35 +174,111 @@ job-compile-dev:
 
 ## 缓存与并发控制
 
-我们注册了4个group runner分别对应我们的4个代码分支。push到对应分支时，触发相应的构建，每个runner同时只允许一个项目构建。提取部分配置如下
+### 缓存
+
+#### image services 镜像缓存
+
+`pull_policy`有三种拉取策略
+
+- always 总是会拉取镜像
+- if-not-present 如果本地存在则直接使用本地镜像 不存在则拉取，推荐使用
+- never 仅从本地获取镜像
 
 ```toml
-# config/config.toml 仅展示 实际未注册命令生成的配置文件
-
-concurrent = 4
+#config.toml
 
 [[runners]]
-  name = "group-runner-dev"   #runner名称
-  url = "https://gitlab.example.com/"
-  token = "***"
-  executor = "docker"
-  [runners.custom_build_dir]
-    enabled = true
-  [runners.docker]
-    tls_verify = true
-    image = "docker:19.03.8"
-    privileged = true
-    pull_policy = "if-not-present"
-    disable_entrypoint_overwrite = false
-    oom_kill_disable = false
-    disable_cache = false
-    volumes = ["/certs/client", "/cache", "/etc/docker/daemon.json:/etc/docker/daemon.json"]
-    shm_size = 0
-  [runners.cache]
-    [runners.cache.s3]
-    [runners.cache.gcs]
+  pull_policy = "if-not-present"
+```
+
+#### 构建阶段缓存 node_modules vendor
+
+每个阶段的job都会在初始化阶段获取
+
+编译阶段，node项目需要执行`npm ci`或`npm i`拉取`node_modules`信息，如果不配置缓存每次都要拉取，拖慢编译时间。
+
+```yaml
+## 编译阶段
+#方式一
+cache:
+    #字符串不支持路径 CI_COMMIT_REF_NAME 分支名 CI_PROJECT_NAMESPACE 组名 CI_PROJECT_NAME 项目名
+    #例如: dev-mygroup-myproject-node_modules 最终node_modules会被压缩成cache.zip放在此目录下
+    key: ${CI_COMMIT_REF_NAME}-${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
+    paths:
+      - node_modules
+#方式二 依赖gitlab 12.5
+cache:
+  key:
+    files:
+      - package.json
+    prefix: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
+## 编译阶段之后的镜像构建和部署阶段
+cache:
+  policy: pull #pull-push
+
+```
+
+- `key` 存放路径
+- `paths` 配置当前构建容器中的那些路径需要被缓存起来。
+
+因目前gitlab版本较低，我们目前采用的是`方式一`的配置方式，每个项目的每个构建环境分支维护一个属于自己的缓存地址。
+
+`方式二`依赖较新的gitlab版本，对`key`进行了扩展。我们更倾向于这种方式，原因是依node项目为例，node_modules文件中的内容是根据`package.json`或`package-lock.json`生成的，如果这两个文件没有发生变化，那么就无需更新缓存信息。
+
+`key`=`prefix`+`-`+`SHA(files)`
+
+- `prefix` 生成目录的前缀，可以不定义
+- `files` 判定缓存是否需要更新的文件，最多2个，最终生成的路径是根据这两个文件计算出SHA码
+
+### 并发控制
+
+早期项目较少 多个项目多个分支在构建时会按提交顺序依次执行。
+
+```toml
+concurrent = 1
+[[runners]]
+  name = "runner-dev"
+  limit = 1
+```
+
+改进配置 随着项目的推进，我们基于分支环境拆分了各自独立的runner，每个环境最多只有一个构建任务执行。
+
+```toml
+concurrent = 4
+[[runners]]
+  name = "runner-dev"
+  limit = 1
+[[runners]]
+  name = "runner-test"
+  limit = 1
+[[runners]]
+  name = "runner-uat"
+  limit = 1
+[[runners]]
+  name = "runner-prd"
+  limit = 1
+```
+
+现在 多个项目多分支支持并发构建。假设A项目的dev分支连续有5次提交，在以往的配置中会触发5个构建任务。第一个在执行，2~5或者B项目dev分支的构建任务需要等待。
+
+```toml
+concurrent = 15
+[[runners]]
+  name = "runner-dev"
+  limit = 5
+[[runners]]
+  name = "runner-test"
+  limit = 5
+[[runners]]
+  name = "runner-uat"
+  limit = 5
+[[runners]]
+  name = "runner-prd"
+  limit = 5
 ```
 
 ## 思考与探索
 
-1.
+### trigger 触发器的应用
+
+### resource_group
