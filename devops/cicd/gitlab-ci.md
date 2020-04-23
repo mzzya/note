@@ -22,7 +22,7 @@
 
 //////此处待补充开发测试流程图示
 
-`gilab-runner`提供了多种执行者供我们选择，常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
+`gilab-runner`提供了多种执行者供我们选择，常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。目前团队已进入并规范化了三个阶段：`compile`编译、`docker-build`镜像构建、`deployment`部署。
 
 一个简单的示例
 
@@ -40,7 +40,7 @@ compile:
       - go build #执行编译命令 go build 或 npm ci 等
   artifacts:
     paths:
-      - bin/ #编辑结果保存，可通过gitlab界面下载，主要是为了自动传递个 镜像构建阶段
+      - bin/ #编辑结果保存，可通过gitlab界面下载，主要是为了自动传递给 镜像构建阶段
 
 docker-build:
   stage: docker-build
@@ -48,7 +48,7 @@ docker-build:
   services:
     - docker:19.03.8-dind
   script:
-    # 执行镜像构建命令，特殊的镜像命名方式同样需要采用 artifacts 传递个部署阶段
+    # 执行镜像构建命令，特殊的镜像命名方式同样需要采用 artifacts 传递给 部署阶段
     - docker build -t registry.*.com/clp-dev/project:CI_COMMIT_SHORT_SHA-YYYYMMDDHHmm .
 
 deployment:
@@ -57,8 +57,11 @@ deployment:
   script:
     # 执行部署命令
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
-
 ```
+
+//////此处待补充Pipeline运行图
+
+对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果有需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
 ## 多项目CI/CD配置管理
 
