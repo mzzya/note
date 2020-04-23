@@ -65,6 +65,8 @@ deployment:
 
 对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
+每个构建阶段都能够能通过系统环境变量拿到很多关于构建任务的信息，
+
 ## 多项目CI/CD配置管理
 
 ### 遇到的问题
@@ -228,6 +230,8 @@ job-compile:
 
 ## 缓存与并发控制
 
+合理的缓存配置能够帮助我们减少构建时间，早期采用单实例单线程的方式使得我们无需考虑并发情况的处理。但随着项目的增多，不同项目，不同分支的并发构建需求愈加强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
+
 ### 缓存
 
 #### image services 运行时的镜像
@@ -291,6 +295,10 @@ job-deployment:
 
 ### 并发控制
 
+- git clone 地址处理
+- cache key 处理
+- 同分支频繁提交取消旧的构建任务
+
 早期项目较少 多个项目多个分支在构建时会按提交顺序依次执行。
 
 ```toml
@@ -338,7 +346,12 @@ concurrent = 15
 
 ## 思考与探索
 
-目前我们的项目中
-### trigger 触发器的应用
+////// 待补充，后续可能增加或删减部分
+
+### trigger
 
 ### resource_group
+
+### check 阶段
+
+### CI/CD Dashboard Prometheus
