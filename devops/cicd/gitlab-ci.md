@@ -63,7 +63,7 @@ deployment:
 
 //////此处待补充Pipeline运行图
 
-对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果有需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
+对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
 ## 多项目CI/CD配置管理
 
