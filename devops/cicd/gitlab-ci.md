@@ -1,6 +1,6 @@
 # 基于gitlab-ci/cd应用
 
-## 简介gitlab-ci/cd在晨光科力普项目中的应用
+## gitlab-ci/cd在晨光科力普项目中的应用
 
 ### 背景介绍
 
@@ -10,7 +10,7 @@
 
 首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作并将处理进度和结果信息实时返回给gitlab.在项目仓库侧边栏`CI/CD`->`Pipelines`中实时展现出来。同时`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置，`Runners`执行者配置提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。使用了大半年的时间再看，官方对于gitlab和gitlab-ci的迭代速度也是非常快，基本上每个月都会有新特性的加入。
 
-### 我们的使用
+### 分支与环境介绍
 
 |  git分支  | K8S集群 | 运行环境 |             说明             |
 |:---------:|:-------:|:--------:|:----------------------------:|
@@ -21,6 +21,8 @@
 | feature-* |         |          | 开发分支，按需合并到环境分支 |
 
 //////此处待补充开发测试流程图示
+
+### gitlab-runner与.gitlab-ci.yml介绍
 
 `gilab-runner`提供了多种执行者供我们选择，常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。目前团队已进入并规范化了三个阶段：`compile`编译、`docker-build`镜像构建、`deployment`部署。
 
