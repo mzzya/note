@@ -22,7 +22,7 @@
 
 //////此处待补充开发测试流程图示
 
-我们采用docker作为gitlab-runner的运行环境，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
+`gilab-runner`提供了多种执行者供我们选择，常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
 
 一个简单的示例
 
