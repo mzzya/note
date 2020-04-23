@@ -32,20 +32,20 @@
 - `.gitlab-ci.yml` 持续集成配置文件，一般放在仓库根目录。
 
 ```yaml
-# .gitlab-ci.yml示例
+#.gitlab-ci.yml示例
 stages:
-  - compile #编译阶段
-  - docker-build #镜像构建阶段
-  - deployment #部署阶段
+  - compile # 编译阶段
+  - docker-build # 镜像构建阶段
+  - deployment # 部署阶段
 
 compile:
   stage: compile
   image: golang:1.14.2
   script:
-      - go build #执行编译命令 go build 或 npm ci 等
+      - go build # 执行编译命令 go build 或 npm ci 等
   artifacts:
     paths:
-      - bin/ #编辑结果保存，可通过gitlab界面下载，主要是为了自动传递给 镜像构建阶段
+      - bin/ # 编辑结果保存，可通过gitlab界面下载，主要是为了自动传递给 镜像构建阶段
 
 docker-build:
   stage: docker-build
@@ -131,13 +131,15 @@ job-deployment:
 # 位置 /.gitlab-ci.yml
 include:
   - project: "common/cicd"
-    ref: "master" #v1 v2 branch
+    ref: "master" # v1 v2 branch
     file: "/prepared-docker-build.yml"
   - project: "common/cicd"
     file: "/prepared-deployment.yml"
 ```
 
-通过`include`关键字，我们很方便的实现了文件的组合复用。但我们最终的目的是使用`common/cicd`项目实现CI/CD配置文件的完全托管,所以可以采用如下操作：
+如上，通过`include`关键字，我们很方便的实现了`job-docker-build`阶段和`job-deployment`阶段的配置复用。如果不指定`ref`引用的分支或标签，默认为`common/cicd`项目的`master`分支，`cicd`项目的修改可以影响到引用项目所有构建，对于我们团队来说，利大于弊。
+
+我们最终的目的是使用`common/cicd`项目实现CI/CD配置文件的完全托管,所以我们会在`cicd`项目下按照引用项目路径创建一个组合文件，如下：
 
 ```yaml
 # 项目 /common/cicd
@@ -146,8 +148,8 @@ include:
   - local: "/prepared-docker-build.yml"
   - local: "/prepared-deployment.yml"
 
-#项目 /yourgroup/yourproject
-#位置 /.gitlab-ci.yml
+# 项目 /yourgroup/yourproject
+# 位置 /.gitlab-ci.yml
 include:
   - project: "common/cicd"
     file: "/yourgroup/yourproject-ci.yml"
@@ -156,24 +158,23 @@ include:
 #### 模块组合
 
 ```yaml
-#项目 /common/cicd
-#位置 /prepared-rule.yml
+# 项目 /common/cicd
 
-#通过Merge Request操作合并时，Merge到目标分支前不允许触发构建（此处暂时屏蔽，但它很有用，在真正合并前我们可以做代码规范和是否能运行检测等）
+# 位置 /prepared-rule.yml
+# 通过Merge Request操作合并时，Merge到目标分支前不允许触发构建（此处暂时屏蔽，但它很有用，在真正合并前我们可以做代码规范和能否运行检测等）
 .rule-merge_request_event: &rule-merge_request_event
   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  when: never
+  when: never # 满足条件 不执行
 
 # 默认规则 如果不是合并动作，再检查是否是 dev 分支，是的话才能执行构建任务。
 .rule-default:
   rules:
     - *rule-merge_request_event
     - if: '$CI_COMMIT_REF_NAME == "dev"'
-      when: on_success
-#
+      when: on_success #上个阶段执行成功了，此阶段继续执行
 
-#位置 /stage-tags.yml
-#分配给持有dev标签的runner运行
+# 位置 /stage-tags.yml
+# 分配给持有dev标签的runner运行
 .tags-dev:
   tags:
     - dev
@@ -199,7 +200,7 @@ job-compile-node:
     - npm ci
 ```
 
-演示中使用`extends`特性，在编译阶段如果不是通过合并事件`merge_request_event`,且需要在`dev`分支上触发的构建才会执行编译动作，实现了规则和标签的复用。甚至是：
+如上，演示中使用`extends`特性，在编译阶段如果不是通过合并事件`merge_request_event`,且需要在`dev`分支上触发的构建才会执行编译动作，实现了规则和标签的复用。甚至是：
 
 ```yaml
 # 位置 /prepared-compile.yaml
@@ -272,18 +273,18 @@ job-compile:
 
 ```yaml
 
-#方式一
+# 方式一
 job-compile:
   cache:
       # 字符串不支持路径
       # 自由组合,前提是保证阶段运行时唯一
       # CI_COMMIT_REF_NAME 分支名 CI_PROJECT_NAMESPACE 组名 CI_PROJECT_NAME 项目名
-      #例如: dev-mygroup-myproject-node_modules 最终node_modules会被压缩成cache.zip放在此目录下
+      # 例如: dev-mygroup-myproject-node_modules 最终node_modules会被压缩成cache.zip放在此目录下
       key: ${CI_COMMIT_REF_NAME}-${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
       paths:
         - node_modules
 
-#方式二 依赖gitlab 12.5
+# 方式二 依赖gitlab 12.5
 job-compile:
   cache:
     key:
@@ -291,7 +292,7 @@ job-compile:
         - package.json
       prefix: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
 
-## 编译阶段之后的镜像构建和部署阶段
+# 编译阶段之后的镜像构建和部署阶段
 job-deployment:
   cache:
     policy: pull #pull-push
