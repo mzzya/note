@@ -1,6 +1,6 @@
-# gitlab-ci在晨光科力普项目中的应用
+# 基于gitlab-ci的CI/CD应用
 
-## gitlab中的应用
+## 简介gitlab-ci在晨光科力普的应用
 
 ### 背景介绍
 
