@@ -34,7 +34,8 @@ GROUP_NAME="smb" #组名
 docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
-        -v /Users/Shared/gitlab-runner-${GROUP_NAME}/docker/daemon.json:/etc/docker/daemon.json \
+        -v /Users/Shared/gitlab-runner-${GROUP_NAME}/cache:/cache \
+        -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config/daemon.json:/etc/docker/daemon.json \
         ${RUNNER_IMAGE}
 ```
 
