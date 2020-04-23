@@ -18,7 +18,7 @@
 |   test    |  test   |   test   |           测试环境           |
 |    uat    |   uat   |   uat    |           验收环境           |
 |    prd    |   prd   | pre、prd |       金丝雀和生产环境       |
-| feature-* |         |          | 开发分支，按需合并到环境分支 |
+| feature-* |         |          | 需求分支，按需合并到环境分支 |
 
 流程简述：
 
@@ -27,9 +27,9 @@
 
 ### gitlab-ci/cd的相关介绍
 
-- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
+- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的C构建任务。
 
-- `.gitlab-ci.yml` 需要持续集成服务的项目配置文件，一般放在仓库根目录。
+- `.gitlab-ci.yml` 持续集成配置文件，一般放在仓库根目录。
 
 ```yaml
 # .gitlab-ci.yml示例
@@ -54,11 +54,11 @@ docker-build:
     - docker:19.03.8-dind
   script:
     # 执行镜像构建命令，特殊的镜像命名方式同样需要采用 artifacts 传递给 部署阶段
-    - docker build -t registry.*.com/clp-dev/project:CI_COMMIT_SHORT_SHA-YYYYMMDDHHmm .
+    - docker build -t registry.*.com/clp-dev/project:${CI_COMMIT_SHORT_SHA}-YYYYMMDDHHmm .
 
 deployment:
   stage: deployment
-  image: registry.*.com/kubectl:v1.17.3 # 需要自己构建
+  image: registry.*.com/kubectl:v1.17.3 # 需要自己构建包含kubectl执行程序的镜像
   script:
     # 执行部署命令
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
@@ -90,8 +90,13 @@ deployment:
 - D项目...
 - E项目...
 
-每个项目下各自维护的CI/CD配置文件给开发和维护带来了极大的不便。首先，新开项目从别的项目中复制一份`.gitlab-ci.yml`文件来用通常是较为简单地做法，但是`docker-build`阶段和`deployment`阶段都是冗余的配置，不符合编程理念。其次，开发语言、容器基础镜像等存在的BUG或升级可能需要我们不得不跟进，
-就算只有1个项目，我们也需要创建一个配置升级分支并合并到所有环境分支上，工作量大大增加。再者，CI/CD配置文件维护也是一个持续的过程，gitlab新版本升级带来的新的特性引入、CI/CD阶段完善（编译前增加`test`单元测试阶段，部署后增加验证`check`阶段）等都很难推进实现。
+每个项目下各自维护的CI/CD配置文件给开发和维护带来了极大的不便，如：
+
+1、新开项目从别的项目中复制一份`.gitlab-ci.yml`文件来用通常是较为简单地做法，但是`docker-build`阶段和`deployment`阶段都是冗余的配置，不符合编程理念。
+
+2、开发语言、容器基础镜像等存在的BUG或升级可能需要我们不得不跟进，就算只有1个项目，我们也需要创建一个配置升级分支并合并到所有环境分支上，工作量大大增加。
+
+3、CI/CD配置文件维护也是一个持续的过程，gitlab新版本升级带来的新的特性引入、CI/CD阶段完善（编译前增加`test`单元测试阶段，部署后增加验证`check`阶段）等都很难推进实现。
 
 ### 如何解决
 
