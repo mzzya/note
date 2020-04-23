@@ -19,6 +19,7 @@
 |    uat    |   uat   |   uat    |           验收环境           |
 |    prd    |   prd   | pre、prd |       金丝雀和生产环境       |
 | feature-* |         |          | 开发分支，按需合并到环境分支 |
+
 //////此处待补充开发测试流程图示
 
 我们采用docker作为gitlab-runner的运行环境，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
