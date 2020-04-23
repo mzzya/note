@@ -6,48 +6,22 @@
 
 科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的B2B电商平台，面向中小企业客群。省心购项目启动之前，公司其他项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。多达五套的运行环境使得我们需要一款能够保证省心购项目顺利快速准确迭代的CI/CD工具。
 
-### 为什么选择gitlab-ci
+### 为什么选择gitlab-ci/cd
 
-首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`。那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作并将处理进度和结果信息实时返回给gitlab.在项目仓库侧边栏`CI/CD`->`Pipelines`中实时展现出来。同时`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置,`Runners`执行者配置提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。使用了大半年的时间再看，官方对于gitlab和gitlab-ci的迭代速度也是非常快，基本上每个月都会有新特性的加入。
+首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作并将处理进度和结果信息实时返回给gitlab.在项目仓库侧边栏`CI/CD`->`Pipelines`中实时展现出来。同时`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置，`Runners`执行者配置提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。使用了大半年的时间再看，官方对于gitlab和gitlab-ci的迭代速度也是非常快，基本上每个月都会有新特性的加入。
 
 ### 我们的分支、环境、流程简述
 
-| git分支 | K8S集群 | 运行环境 |       说明       |
-|:-------:|:-------:|:--------:|:----------------:|
-|   dev   |   dev   |   dev    |     开发环境     |
-|  test   |  test   |   test   |     测试环境     |
-|   uat   |   uat   |   uat    |     验收环境     |
-|   prd   |   prd   | pre、prd | 金丝雀和生产环境 |
-
-//////此处待补充开发测试流程
-
-gitlab包含了用于协调作业的开源持续集成服务`gitlab-ci/cd`。
-
-`gitlab-runner`是`gitlab-ci/cd`的处理程序，采用轮询的方式获取gitlab项目变更，执行相应的作业并将结果返回给gitlab。支持二进制，docker,docker-machine,k8s等方式部署。
+|  git分支  | K8S集群 | 运行环境 |             说明             |
+|:---------:|:-------:|:--------:|:----------------------------:|
+|    dev    |   dev   |   dev    |           开发环境           |
+|   test    |  test   |   test   |           测试环境           |
+|    uat    |   uat   |   uat    |           验收环境           |
+|    prd    |   prd   | pre、prd |       金丝雀和生产环境       |
+| feature-* |         |          | 开发分支，按需合并到环境分支 |
+//////此处待补充开发测试流程图示
 
 我们采用docker作为gitlab-runner的运行环境，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
-
-#### 侧边栏菜单介绍
-
-- CI/CD
-  - Pipelines 管道页面，展示所有的CI/CD过程，运行状态，结果。
-  - Schedules 可以配置定时触发管道运行。
-- Setting
-  - CI/CD
-    - Runners 选择项目使用的runner，一般使用`Group Runners`组级别runner。
-    - Variables 一般用于存放镜像仓库的地址，账号，密码，kubectl配置文件等信息。
-
-CI/CD的过程可以简化为3个`stage`阶段:`complie`编译，`docker-build`镜像构建，`deployment`部署。这三个阶段组合在一起就是`pipeline`。每个阶段都会启动各自的运行容器,容器运行时生成的缓存文件和编译文件需指定保存，否则下个阶段无法获取到。
-
-阶段必须包含的关键参数：
-
-- image 运行镜像 例如：golang:1.14.2
-- script 执行的命令 `go build`、`docker build`、`kubectl patch`
-- stage 属于哪个阶段 `compile`、`docker-build`、`deployment`
-
-比较实用的可选参数：
-
-- artifacts 工件 例如：编译阶段生成的二进制文件应提供给镜像构建阶段使用。
 
 一个简单的示例
 
