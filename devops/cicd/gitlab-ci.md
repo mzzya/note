@@ -1,4 +1,4 @@
-# 基于gitlab-ci/cd应用
+# 基于gitlab-ci/cd持续集成服务的应用
 
 ## 简要介绍gitlab-ci/cd在晨光科力普项目中的应用
 
