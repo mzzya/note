@@ -161,7 +161,8 @@ include:
 # 项目 /common/cicd
 
 # 位置 /prepared-rule.yml
-# 通过Merge Request操作合并时，Merge到目标分支前不允许触发构建（此处暂时屏蔽，但它很有用，在真正合并前我们可以做代码规范和能否运行检测等）
+# 通过Merge Request操作合并时，Merge到目标分支前不允许触发构建
+#（此处暂时屏蔽，但它很有用，在真正合并前我们可以做代码规范和能否运行检测等）
 .rule-merge_request_event: &rule-merge_request_event
   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   when: never # 满足条件 不执行
