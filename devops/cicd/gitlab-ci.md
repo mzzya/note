@@ -1,6 +1,6 @@
 # 基于gitlab-ci/cd应用
 
-## gitlab-ci/cd在晨光科力普项目中的应用
+## 简要介绍gitlab-ci/cd在晨光科力普项目中的应用
 
 ### 背景介绍
 
@@ -228,7 +228,7 @@ job-compile:
 - `include` 总共允许包含100个，重复包含被视为配置错误
 - 尽可能的保证相同语言阶段模块内容一致
 
-## 缓存与并发控制
+## 并发构建处理
 
 合理的缓存配置能够帮助我们减少构建时间，早期采用单实例单线程的方式使得我们无需考虑并发情况的处理。但随着项目的增多，不同项目，不同分支的并发构建需求愈加强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
 
@@ -353,5 +353,7 @@ concurrent = 15
 ### resource_group
 
 ### check 阶段
+
+### Auto DevOps
 
 ### CI/CD Dashboard Prometheus
