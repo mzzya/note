@@ -10,7 +10,7 @@
 
 首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作并将处理进度和结果信息实时返回给gitlab.在项目仓库侧边栏`CI/CD`->`Pipelines`中实时展现出来。同时`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置，`Runners`执行者配置提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。使用了大半年的时间再看，官方对于gitlab和gitlab-ci的迭代速度也是非常快，基本上每个月都会有新特性的加入。
 
-### 我们的分支、环境、流程简述
+### 我们的使用
 
 |  git分支  | K8S集群 | 运行环境 |             说明             |
 |:---------:|:-------:|:--------:|:----------------------------:|
@@ -29,18 +29,18 @@
 ```yaml
 # .gitlab-ci.yml
 stages:
-  - compile
-  - docker-build
-  - deployment
+  - compile #编译阶段
+  - docker-build #镜像构建阶段
+  - deployment #部署阶段
 
 compile:
   stage: compile
   image: golang:1.14.2
   script:
-      - go build #或npm ci 等
+      - go build #执行编译命令 go build 或 npm ci 等
   artifacts:
     paths:
-      - bin/
+      - bin/ #编辑结果保存，可通过gitlab界面下载，主要是为了自动传递个 镜像构建阶段
 
 docker-build:
   stage: docker-build
@@ -48,12 +48,14 @@ docker-build:
   services:
     - docker:19.03.8-dind
   script:
-    - docker build -t registry.*.com/clp-dev/project:CI_COMMIT_SHORT_SHA-YYYYMMDDHHmm
+    # 执行镜像构建命令，特殊的镜像命名方式同样需要采用 artifacts 传递个部署阶段
+    - docker build -t registry.*.com/clp-dev/project:CI_COMMIT_SHORT_SHA-YYYYMMDDHHmm .
 
 deployment:
   stage: deployment
-  image: registry.*.com/kubectl:v1.17.3 #需要自己构建
+  image: registry.*.com/kubectl:v1.17.3 # 需要自己构建
   script:
+    # 执行部署命令
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
 
 ```
