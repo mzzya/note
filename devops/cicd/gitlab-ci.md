@@ -20,16 +20,19 @@
 |    prd    |   prd   | pre、prd |       金丝雀和生产环境       |
 | feature-* |         |          | 开发分支，按需合并到环境分支 |
 
-//////此处待补充开发测试流程图示
+流程简述：
 
-### gitlab-runner与.gitlab-ci.yml介绍
+我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀自动部署，生产环境需手动触发。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev，test，uat环境。目前我们的构建只有三个阶段：`compile`编译、`docker-build`镜像构建、`deployment`部署，从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。不足的地方也有很多，比如缺少`commit-check`提交检查，`test`自动测试阶段、`deployment-check`部署状态检查阶段等，这些也是我们正在完善的地方。
+![pipeline列表页](assets/pipeline-1.png)
 
-`gilab-runner`提供了多种执行者供我们选择，常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。目前团队已进入并规范化了三个阶段：`compile`编译、`docker-build`镜像构建、`deployment`部署。
+### gitlab-ci/cd的相关介绍
 
-一个简单的示例
+- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的CI/CD任务。
+
+- `.gitlab-ci.yml` 需要持续集成服务的项目配置文件，一般放在仓库根目录。
 
 ```yaml
-# .gitlab-ci.yml
+# .gitlab-ci.yml示例
 stages:
   - compile #编译阶段
   - docker-build #镜像构建阶段
@@ -61,15 +64,16 @@ deployment:
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
 ```
 
-![avatar](assets/pipeline-1.png)
-![avatar](assets/pipeline-2.png)
+像docker镜像仓库登录信息和kubectl配置文件信息可以通过`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`存储，并在构建过程中获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务明细。如下图：
+
+![pipeline详情页](assets/pipeline-2.png)
 
 在我们现有的项目中使用的还是比较简单的用法。复杂的情形也是可以轻松应对，参考官方`gitlab-runner`的CI/CD构建流程图
-![avatar](assets/pipeline-runner.png)
+![gitlab-runner的构建详情页](assets/pipeline-runner.png)
 
 对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
-每个构建阶段都能够能通过系统环境变量拿到很多关于构建任务的信息，
+官方原生，很多的仓库信息，提交信息，事件等都是可以通过环境变量直接获取到。比如我们这边执行构建时统一使用`CI_COMMIT_SHORT_SHA`提交信息短码作为镜像构建的标签。
 
 ## 多项目CI/CD配置管理
 
