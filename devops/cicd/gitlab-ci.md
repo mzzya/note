@@ -61,7 +61,11 @@ deployment:
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
 ```
 
-//////此处待补充Pipeline运行图
+![avatar](assets/pipeline-1.png)
+![avatar](assets/pipeline-2.png)
+
+在我们现有的项目中使用的还是比较简单的用法。复杂的情形也是可以轻松应对，参考官方`gitlab-runner`的CI/CD构建流程图
+![avatar](assets/pipeline-runner.png)
 
 对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
