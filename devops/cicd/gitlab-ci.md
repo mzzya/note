@@ -304,9 +304,13 @@ compile:
 
 这种方法能够更好的处理是否需要更新缓存问题，如果不同分支依赖的包相同且很少发生变化，那么不配置`prefix`或需是一个更好的选择。
 
-## 思考与探索
+## 功能探索
 
-////// 待补充，后续可能增加或删减部分
+### 阶段输出
+
+![pipeline构建进度](assets/pipeline-console.png)
+
+近期的gitlab版本对阶段输出界面进行了优化，增加了计时器，能够帮助我们很好地确认构建任务执行慢的原因。
 
 ### trigger
 
@@ -320,9 +324,12 @@ compile:
 
 ## 相关官方资料
 
-- [环境变量](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)
-- [.gitlab-ci.yml配置](https://docs.gitlab.com/ee/ci/yaml/README.html)
+以上仅基于我们目前的使用方式列举了部分`gitlab ci/cd`功能介绍，可能存在部分有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
+
+- [安装](https://docs.gitlab.com/ee/ci/runners)
 - [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
+- [.gitlab-ci.yml配置](https://docs.gitlab.com/ee/ci/yaml/README.html)
+- [环境变量](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)
 - [缓存说明](https://docs.gitlab.com/ee/ci/caching/index.html)
 
 ![科力普省心购](assets/shengxingou.png)
