@@ -27,9 +27,9 @@
 
 ### gitlab-ci/cd的相关介绍
 
-- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的构建任务。
+- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个`worker`分别处理各个分支的构建任务。
 
-- `.gitlab-ci.yml` 持续集成配置文件，一般放在仓库根目录。
+- `.gitlab-ci.yml` 持续集成配置文件，配置有多少个阶段，每个阶段需要做什么事情，一般放在仓库根目录。
 
 ```yaml
 #.gitlab-ci.yml示例
@@ -175,7 +175,7 @@ include:
       when: on_success #上个阶段执行成功了，此阶段继续执行
 
 # 位置 /stage-tags.yml
-# 分配给持有dev标签的runner运行
+# 分配给持有dev标签的worker运行
 .tags-dev:
   tags:
     - dev
@@ -247,120 +247,62 @@ job-compile:
 
 ## 并发构建处理
 
-我们早期的配置方式只使用了一个runner为团队项目进行构建任务，因为这样配置简单能避免很多问题，如`git clone`位置问题，先后构建交叉问题。随着项目的增多，不同的项目、分支上，团队成员代码提交的越来越频繁。对于并发构建的需求越来越强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
+我们早期的配置方式只使用了一个worker为团队项目进行构建任务，因为这样配置简单，能避免很多问题，如`git clone`位置问题，先后构建问题。随着项目的增多，不同的项目、分支上，团队成员代码提交的越来越频繁。对于并发构建的需求越来越强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
 
-### 缓存
+### concurrent与limit
 
-#### image services 运行时的镜像缓存问题
+- `concurrent` runner下所有worker最大可以并发执行的任务数
+- `limit` worker最大并发数 默认0不限制数量
 
+这两个参数属于`runner`配置文件中的配置项，如果我们想要让1个或多个worker并发的执行构建则需要设置为>1。同时需要进行一些必要的配置。
 
-`pull_policy` 有三种拉取策略
+### interruptible
 
-- always 总是会拉取镜像
-- if-not-present 如果本地存在则直接使用本地镜像 不存在则拉取，推荐使用
-- never 仅从本地获取镜像
+依我们目前的使用需求为例，合并代码到`dev`分支自动执行构建任务。假设A同学对代码进行了合并，正在执行构建任务，此时B同学也提交了代码，就会导致同时有两个`dev`分支的构建任务在进行。对于我们来说说，之前A同学的构建任务已经过时，没有必要再执行，只需要执行B同学的构建任务即可。`gitlab 12.3`版本引入了`interruptible`特性，在`.gitlab-c.yml`阶段配置时使用此特性，那么同分支上后续的构建任务将自动取消前置构建任务。如B同学的构建任务将自动取消A同学的构建任务。
 
-```toml
-#config.toml
+### cache
 
-[[runners]]
-  pull_policy = "if-not-present"
-```
+`compile`编译阶段，往往需要获取依赖包，依node为例，需要在执行编译前执行`npm ci`或`npm i`命令获取依赖包，如果不进行缓存配置，那么不仅会占用带宽，同时会拖慢我们的构建速度。
 
-#### 构建阶段缓存 node_modules vendor
-
-编译阶段，node项目需要执行`npm ci`或`npm i`拉取`node_modules`信息，如果不配置缓存每次都要从源地址拉取，拖慢编译时间，配置之后在下次构建任务触发时会根据我们在`cache->key`定义的关键字寻找是否存在缓存，如果有就被预先加载进来。
+简单缓存配置
 
 ```yaml
-
-# 方式一
-job-compile:
+compile:
   cache:
-      # 字符串不支持路径
-      # 自由组合,前提是保证阶段运行时唯一
-      # CI_COMMIT_REF_NAME 分支名 CI_PROJECT_NAMESPACE 组名 CI_PROJECT_NAME 项目名
-      # 例如: dev-mygroup-myproject-node_modules 最终node_modules会被压缩成cache.zip放在此目录下
-      key: ${CI_COMMIT_REF_NAME}-${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
-      paths:
-        - node_modules
+    key: node_modules
+    paths:
+      - node_modules
+```
 
-# 方式二 依赖gitlab 12.5
-job-compile:
+但这样会存在一个问题，依我们的需求为例，我们希望各个环境的缓存能够被隔离开，那么进阶一点的做法是增加分支名区分，如下：
+
+```yaml
+compile:
   cache:
+    # 分支名+node_modules 例如：dev-node_modules
+    key: ${CI_COMMIT_REF_NAME}-node_modules
+    paths:
+      - node_modules
+```
+
+`gitlab 12.5`版本对key进行了扩展，增加了`files`和`prefix`两个字段。作用是：`node_modules`目录实际是依赖`package.json`或`package-lock.json`中的配置生成的，如果没有变化，那么也就没有必要重新缓存。如下：
+
+```yaml
+compile:
+  cache:
+    # `key`=`prefix`+`-`+`SHA(files)`
     key:
+      # 判定缓存是否需要更新的文件，最多2个，最终生成的路径是根据这两个文件计算出SHA码
       files:
         - package.json
-      prefix: ${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}-node_modules
-
-# 编译阶段之后的镜像构建和部署阶段
-job-deployment:
-  cache:
-    policy: pull #pull-push
+        - package-lock.json
+      # 生成目录的前缀，可以不定义
+      prefix: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules
 ```
 
-- `key` 存放路径
-- `paths` 配置当前构建容器中的那些路径需要被缓存起来。
-- `policy` 每个job其实阶段都会执行获取和保存缓存动作，部分阶段，如镜像构建和部署阶段并不需要。所以我们可以设置成`pull`仅拉取，加快编译速度。
-
-因目前gitlab版本略低，我们目前采用的是`方式一`的配置方式，每个项目的每个构建环境分支维护一个属于自己的缓存地址。
-
-`方式二`依赖较新的gitlab版本，对`key`进行了扩展。我们更倾向于这种方式，原因是依node项目为例，node_modules文件中的内容是根据`package.json`或`package-lock.json`生成的，如果这两个文件没有发生变化，那么就无需更新缓存信息。
-
-`key`=`prefix`+`-`+`SHA(files)`
-
-- `prefix` 生成目录的前缀，可以不定义
-- `files` 判定缓存是否需要更新的文件，最多2个，最终生成的路径是根据这两个文件计算出SHA码
-
-### 并发控制
-
-- git clone 地址处理
-- cache key 处理
-- 同分支频繁提交取消旧的构建任务
-
-早期项目较少 多个项目多个分支在构建时会按提交顺序依次执行。
-
-```toml
-concurrent = 1
-[[runners]]
-  name = "runner-dev"
-  limit = 1
-```
-
-改进配置 随着项目的推进，我们基于分支环境拆分了各自独立的runner，每个环境最多只有一个构建任务执行。
-
-```toml
-concurrent = 4
-[[runners]]
-  name = "runner-dev"
-  limit = 1
-[[runners]]
-  name = "runner-test"
-  limit = 1
-[[runners]]
-  name = "runner-uat"
-  limit = 1
-[[runners]]
-  name = "runner-prd"
-  limit = 1
-```
-
-现在 多个项目多分支支持并发构建。假设A项目的dev分支连续有5次提交，在以往的配置中会触发5个构建任务。第一个在执行，2~5或者B项目dev分支的构建任务需要等待。
-
-```toml
-concurrent = 15
-[[runners]]
-  name = "runner-dev"
-  limit = 5
-[[runners]]
-  name = "runner-test"
-  limit = 5
-[[runners]]
-  name = "runner-uat"
-  limit = 5
-[[runners]]
-  name = "runner-prd"
-  limit = 5
-```
+这种方法能够更好的处理是否需要更新缓存问题，如果不同分支依赖的包相同且很少发生变化，那么不配置`prefix`或需是一个更好的选择。
 
 ## 思考与探索
 
@@ -381,5 +323,6 @@ concurrent = 15
 - [环境变量](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)
 - [.gitlab-ci.yml配置](https://docs.gitlab.com/ee/ci/yaml/README.html)
 - [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
+- [缓存说明](https://docs.gitlab.com/ee/ci/caching/index.html)
 
 ![科力普省心购](assets/shengxingou.png)
