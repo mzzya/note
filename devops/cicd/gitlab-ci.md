@@ -4,7 +4,7 @@
 
 ### 背景介绍
 
-科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的B2B电商平台，面向中小企业客群。省心购项目启动之前，公司其他项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。多达五套的运行环境使得我们需要一款能够保证省心购项目顺利快速准确迭代的CI/CD工具。
+科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的电商平台，面向中小企业客户和个人。省心购项目启动之前，公司其他项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。多达五套的运行环境使得我们需要一款能够保证省心购项目顺利快速准确迭代的CI/CD工具。
 
 ### 为什么选择gitlab-ci/cd
 
@@ -27,7 +27,7 @@
 
 ### gitlab-ci/cd的相关介绍
 
-- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的C构建任务。
+- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell,docker,docker-machine,kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个runner分别处理各个分支的构建任务。
 
 - `.gitlab-ci.yml` 持续集成配置文件，一般放在仓库根目录。
 
@@ -64,7 +64,7 @@ deployment:
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
 ```
 
-像docker镜像仓库登录信息和kubectl配置文件信息可以通过`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`存储，并在构建过程中获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务明细。如下图：
+像docker镜像仓库登录信息和kubectl配置文件信息可以通过`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`存储，并在构建过程中通过环境变量获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务明细。如下图：
 
 ![pipeline详情页](assets/pipeline-2.png)
 
@@ -73,7 +73,7 @@ deployment:
 
 对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`调度器配置构建任务的定时执行。
 
-官方原生，很多的仓库信息，提交信息，事件等都是可以通过环境变量直接获取到。比如我们这边执行构建时统一使用`CI_COMMIT_SHORT_SHA`提交信息短码作为镜像构建的标签。
+由于是官方原生支持，所以很多的仓库信息，提交信息，事件等都是可以通过环境变量直接获取到，并随着版本的更新不断地扩增。比如我们这边执行构建打包镜像阶段统一使用`CI_COMMIT_SHORT_SHA`提交信息短码作为镜像构建的标签。
 
 ## 多项目CI/CD配置管理
 
@@ -102,9 +102,9 @@ deployment:
 
 `gitlab-ci.yml`采用YAML数据格式语言，自然不可缺少对于锚点（&）和引用（*）的支持，在一个文件中可以很方便的将阶段公共配置拆分出来。
 
-如果套用面向对象设计的五大基本原则，`gitlab-ci.yml`承担很多太多的职责，所以对于不同阶段我们可以拆分成不同的文件，在需要的时候引用。官方在很早的版本就引入了组合复用，并不断完善使用体验。
+如果套用面向对象设计的五大基本原则之单一职责原则，`gitlab-ci.yml`承担了大多的职责，所以对于不同阶段我们可以拆分成不同的文件，在需要的时候引用。官方在很早的版本就引入了组合复用，并不断完善使用体验。
 
-现在我们可以使用`include`引入`local`当前项目， `file`相同git组织，`template`官方模板和`remote`远程文件（OSS）从不同位置引入1+个配置好的`yaml`文件进行文件复用。并使用`extends`为我们提供细致的配置代码模块复用。
+现在我们可以使用`include`特性引入`local`当前仓库， `file`相同gitlab，`template`官方模板和`remote`远程文件（OSS等）从不同位置引入1+个配置好的`yaml`文件进行文件复用。并使用`extends`为我们提供细致的配置代码模块复用。
 
 #### 文件组合
 
@@ -137,7 +137,7 @@ include:
     file: "/prepared-deployment.yml"
 ```
 
-如上，通过`include`关键字，我们很方便的实现了`job-docker-build`阶段和`job-deployment`阶段的配置复用。如果不指定`ref`引用的分支或标签，默认为`common/cicd`项目的`master`分支，`cicd`项目的修改可以影响到引用项目所有构建，对于我们团队来说，利大于弊。
+如上，通过`include`特性，我们很方便的实现了`job-docker-build`阶段和`job-deployment`阶段的配置复用。如果你想要对公共配置进行版本管理，可以通过`ref`指定分支或者标签。我们团队目前直接使用了默认的master分支进行维护，`cicd`项目的修改会影响到引用项目所有构建，对于我们团队来说，利大于弊。
 
 我们最终的目的是使用`common/cicd`项目实现CI/CD配置文件的完全托管,所以我们会在`cicd`项目下按照引用项目路径创建一个组合文件，如下：
 
@@ -234,10 +234,7 @@ job-compile:
     - echo '只为演示可重写'
 ```
 
-可以暴露出`.compile-case`供具体使用方重写。
-
-
-
+暴露出`.compile-case`供具体使用方重写。
 
 ### 总结
 
@@ -246,16 +243,18 @@ job-compile:
 - `extends` 支持多级继承，但是不建议使用三个以上级别。支持的最大嵌套级别为10
 - `include` 总共允许包含100个，重复包含被视为配置错误
 - 尽可能的保证相同语言阶段模块内容一致
+- 如果你的项目较为复杂，那么单独管理`.gitlab-ci.yml`更为合适。
 
 ## 并发构建处理
 
-合理的缓存配置能够帮助我们减少构建时间，早期采用单实例单线程的方式使得我们无需考虑并发情况的处理。但随着项目的增多，不同项目，不同分支的并发构建需求愈加强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
+我们早期的配置方式只使用了一个runner为团队项目进行构建任务，因为这样配置简单能避免很多问题，如`git clone`位置问题，先后构建交叉问题。随着项目的增多，不同的项目、分支上，团队成员代码提交的越来越频繁。对于并发构建的需求越来越强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
 
 ### 缓存
 
-#### image services 运行时的镜像
+#### image services 运行时的镜像缓存问题
 
-`pull_policy`有三种拉取策略
+
+`pull_policy` 有三种拉取策略
 
 - always 总是会拉取镜像
 - if-not-present 如果本地存在则直接使用本地镜像 不存在则拉取，推荐使用
@@ -301,7 +300,7 @@ job-deployment:
 
 - `key` 存放路径
 - `paths` 配置当前构建容器中的那些路径需要被缓存起来。
-- `policy` 每个job其实阶段都会执行获取缓存和保存缓存动作，单部分阶段，如 镜像构建和部署阶段，并不需要。所以我们可以设置成`pull`仅拉取，加快编译速度。
+- `policy` 每个job其实阶段都会执行获取和保存缓存动作，部分阶段，如镜像构建和部署阶段并不需要。所以我们可以设置成`pull`仅拉取，加快编译速度。
 
 因目前gitlab版本略低，我们目前采用的是`方式一`的配置方式，每个项目的每个构建环境分支维护一个属于自己的缓存地址。
 
@@ -377,4 +376,10 @@ concurrent = 15
 
 ### CI/CD Dashboard Prometheus
 
-<!-- ![科力普省心购](assets/shengxingou.png) -->
+## 相关官方资料
+
+- [环境变量](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)
+- [.gitlab-ci.yml配置](https://docs.gitlab.com/ee/ci/yaml/README.html)
+- [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
+
+![科力普省心购](assets/shengxingou.png)
