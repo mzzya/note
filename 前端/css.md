@@ -17,6 +17,8 @@
   - clip 溢出时不显示省略标记(...) 限定高度要搭配 overflow:hidden
   - ellipsis 溢出时显示省略标记(...) 配合 overflow:hidden；white-space:nowrap
     - 有浏览器兼容性问题
+- text-indent 文字首行缩进
+
 
 - white-space
   - normal 默认。空白会被浏览器忽略。
