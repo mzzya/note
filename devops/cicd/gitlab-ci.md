@@ -250,11 +250,20 @@ job-compile:
 - `concurrent` runner下所有worker最大可以并发执行的任务数
 - `limit` worker并发执行任务数 默认0不限制数量
 
-这两个参数属于`runner`配置文件中的配置项，如果我们想要让1个或多个worker并发的执行构建则需要设置为>1。同时需要进行一些必要的配置。
+这两个参数属于`runner`配置文件中的配置项，如果我们想要让1个或多个worker并发的执行构建则需要设置为>1。
 
 ### interruptible
 
 依我们目前的使用需求为例，合并代码到`dev`分支自动执行构建任务。假设A同学对代码进行了合并，正在执行构建任务，此时B同学也提交了代码，就会导致同时有两个`dev`分支的构建任务在进行。对于我们来说说，之前A同学的构建任务已经过时，没有必要再执行，只需要执行B同学的构建任务即可。`gitlab 12.3`版本引入了`interruptible`特性，在`.gitlab-c.yml`阶段配置时使用此特性，那么同分支上后续的构建任务将自动取消前置构建任务。如B同学的构建任务将自动取消A同学的构建任务。
+
+### custom_build_dir
+
+在执行构建作业前，`gitlab-runner-helper`会先将项目clone到`builds_dir`目录下相应的文件夹下。在开启并发构建后，可能会导致多个阶段任务在同一个目录上执行。参照官方的建议需要对`GIT_CLONE_PATH`工作目录设置：
+
+```yml
+variables:
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_PATH
+```
 
 ### cache
 
