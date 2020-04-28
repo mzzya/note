@@ -8,7 +8,7 @@
 
 ### 为什么选择gitlab-ci/cd
 
-首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作，同时将构建进度和结果及时返回给gitlab并在web端仓库侧边栏`CI/CD`->`Pipelines`页面中滚动展示出来。`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置，`Runners`执行者等配置项提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。从我们使用的大半年时间来看，官方对于`gitlab-ci/cd`的迭代速度也是非常快的，基本上每个月都会有新特性的加入。
+首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作，同时将构建进度和结果及时返回给gitlab并在web端仓库侧边栏`CI/CD`->`Pipelines`页面中滚动展示出来。`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置、`Runners`执行者等配置项提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。从我们使用的大半年时间来看，官方对于`gitlab-ci/cd`的迭代速度也是非常快的，基本上每个月都会有新特性的加入。
 
 ### 分支与环境介绍
 
@@ -22,14 +22,14 @@
 
 流程简述：
 
-我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动触发。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev，test，uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
+我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动触发。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev、test、uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
 ![pipeline列表页](assets/pipeline-1.png)
 
 ### gitlab-ci/cd的相关介绍
 
 - `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell，docker，docker-machine，kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个`worker`分别处理各个分支的构建任务。
 
-- `.gitlab-ci.yml` 持续集成配置文件，配置构建任务的顺序和结构。若使用docker部署，每个阶段需要指定该阶段所需的镜像。
+- `.gitlab-ci.yml` `CI/CD`持续集成配置文件，配置构建任务的顺序和结构。若使用docker部署，每个阶段需要指定该阶段所需镜像。
 
 ```yaml
 #.gitlab-ci.yml示例
@@ -64,14 +64,14 @@ deployment:
     - kubectl patch deploy K8S_DEPLOYMENT_NAME -p '更新镜像json字符串'
 ```
 
-对于一些敏感信息，如docker镜像仓库登录密钥和kubectl配置文件，可通过gitlab web端`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`配置页面配置。那么在构建过程中即可通过环境变量获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务阶段明细。如下图：
+对于一些敏感信息，如docker镜像仓库登录密钥和kubectl配置文件，可通过gitlab web端`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`配置页面配置。在构建过程中可通过环境变量获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务阶段明细。如下图：
 
 ![pipeline详情页](assets/pipeline-2.png)
 
 在我们现有的项目中使用的还是比较简单的用法。复杂的情形也可以轻松应对，参考官方`gitlab-runner`的CI/CD构建流程图
 ![gitlab-runner的构建详情页](assets/pipeline-runner.png)
 
-对于各个阶段，`start_in`延时，`timeout`超时控制，`retry`失败重试，`interruptible` 打断旧的构建，`trigger`触发器别的构建，`parallel`阶段并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`页面配置构建任务的何时执行。
+对于各个阶段，`start_in`延时、`timeout`超时控制、`retry`失败重试、`interruptible` 打断、`trigger`触发器、`parallel`并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`页面配置构建任务的何时执行。
 
 由于是gitlab官方推出的持续集成服务，许多跟仓库有关的信息都可以在执行构建任务时通过环境变量获取到，并随着版本的更新不断地扩增。比如我们这边打包镜像阶段统一使用`CI_COMMIT_SHORT_SHA`提交信息短码作为镜像标签。
 
@@ -90,9 +90,9 @@ deployment:
 - D项目...
 - E项目...
 
-每个项目下各自维护的CI/CD配置文件给开发和维护带来了极大的不便，如：
+每个项目下各自维护的`.gitlab-ci.yml`配置文件给开发和维护带来了极大的不便，如：
 
-1. 新开项目从别的项目中复制一份`.gitlab-ci.yml`文件来用通常是较为简单地做法，但是`docker-build`阶段和`deployment`阶段都是冗余的配置，不符合编程理念。
+1. 新开项目从别的项目中复制一份过来用通常是较为简单地做法，但是`docker-build`阶段和`deployment`阶段都是冗余的配置，不符合编程理念。
 
 2. 开发语言、容器基础镜像等存在的BUG或升级需要我们跟进，就算只有1个项目，我们也要创建一个配置升级分支并合并到所有环境分支上，重复劳动。
 
@@ -100,7 +100,7 @@ deployment:
 
 ### 如何解决
 
-`gitlab-ci.yml`采用YAML数据格式语言，自然不可缺少对于锚点（&）和引用（*）的支持，在一个文件中可以很方便的将阶段公共配置拆分出来。同时将`gitlab-ci.yml`按阶段拆分成不同的阶段配置文件，在需要的时候引入并重写。我们可以使用`include`特性引入`local`当前仓库， `file`相同gitlab，`template`官方模板和`remote`远程文件（OSS等）从不同位置引入1+个配置好的`yaml`文件进行文件复用。并使用`extends`为我们提供细致的配置代码模块复用。
+`gitlab-ci.yml`采用YAML数据格式语言，自然不可缺少对于锚点（&）和引用（*）的支持，在一个文件中可以很方便的将阶段公共配置拆分出来。同时可将`gitlab-ci.yml`按阶段拆分成不同的阶段配置文件，在需要的时候引入并重写。我们可以使用`include`特性引入`local`当前仓库， `file`相同gitlab，`template`官方模板和`remote`远程文件（OSS等）从不同位置引入1+个配置好的`yaml`文件进行文件复用。还可以使用`extends`为我们提供细致的配置代码模块复用。
 
 #### 文件组合
 
@@ -135,7 +135,7 @@ include:
 
 如上，通过`include`特性，我们很方便的实现了`job-docker-build`阶段和`job-deployment`阶段的配置复用。如果你想要对公共配置进行版本管理，可以通过`ref`指定分支或者标签。我们团队目前直接使用了默认的master分支进行维护，`cicd`项目的修改会影响到引用项目所有构建，对于我们团队来说，利大于弊。
 
-我们最终的目的是使用`common/cicd`项目实现CI/CD配置文件的完全托管,所以我们会在`cicd`项目下按照引用项目路径创建一个组合文件，如下：
+我们最终的目的是使用`common/cicd`项目实现所有项目`.gitlab-ci.yml`配置托管，所以我们会将组合文件同时托管在`common/cicd`项目中，具体项目只需引入组合文件即可。如下：
 
 ```yaml
 # 项目 /common/cicd
@@ -143,6 +143,7 @@ include:
 include:
   - local: "/prepared-docker-build.yml"
   - local: "/prepared-deployment.yml"
+  - local: "/prepared-stages.yml"
 
 # 项目 /yourgroup/yourproject
 # 位置 /.gitlab-ci.yml
@@ -197,7 +198,7 @@ job-compile-node:
     - npm ci
 ```
 
-上方示例所表达的意思是：在编译阶段，如果是合并动作发起的构建则不处理，不是合并动作处罚的构建任务还需判断构建任务的来源分支是否来自于`dev`分支。使用了`yml锚点&和引用*`、`extends`特性，实现了规则和标签的复用。还可以暴露出一个`.compile-case`可供重写的方法供具体调用方使用，如下：
+上方示例所表达的意思是：在构建任务编译阶段，如果是合并动作发起的构建则不处理，不是合并动作触发的构建还需判断构建任务的触发分支是否来自于`dev`分支。使用了`yml锚点&和引用*`、`extends`特性，实现了规则和标签的复用。甚至是支持`重写`，如下：
 
 ```yaml
 # 位置 /prepared-compile.yaml
@@ -211,6 +212,8 @@ job-compile-node:
 
 # 可供引用者重写
 .compile-case:
+  variables:
+    APP_TYPE: API
   extends:
     - .compile-default
 
@@ -223,40 +226,40 @@ job-compile:
 
 # 位置 /yourgroup/yourproject-ci.yml
 .compile-case:
+  variables:
+    APP_TYPE: WEB_API
   extends:
     - .compile-default
     - .compile-script-go
-  after_script:
-    - echo '只为演示可重写'
 ```
 
 ### 总结
 
-通过以上示例简单演示了多项目CI/CD配置文件管理的方式，为我们对公司项目构建流程持续完善打好了基础。
+通过以上示例简单演示了我们现在的多项目配置文件管理方式，这种方式为我们多项目构建流程的可持续维护奠定了基础。
 
 - `extends` 支持多级继承，但是不建议使用三个以上级别。支持的最大嵌套级别为10
 - `include` 总共允许包含100个，重复包含被视为配置错误
-- 尽可能的保证相同语言阶段模块内容一致
+- 尽可能保证相同语言的构建阶段模块内容一致
 - 如果你的项目较为复杂，那么单独管理`.gitlab-ci.yml`更为合适
 
 ## 并发构建处理
 
-我们早期的配置方式只使用了一个worker为团队项目进行构建任务，因为这样配置简单，能避免很多问题，如`git clone`位置问题，先后构建问题。随着项目的增多，不同的项目、分支上，团队成员代码提交的越来越频繁。对于并发构建的需求越来越强烈，驱动着我们不断的对`gitlab-runner`和`ci/cd`配置优化。
+我们早期的配置方式只使用了一个runner启动一个worker为团队项目进行构建任务，因为这样配置简单，能避免很多问题，如：`build_dir`位置问题，先后构建问题等。随着项目的增多，不同的项目和分支上频繁的合并代码，构建任务逐渐出现了堆积的情况，对于并发构建的需求越来越强烈。这些问题驱动着我们对`gitlab-runner`和`ci/cd`配置持续优化。
 
 ### concurrent与limit
 
 - `concurrent` runner下所有worker最大可以并发执行的任务数
 - `limit` worker并发执行任务数 默认0不限制数量
 
-这两个参数属于`runner`配置文件中的配置项，如果我们想要让1个或多个worker并发的执行构建则需要设置为>1。
+这两个参数属于`runner`配置文件中的配置项，如果我们想要让多个worker并发的执行构建则需要设置为>1。
 
 ### interruptible
 
-依我们目前的使用需求为例，合并代码到`dev`分支自动执行构建任务。假设A同学对代码进行了合并，正在执行构建任务，此时B同学也提交了代码，就会导致同时有两个`dev`分支的构建任务在进行。对于我们来说说，之前A同学的构建任务已经过时，没有必要再执行，只需要执行B同学的构建任务即可。`gitlab 12.3`版本引入了`interruptible`特性，在`.gitlab-c.yml`阶段配置时使用此特性，那么同分支上后续的构建任务将自动取消前置构建任务。如B同学的构建任务将自动取消A同学的构建任务。
+依我们目前的使用需求为例，合并代码到`dev`分支自动执行构建任务。假设A同学将自己的代码合并到`dev`分支，正在执行构建任务，此时B同学也往`dev`分支合并了代码，就会导致同时有两个`dev`分支的构建任务在进行。对于我们来说说，之前A同学的构建任务已经过时，没有必要再执行，只需要执行B同学的构建任务即可。`gitlab 12.3`版本引入了`interruptible`特性，在`.gitlab-c.yml`阶段配置时使用此特性，那么同分支上后续的构建任务将自动取消前置构建任务。引入后B同学的构建任务将自动取消前边A同学的构建任务。
 
 ### custom_build_dir
 
-在执行构建作业前，`gitlab-runner-helper`会先将项目clone到`builds_dir`目录下相应的文件夹下。在开启并发构建后，可能会导致多个阶段任务在同一个目录上执行。参照官方的建议需要对`GIT_CLONE_PATH`工作目录设置：
+在执行构建作业前，`gitlab-runner-helper`会先将项目clone到`builds_dir`目录下相应的文件夹下。在开启并发构建后，可能会导致多个阶段任务在同一个目录上执行，视具体情况而定。参照官方的建议，最保险的做法是对`GIT_CLONE_PATH`工作目录设置。如下：
 
 ```yml
 variables:
@@ -265,9 +268,7 @@ variables:
 
 ### cache
 
-`compile`编译阶段，往往需要获取依赖包，依node为例，需要在执行编译前执行`npm ci`或`npm i`命令获取依赖包，如果不进行缓存配置，那么不仅会占用带宽，同时会拖慢我们的构建速度。
-
-简单缓存配置
+`compile`编译阶段，往往需要获取依赖包。依node为例，在执行编译命令`num run build`前需要执行`npm ci`或`npm i`命令获取依赖包。如果不配置缓存策略，那么每次都需要拉取依赖包数据，不仅会占用带宽，同时会拖慢我们的构建速度。
 
 ```yaml
 compile:
@@ -277,7 +278,7 @@ compile:
       - node_modules
 ```
 
-但这样会存在一个问题，依我们的需求为例，我们希望各个环境的缓存能够被隔离开，那么进阶一点的做法是增加分支名区分，如下：
+上方是一个简单地缓存策略配置。但依我们的需求为例，希望各个环境的缓存能够被隔离开。那么进阶一点的做法是增加分支名区分，如下：
 
 ```yaml
 compile:
@@ -321,13 +322,13 @@ compile:
 
 依官方项目为例，gitlab有ce社区版和ee企业版两个版本，gitlab-runner也为不同的平台提供了独立安装包。针对不同的版本编写不同的构建流程和阶段，在构建时可以通过触发器来控制多个任务同时进行。
 
-假设前后端分离的项目中在发布API项目的同时需要发布WEB项目，WEB项目依赖API项目的版本信息进行负载均衡配置，API在执行构建任务时通过触发器并传递参数（API版本信息）触发WEB的构建任务。
+依前后端分离的项目为例，在发布API项目的同时需要发布WEB项目，假设WEB项目依赖API项目的版本信息进行负载均衡配置，API在执行构建任务时通过触发器并传递参数（API版本信息）触发WEB的构建任务。
 
 如果你的项目较为复杂，需要动态的生成构建任务配置文件，`GitLab 12.9`近期更新的一个版本已经支持了这种做法。同时官方提供了触发器的API，还可以将构建动作集成到别的应用当中。
 
 ### delayed+start_in+retry
 
-在部署完成之后，我们通常会通过kubectl手动确认部署状态，或者是通过http服务暴露的特殊的包含版本信息的连接进行部署确认。这种做法随着项目的增多是一件很累的事，`when:delayed`延迟+`start_in`延迟多久+`retry`失败重试组合使用是个很好的选择，也是我们团队准备补充的阶段。
+在部署完成之后，我们通常会通过kubectl手动确认部署状态，或者是通过http服务暴露的特殊的包含版本信息的连接进行部署确认。这种做法随着项目的增多是一件很累的事，`delayed`延迟+`start_in`延迟多久+`retry`失败重试组合使用是个很好的选择，也是我们团队准备补充的阶段。
 
 ### Auto DevOps
 
@@ -341,7 +342,7 @@ compile:
 
 ## 相关官方资料
 
-以上仅基于我们目前的使用方式列举了部分`gitlab ci/cd`功能介绍，可能存在部分有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
+以上是基于我们目前实践经历，罗列出的部分`gitlab-ci/cd`介绍，可能存在有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
 
 - [安装](https://docs.gitlab.com/ee/ci/runners)
 - [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
