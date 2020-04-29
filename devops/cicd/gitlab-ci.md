@@ -263,6 +263,9 @@ job-compile:
 
 ```yml
 variables:
+  # CI_BUILDS_DIR 构建根路径 默认：/builds
+  # CI_CONCURRENT_ID 单个执行者的执行的唯一ID
+  # CI_PROJECT_PATH yourgroup/yourproject
   GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_PATH
 ```
 
