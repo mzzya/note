@@ -12,17 +12,17 @@
 
 ### 分支与环境介绍
 
-|  git分支  | K8S集群 | 运行环境 |             说明             |
-|:---------:|:-------:|:--------:|:----------------------------:|
-|    dev    |   dev   |   dev    |           开发环境           |
-|   test    |  test   |   test   |           测试环境           |
-|    uat    |   uat   |   uat    |           验收环境           |
-|    prd    |   prd   | pre、prd |     金丝雀和生产环境     |
-| feature-* |         |          | 需求分支，按需合并到环境分支 |
+|  git分支  | K8S集群 | 运行环境 |               说明               |
+|:---------:|:-------:|:--------:|:--------------------------------:|
+|    dev    |   dev   |   dev    |         开发环境（自动）         |
+|   test    |  test   |   test   |         测试环境（自动）         |
+|    uat    |   uat   |   uat    |         验收环境（自动）         |
+|    prd    |   prd   | pre、prd | 金丝雀（自动）和生产环境（手动） |
+| feature-* |         |          |   需求分支，按需合并到环境分支   |
 
 流程简述：
 
-我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动触发。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev、test、uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
+我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动部署。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev、test、uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
 ![pipeline列表页](assets/pipeline-1.png)
 
 ### GitLab CI/CD的相关介绍
