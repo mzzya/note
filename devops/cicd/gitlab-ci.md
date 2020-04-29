@@ -276,8 +276,9 @@ variables:
 ```yaml
 compile:
   cache:
-    key: node_modules
-    paths:
+    # 最终会保存在 .../yourgroup/yourproject/key_node_modules/cache.zip
+    key: key_node_modules
+    paths: # 那些目录需要缓存
       - node_modules
 ```
 
@@ -287,6 +288,7 @@ compile:
 compile:
   cache:
     # 分支名+node_modules 例如：dev-node_modules
+    # 最终会保存在 .../yourgroup/yourproject/dev-node_modules/cache.zip
     key: ${CI_COMMIT_REF_NAME}-node_modules
     paths:
       - node_modules
@@ -300,6 +302,7 @@ compile:
     # `key`=`prefix`+`-`+`SHA(files)`
     key:
       # 判定缓存是否需要更新的文件，最多2个，最终生成的路径是根据这两个文件计算出SHA码
+      # 最终会保存在 .../yourgroup/yourproject/dev-feef9576d21ee9b6a32e30c5c79d0a0ceb68d1e5/cache.zip
       files:
         - package.json
         - package-lock.json
@@ -309,7 +312,7 @@ compile:
       - node_modules
 ```
 
-这种方法能够更好的处理是否需要更新缓存问题。如果不同分支依赖的包相同且很少发生变化，那么取消配置`prefix`放弃环境隔离策略或许是一个更好的选择。
+一旦配置了cache模块，那么在构建任务时就会先获取缓存，并在阶段完成后更新缓存，这种方法能够更好的处理是否需要更新问题。如果不同分支依赖的包相同且很少发生变化，那么取消配置`prefix`放弃环境隔离策略或许是一个更好的选择。
 
 ## 功能探索
 
