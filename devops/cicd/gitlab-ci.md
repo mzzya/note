@@ -27,7 +27,7 @@
 
 ### GitLab CI/CD的相关介绍
 
-- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell，docker，docker-machine，kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个`worker`分别处理各个分支的构建任务。
+- `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell、docker、docker-machine、kubernetes等。基于部署维护和权限方面的考量，我们最终选择基于docker部署。为每个团队启动一个runner容器，容器内按部署环境注册了4个`worker`分别处理各个分支的构建任务。
 
 - `.gitlab-ci.yml` `CI/CD`持续集成配置文件，配置构建任务的顺序和结构。若使用docker部署，每个阶段需要指定该阶段所需镜像。
 
