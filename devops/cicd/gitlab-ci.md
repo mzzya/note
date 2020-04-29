@@ -1,14 +1,14 @@
-# 晨光科力普基于gitlab-ci/cd持续集成服务的应用
+# 晨光科力普基于GitLab CI/CD持续集成服务的应用
 
-## 简要介绍gitlab-ci/cd在晨光科力普项目中的应用
+## 简要介绍GitLab CI/CD在晨光科力普项目中的应用
 
 ### 背景介绍
 
 科力普省心购是晨光文具集团在19年初为了拓展综合办公物资采购业务成立的电商平台，面向中小企业和个人客户。省心购项目启动之前，公司其他项目多为企业、政府、事业单位等提供办公用品采购服务，采用定期发版的方式保证系统的稳健运行，一个小的需求也可能要等上一周才会发布。多达五套的运行环境使得我们需要一款能够保证省心购项目快速迭代的CI/CD工具。
 
-### 为什么选择gitlab-ci/cd
+### 为什么选择GitLab CI/CD
 
-首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`gitlab-ci/cd`，那么`gitlab-ci/cd`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作，同时将构建进度和结果及时返回给gitlab并在web端仓库侧边栏`CI/CD`->`Pipelines`页面中滚动展示出来。`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置、`Runners`执行者等配置项提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。从我们使用的大半年时间来看，官方对于`gitlab-ci/cd`的迭代速度也是非常快的，基本上每个月都会有新特性的加入。
+首先是公司选择了gitlab作为代码仓库，本身包含协调作业的开源持续集成服务`GitLab CI/CD`，那么`GitLab CI/CD`自然成了我们首先调研的对象。`gitlab`作为服务的提供者，由`gitlab-runner`注册后依轮询的方式获取服务的指令，执行相应的构建动作，同时将构建进度和结果及时返回给gitlab并在web端仓库侧边栏`CI/CD`->`Pipelines`页面中滚动展示出来。`Setting`->`CI/CD`模块下的`Auto DevOps` 自动化DevOps功能、`Variables`变量配置、`Runners`执行者等配置项提供了强大的公共配置管理功能。在编写完`.gitlab-ci.yml`构建配置文件和`dockerfile`文件即可满足我们的自动化需求。从我们使用的大半年时间来看，官方对于`GitLab CI/CD`的迭代速度也是非常快的，基本上每个月都会有新特性的加入。
 
 ### 分支与环境介绍
 
@@ -25,7 +25,7 @@
 我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动触发。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev、test、uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
 ![pipeline列表页](assets/pipeline-1.png)
 
-### gitlab-ci/cd的相关介绍
+### GitLab CI/CD的相关介绍
 
 - `gitlab-runner` 持续集成服务的执行者，官方提供了多种部署方式，如常见的shell，docker，docker-machine，kubernetes等。基于部署维护和权限方面的考量，我们最终选择了docker作为执行者，为每个团队启动一个runner容器，容器内按分支注册了4个`worker`分别处理各个分支的构建任务。
 
@@ -342,7 +342,7 @@ compile:
 
 ## 相关官方资料
 
-以上是基于我们目前实践经历，罗列出的部分`gitlab-ci/cd`介绍，可能存在有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
+以上是基于我们目前实践经历，罗列出的部分`GitLab CI/CD`介绍，可能存在有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
 
 - [安装](https://docs.gitlab.com/ee/ci/runners)
 - [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
