@@ -350,7 +350,7 @@ compile:
 
 以上是基于我们目前实践经历，罗列出的部分`GitLab CI/CD`介绍，可能存在有误的地方。如果你对它感兴趣，那么官方文档则是更好的阅读选择。
 
-- [外部仓库与Gitlab镜像方案](https://gitlab.colipu.com/help/workflow/repository_mirroring)
+- [外部仓库与Gitlab镜像方案](https://docs.gitlab.com/ee/user/project/repository/repository_mirroring.html)
 - [Runner安装](https://docs.gitlab.com/ee/ci/runners)
 - [Runner配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
 - [.gitlab-ci.yml配置](https://docs.gitlab.com/ee/ci/yaml/README.html)
