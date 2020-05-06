@@ -1,5 +1,31 @@
 # 晨光科力普基于GitLab CI/CD持续集成服务的应用
 
+## 目录
+
+- [简要介绍GitLab CI/CD在晨光科力普项目中的应用](#简要介绍GitLab-CI/CD在晨光科力普项目中的应用)
+  - [背景介绍](#背景介绍)
+  - [为什么选择GitLab CI/CD](#为什么选择GitLab-CI/CD)
+  - [分支与环境介绍](#分支与环境介绍)
+  - [GitLab CI/CD的相关介绍](#GitLab-CI/CD的相关介绍)
+- [多项目CI/CD配置管理](#多项目CI/CD配置管理)
+  - [遇到的问题](#遇到的问题)
+  - [如何解决](#如何解决)
+    - [文件组合](#文件组合)
+    - [模块组合](#模块组合)
+  - [总结](#总结)
+- [并发构建处理](#并发构建处理)
+  - [concurrent与limit](#concurrent与limit)
+  - [interruptible](#interruptible)
+  - [custom_build_dir](#custom_build_dir)
+  - [cache](#cache)
+- [功能探索](#功能探索)
+  - [阶段输出](#阶段输出)
+  - [trigger](#trigger)
+  - [delayed+start_in+retry](#delayed+start_in+retry)
+  - [Auto DevOps](#Auto-DevOps)
+  - [Dashboard Prometheus](#Dashboard-Prometheus)
+- [相关官方资料](#相关官方资料)
+
 ## 简要介绍GitLab CI/CD在晨光科力普项目中的应用
 
 ### 背景介绍
