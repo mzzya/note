@@ -49,7 +49,7 @@
 流程简述：
 
 我们采用`合并即发布`的策略，`push`对应环境分支自动部署。其中`prd`分支的金丝雀环境自动部署，生产环境需手动部署。开发同学基于`teambition`认领新的需求，创建`feature-*`分支，按需合并到dev、test、uat分支发布。现在我们的流程仅有三个阶段：`compile`编译、`docker-build`镜像构建和`deployment`部署。从提交代码到部署成功约3分钟时间，除生产分支外零人为干预。也有许多待完善的地方，比如尚未集成`commit-check`提交检查、`test`自动测试、`deployment-check`部署状态检查、`deployment-rollback`部署回滚等阶段配置，这些也是我们下一步计划要做的事情。
-![pipeline列表页](assets/pipeline-1.png)
+![pipeline列表页](https://res.clpcdn.com/smb/itblog/20200505cicd/pipeline-1.png)
 
 ### GitLab CI/CD的相关介绍
 
@@ -92,10 +92,10 @@ deployment:
 
 对于一些敏感信息，如docker镜像仓库登录密钥和kubectl配置文件，可通过gitlab web端`Project`级别或`Group`级别侧边栏`Settings`->`CI/CD`->`Variables`配置页面配置。在构建过程中可通过环境变量获取到这些信息。`CI/CD`->`Pipelines`->`Status Tag`下可以查看到构建任务阶段明细。如下图：
 
-![pipeline详情页](assets/pipeline-2.png)
+![pipeline详情页](https://res.clpcdn.com/smb/itblog/20200505cicd/pipeline-2.png)
 
 在我们现有的项目中使用的还是比较简单的用法。复杂的情形也可以轻松应对，参考官方`gitlab-runner`的CI/CD构建流程图
-![gitlab-runner的构建详情页](assets/pipeline-runner.png)
+![gitlab-runner的构建详情页](https://res.clpcdn.com/smb/itblog/20200505cicd/pipeline-runner.png)
 
 对于各个阶段，`start_in`延时、`timeout`超时控制、`retry`失败重试、`interruptible` 打断、`trigger`触发器、`parallel`并行等操作都是支持的。如果需要安排定点上线还可以使用`CI/CD`->`Schedules`页面配置构建任务的何时执行。
 
@@ -344,7 +344,7 @@ compile:
 
 ### 阶段输出
 
-![pipeline构建进度](assets/pipeline-console.png)
+![pipeline构建进度](https://res.clpcdn.com/smb/itblog/20200505cicd/pipeline-console.png)
 
 上图是个失败的演示，仅仅是为了说明近期gitlab版本更新对阶段输出界面进行了优化，增加了计时器，可以帮助我们在遇到构建任务较慢时分析原因。
 
@@ -384,4 +384,10 @@ compile:
 - [环境变量](https://docs.gitlab.com/ee/ci/variables/predefined_variables.html)
 - [缓存说明](https://docs.gitlab.com/ee/ci/caching/index.html)
 
-![科力普省心购](assets/shengxingou.png)
+## 关于我们
+
+基于多年为企业、政府、事业单位等客户的采购服务经验，结合专业优质的办公用品渠道供应链优势，为企业市场重新定义真正好货低价的办公用品。欢迎访问我们的网站 [b.colipu.com](https://b.colipu.com/) ，合作方式： 15189798580 （微信号同手机号）
+
+微信小程序
+
+![科力普省心购](https://res.clpcdn.com/smb/itblog/20200505cicd/shengxingou.png?x-oss-process=image/resize,h_500)
