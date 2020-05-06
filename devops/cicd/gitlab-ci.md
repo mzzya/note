@@ -25,6 +25,7 @@
   - [Auto DevOps](#Auto-DevOps)
   - [Dashboard Prometheus](#Dashboard-Prometheus)
 - [相关官方资料](#相关官方资料)
+- [关于我们](#关于我们)
 
 ## 简要介绍GitLab CI/CD在晨光科力普项目中的应用
 
