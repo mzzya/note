@@ -391,6 +391,6 @@ compile:
 
 基于多年为企业、政府、事业单位等客户的采购服务经验，结合专业优质的办公用品渠道供应链优势，为企业市场重新定义真正好货低价的办公用品。欢迎访问我们的网站 [b.colipu.com](https://b.colipu.com/) ，合作方式： 15189798580 （微信号同手机号）
 
-微信小程序
+微信小程序：搜索“科力普省心购”或扫描下方二维码
 
 ![科力普省心购](https://res.clpcdn.com/smb/itblog/20200505cicd/shengxingou.png?x-oss-process=image/resize,h_500)
