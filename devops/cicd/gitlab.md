@@ -76,6 +76,11 @@ done
 
 大原则：并发进行时 cache目录 GIT_CLONE_PATH目录要带上特定情况下唯一的标识，如环境字段f
 
+#### 路径问题
+
+mac 上 查看 volume
+screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty
+
 #### 多项目多分支并发时
 
 extends和include组合起来使用非常强大

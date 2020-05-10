@@ -6,10 +6,17 @@ import subprocess
 import os
 
 # 想要获取的镜像
-imageNames = ["mysql", "redis", "mongo", "busybox", "alpine", "hellojqk/alpine", "prom/prometheus",
-              "jaegertracing/all-in-one", "grafana/grafana", "prom/prometheus", "nginx", "gitlab/gitlab-ce",
-              "jenkins/jenkins", "docker", "rabbitmq", "wurstmeister/kafka", "kafkamanager/kafka-manager",
-              "wurstmeister/zookeeper", "logstash", "kibana", "elasticsearch", "jenkins"]
+imageNames = [
+    "mysql", "redis", "mongo",  # 存储
+    "nginx", "docker",   #
+    "busybox", "alpine",  # 系统和工具
+    "golang", 'python',  # 语言
+    "hellojqk/alpine", "hellojqk/envoy-alpine",  # 我的
+    "prom/prometheus", "envoyproxy/envoy-alpine", "jaegertracing/all-in-one", "grafana/grafana", "prom/prometheus",  # 容器
+    "gitlab/gitlab-ce", "jenkins/jenkins",  # ci/cd
+    "rabbitmq", "wurstmeister/kafka", "kafkamanager/kafka-manager", "wurstmeister/zookeeper",  # 消息队列
+    "logstash", "kibana", "elasticsearch"  # elk
+]
 
 # 要匹配的版本号正则 纯v数字版本号
 patterns = ["^v\d+\.\d+\.\d+\.\d+$", "^\d+\.\d+\.\d+\.\d+$",

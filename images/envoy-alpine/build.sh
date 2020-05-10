@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #基础镜像
-base_image="alpine:3.11.6"
+base_image="envoy-alpine:v1.14.1"
 
 cp ./Template Dockerfile
 
-sed -i "s!\$BASE_IMAGE!${base_image}!g" Dockerfile
+sed -i "s!\$BASE_IMAGE!envoyproxy/${base_image}!g" Dockerfile
 
 #改造后镜像TAG
 image_full_name=hellojqk/${base_image}
