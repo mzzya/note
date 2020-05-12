@@ -7,4 +7,4 @@ minikube start \
     --image-mirror-country=cn \
     --registry-mirror="https://o40mvhma.mirror.aliyuncs.com" \
     --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers \
-    --kubernetes-version='1.18.0'
+    --kubernetes-version='1.18.2'

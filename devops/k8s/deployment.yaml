@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy
+spec:
+  selector:
+    matchLabels:
+      app: myapp-deploy
+  template:
+    metadata:
+      labels:
+        app: myapp-deploy
+    spec:
+      containers:
+        - name: myapp-deploy
+          image: <Image>
+          imagePullPolicy: IfNotPresent # IfNotPresent Always
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /v
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
+          readinessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /v
+              port: 7777
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
