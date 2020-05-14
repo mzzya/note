@@ -1,46 +1,114 @@
+# apiVersion api版本
 apiVersion: apps/v1
+# kind 资源类型
 kind: Deployment
+# metadata 元数据
 metadata:
-  name: myapp-deploy
+  name: myapp-deploy # 部署的名称 个人习惯 环境-git组名-git项目名-deploy（资源简称） 命名方式 例如 dev-mygroup-myproject-deploy
+  annotations: # 注解 主要是辅助用的 供用户识别 不用label的原因是，label是一种标准资源类型，官方很多操作依赖label，如选择器，节点亲和力与污点等。
+   gitCommitShortSHA: "hih9a8u493" # 假设提交信息短码
+   imageregistry: "https://hub.docker.com/" # 仓库地址
+  clusterName: aaaa # 展示字段 集群名称
+  creationTimestamp: "2019-03-18T10:58:37+08:00" # 展示字段 创建时间 RFC3339 UTC
+  # deletionTimestamp:
+  # deletionGracePeriodSeconds:
 spec:
-  selector:
-    matchLabels:
-      app: myapp-deploy
+  paused: false # 是否暂停部署
+  minReadySeconds: 0 # pod拉起后最少多少秒后才被视为可用
+  progressDeadlineSeconds: 600 # pod可能因各种原因导致启动较慢，此处是至少等多少秒后如果还未启动才能报告失败
+  strategy:
+    type: RollingUpdate # 滚动更新 可选参数: Recreate 停止所有老的再拉取新的
+    rollingUpdate:
+      maxSurge: 25% # 滚动升级时创建pod的最大数量，老的+旧的不得超过 100%+25%
+      maxUnavailable: 25% # 滚动升级时 最大不可用数量 可以是固定数值或者25%百分比
+  replicas: 1 # 创建多少个副本
+  revisionHistoryLimit: 10 # 保留多少个历史记录
+  selector: # 选择器
+    matchLabels: # 匹配标签 多个标签需全满足
+      app: myapp-deploy #必须与下方 template.metadata.labels 匹配 否则无法创建成功
+    matchExpressions: # 表达式匹配 匹配标签的高级用法
+    - key: app
+      operator: In # In, NotIn, Exists and DoesNotExist todo
+      values:
+        - myapp-deploy
   template:
     metadata:
       labels:
         app: myapp-deploy
     spec:
+      dnsPolicy: "ClusterFirst" # 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'
+      dnsConfig: # dns配置
+        nameservers:
+          - ''
+        searches:
+          - ''
+        options:
+          - name: 'aaa'
+            value:
       containers:
-        - name: myapp-deploy
-          image: <Image>
-          imagePullPolicy: IfNotPresent # IfNotPresent Always
+        - name: myapp-deploy # 容器的名字
+          image: <Image> # 容器的镜像
+          imagePullPolicy: IfNotPresent # IfNotPresent Always 镜像拉取策略 IfNotPresent 不存在则拉取 Always总是拉取（适用latest标签镜像）
           resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
+            requests: # 最低请求
+              memory: "64Mi" # 内存
+              cpu: "250m" # cpu
+            limits: # 限制的最大
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 80
-          livenessProbe:
-            failureThreshold: 10
-            httpGet:
-              path: /v
-              port: 7777
+            - containerPort: 80 #容器端口 即引用暴露的端口
+          env: #容器环境变量
+            - name: VERSION # 环境变量名称
+              value: v1 # 环境变量值
+            - name: ENV_CM
+              valueFrom: # 变量引用来源
+                configMapKeyRef: # 来自ConfigMap
+                  name: n1 #ConfigMap名称
+                  key: k1 #ConfigMap中的key
+                  optional: false #是否必须定义了才能创建成功pod
+            - name: ENV_FIELD
+              valueFrom:
+                fieldRef: #从pod中选择一个字段作为变量 场景：daemonset启动的链路跟踪agent程序的IP需要提供给容器内使用，可通过此方式透传。
+                  apiVersion: v1 #提取字段所依赖的api的版本
+                  fieldPath: status.hostIP # 节点主机IP 可选：metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP
+            - name: ENV_RESOURCEFIELD
+              valueFrom:
+                resourceFieldRef: #资源字段引用
+                  containerName: pod1 #可指定别的pod名称
+                  resource: a1
+                  divisor: 1
+            - name: ENV_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: n1
+                  key: k1
+                  optional: false #是否必须定义了才能创建成功pod
+          envFrom:
+            - configMapRef:
+                name: n1
+                optional: false #是否必须定义了才能创建成功pod
+              prefix: MY_ #依ConfigMap生成的环境变量前附加前缀
+            - secretRef:
+                name: n1
+                optional: false #是否必须定义了才能创建成功pod
+          livenessProbe: #存货检查
+            failureThreshold: 3 #检查连续多少次失败被视为容器异常
+            exec: # 使用脚本命令检查
+              command: # 执行目录 / 0的退出状态被视为活动/健康，而非0则不健康
+                - echo 1
+            tcpSocket: # 基于tcp socket的检查
+              host: '' # 默认容器IP
+              port: '' # socket端口
+            httpGet: # http方式健康检查
+              host: '' # 主机名 不用设置 默认为pod ip
+              path: /health # 路径
+              port: 7777 # 健康检查端口
+              httpHeaders: [] # 自定义头部
               scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 60
-          readinessProbe:
-            failureThreshold: 10
-            httpGet:
-              path: /v
-              port: 7777
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 60
+            initialDelaySeconds: 10 # 容器启动后多少秒后启动探针
+            periodSeconds: 10 # 探针周期
+            successThreshold: 1 # 成功次数
+            timeoutSeconds: 60 # 探针超时时间
+          readinessProbe: # 就需检查 同上方 livenessProbe
+            failureThreshold: 3
