@@ -6,8 +6,8 @@ kind: Deployment
 metadata:
   name: myapp-deploy # 部署的名称 个人习惯 环境-git组名-git项目名-deploy（资源简称） 命名方式 例如 dev-mygroup-myproject-deploy
   annotations: # 注解 主要是辅助用的 供用户识别 不用label的原因是，label是一种标准资源类型，官方很多操作依赖label，如选择器，节点亲和力与污点等。
-   gitCommitShortSHA: "hih9a8u493" # 假设提交信息短码
-   imageregistry: "https://hub.docker.com/" # 仓库地址
+    gitCommitShortSHA: "hih9a8u493" # 假设提交信息短码
+    imageregistry: "https://hub.docker.com/" # 仓库地址
   clusterName: aaaa # 展示字段 集群名称
   creationTimestamp: "2019-03-18T10:58:37+08:00" # 展示字段 创建时间 RFC3339 UTC
   # deletionTimestamp:
@@ -27,10 +27,10 @@ spec:
     matchLabels: # 匹配标签 多个标签需全满足
       app: myapp-deploy #必须与下方 template.metadata.labels 匹配 否则无法创建成功
     matchExpressions: # 表达式匹配 匹配标签的高级用法
-    - key: app
-      operator: In # In, NotIn, Exists and DoesNotExist todo
-      values:
-        - myapp-deploy
+      - key: app
+        operator: In # In, NotIn, Exists and DoesNotExist todo
+        values:
+          - myapp-deploy
   template:
     metadata:
       labels:
@@ -39,12 +39,25 @@ spec:
       dnsPolicy: "ClusterFirst" # 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'
       dnsConfig: # dns配置
         nameservers:
-          - ''
+          - 10.10.10.1
+          - 10.10.10.2
         searches:
-          - ''
+          - ""
         options:
-          - name: 'aaa'
-            value:
+          - name: attempts
+            value: "3"
+          - name: timeout
+            value: "1"
+          - name: rotate
+      volumes:
+        - configMap:
+            name: cm-a
+            items:
+              - key: cm-a-k
+                path: cm-a-path
+                mode: 0744
+            optional: false
+          name: aaa
       containers:
         - name: myapp-deploy # 容器的名字
           image: <Image> # 容器的镜像
@@ -98,10 +111,10 @@ spec:
               command: # 执行目录 / 0的退出状态被视为活动/健康，而非0则不健康
                 - echo 1
             tcpSocket: # 基于tcp socket的检查
-              host: '' # 默认容器IP
-              port: '' # socket端口
+              host: "" # 默认容器IP
+              port: "" # socket端口
             httpGet: # http方式健康检查
-              host: '' # 主机名 不用设置 默认为pod ip
+              host: "" # 主机名 不用设置 默认为pod ip
               path: /health # 路径
               port: 7777 # 健康检查端口
               httpHeaders: [] # 自定义头部
