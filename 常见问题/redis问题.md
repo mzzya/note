@@ -64,6 +64,7 @@ IO复用：ae_epoll->ae_kqueue->ae_select
 - 队列
 - 分布式锁 SET key value EX过期时间秒 PX过期毫秒 NX 不存在时执行 XX 存在时执行
   - 单Matster-Slave设置value为unique_value保证自己的锁只有自己能解开
+- 排行榜
 
 ## AOF (Append Only File) 与 RDB (Redis DataBase)区别
 
