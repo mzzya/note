@@ -8,3 +8,7 @@ minikube start \
     --registry-mirror="https://o40mvhma.mirror.aliyuncs.com" \
     --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers \
     --kubernetes-version='1.18.2'
+
+
+#win10失败情况一 hyper未启动 解决办法
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
