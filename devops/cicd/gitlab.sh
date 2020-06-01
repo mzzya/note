@@ -39,9 +39,10 @@ for branch in ${branchs[@]}; do
     --docker-tlsverify="true" \
     --docker-image "docker:19.03.8" \
     --docker-privileged="true" \
+    --docker-pull-policy = "if-not-present" \
     --docker-volumes '/certs/client' \
-    --docker-volumes '/cache' \
-    --docker-volumes '/etc/docker/daemon.json:/etc/docker/daemon.json'
+    --docker-volumes '/Users/Shared/gitlab-runner/cache:/cache' \
+    --docker-volumes '/Users/Shared/gitlab-runner/config/daemon.json:/etc/docker/daemon.json'
 done
 
 $()$(

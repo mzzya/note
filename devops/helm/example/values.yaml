@@ -1,0 +1,12 @@
+replicaCount: 3
+
+image: nginx:1.18.0-alpine
+
+service:
+  type: ClusterIP
+  externalPort: 8080
+  internalPort: 80
+  name: web
+
+ingress:
+  enabled: true

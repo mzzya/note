@@ -1,0 +1,21 @@
+apiVersion: v2
+name: nginx
+version: 1.18.0-alpine
+kubeVersion: ">= 1.13.0 < 1.15.0"
+description: "汪洋的helm测试说明"
+type: application
+keywords:
+  - test
+  - nginx
+  - alpine
+home: https://github.com/hellojqk
+sources:
+  - https://github.com/hellojqk/note
+  - https://github.com/hellojqk/simple
+maintainers:
+  - name: wanyang
+    email: 657176605@qq.com
+    url: https://github.com/hellojqk
+appVersion: 0.0.1
+annotations:
+  project: example

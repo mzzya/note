@@ -18,6 +18,7 @@ func main() {
 		go update()
 	}
 	update()
+	runtime.Goexit()
 	fmt.Println(runtime.GOMAXPROCS(4))
 	fmt.Println("NumCPU", runtime.NumCPU())
 	fmt.Println("NumGoroutine", runtime.NumGoroutine())

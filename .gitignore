@@ -2,3 +2,4 @@ vendor
 容器集群/istio-1.2.4
 容器集群/istio*
 kubectl
+.vscode

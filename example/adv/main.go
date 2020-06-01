@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+var a = 1
+
 func main() {
 	var v = 71.5150
 	var v2 = 71.60
