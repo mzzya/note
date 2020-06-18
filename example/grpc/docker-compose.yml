@@ -1,7 +1,7 @@
 version: "3"
-services: #docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 -v ~/DockerVolumes/mysql:/var/lib/mysql -d mysql:8.0.17
+services: #docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 -v ~/DockerVolumes/mysql:/var/lib/mysql -d mysql:8.0.20
   mysql:
-    image: mysql:8.0.17
+    image: mysql:8.0.20
     ports:
       - "3306:3306"
       - "33060:33060"
