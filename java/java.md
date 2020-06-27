@@ -29,3 +29,62 @@
   - 对象+类+继承+多态+消息，核心概念是类和对象
 - `GoF`
   - Gang of Four 四人组 泛指 设计模式
+
+
+## 注解
+
+- org.springframework.stereotype
+  - @Controller 控制器
+  - @Service 业务逻辑
+  - @Repository  数据访问
+    - @Target({ElementType.TYPE})
+    - @Retention(RetentionPolicy.RUNTIME)
+    - @Documented
+    - @Component
+  - @Component 组件
+    - @Target(ElementType.TYPE)
+    - @Retention(RetentionPolicy.RUNTIME)
+    - @Documented
+    - @Indexed
+  - @Indexed
+    - @Target(ElementType.TYPE)
+    - @Retention(RetentionPolicy.RUNTIME)
+    - @Documented
+
+- java.lang.annotation
+  - @Retention 注解保留策略
+    - SOURCE 编译时丢弃
+    - CLASS 编译到class文件中，但vm运行时不保留 默认
+    - RUNTIME 编译到class文件中，vm运行时保留，可以通过反射获取。
+  - @Documented 将注解信息生成到java doc中
+  - @Target - 标记这个注解应该是哪种 Java 成员。
+    - TYPE class、interface、annotation type、enum上
+    - FIELD 字段上
+    - METHOD 方法上
+    - PARAMETER 参数上
+    - CONSTRUCTOR 构造方法上
+    - LOCAL_VARIABLE
+    - ANNOTATION_TYPE 注解上 @interface
+    - PACKAGE
+    - TYPE_PARAMETER 1.8
+    - TYPE_USE 1.8
+    - MODULE 9
+  - @Inherited - 标记这个注解是继承于哪个注解类(默认 注解并没有继承于任何子类)
+  - @Repeatable 可重复的
+- java.lang
+  - @Override 重载
+  - @Deprecated 废弃的方法
+  - @SuppressWarnings 抑制警告，使用了`@Deprecated`注解方法法后，编译器会警告提醒，此注解是忽略警告用的。
+
+
+```java
+package java.lang.annotation;
+
+public interface Annotation {
+    boolean equals(Object obj);
+    int hashCode();
+    String toString();
+    Class<? extends Annotation> annotationType();
+}
+
+```
