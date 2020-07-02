@@ -8,7 +8,7 @@ API状态码`200一把梭`问题历来
 
 CNCF毕业项目，基于opentracing规范的链路跟踪系统，主要调研此系统UI界面。
 
-```json
+```log
 # 查询指定链路ID的数据
 # http://localhost:16686/api/traces/7e46a082d33cacc8
 # Status Code: 200
@@ -59,6 +59,44 @@ CNCF毕业项目，基于opentracing规范的链路跟踪系统，主要调研�
 ```
 
 错误相应直接输出msg到页面
+
+### prometheus
+
+CNCF
+
+```log
+# http://localhost:9090/api/v1/query?query=rate(prometheus_http_requests_total%5B5m%5D%20offset%205m)
+# 查询正常
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": []
+  }
+}
+# 查询异常
+{
+  "status": "error",
+  "errorType": "bad_data",
+  "error": "invalid parameter 'query': 1:1: parse error: unknown function with name \"rate11\""
+}
+```
+
+```json
+{
+  "status": "success" | "error",
+  "data": <data>,
+
+  // Only set if status is "error". The data field may still hold
+  // additional data.
+  "errorType": "<string>",
+  "error": "<string>",
+
+  // Only if there were warnings while executing the request.
+  // There will still be data in the data field.
+  "warnings": ["<string>"]
+}
+```
 
 ### k8s
 
