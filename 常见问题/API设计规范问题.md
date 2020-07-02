@@ -195,6 +195,17 @@ $ curl -v -k -H "Authorization: Bearer WhCDvq4VPpYhrcfmF6ei7V9qlbqTubUc" https:/
 }
 ```
 
+正常返回
+
+```json
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {},
+  "spec": {},
+  "status": {}
+```
+
 `status` 字段包含两个可能的值之一：
 
 - Success
@@ -303,9 +314,6 @@ $ curl -v -k -H "Authorization: Bearer WhCDvq4VPpYhrcfmF6ei7V9qlbqTubUc" https:/
 - 类似地，仅在极为知名的情况下才应使用首字母缩写词。首字母缩写词中的所有字母都应具有相同的大小写，并针对情况使用适当的大小写。例如，在字段名的开头，首字母缩写词应全部小写，例如“ httpGet”。当用作常量时，所有字母均应为大写，例如“ TCP”或“ UDP”。
 - 表示布尔属性的字段名称称为“ fooable” Fooable，而不是IsFooable。
 
-
-
-
 #### 有感
 
-从k8s的API约定文档来看，采用了http状态码的方式
+从k8s的API约定文档来看，采用了http状态码的方式。
