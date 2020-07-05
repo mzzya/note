@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #基础镜像
-base_image="envoy-alpine:v1.14.1"
+base_image="envoy-alpine:v1.14.3"
 
 cp ./Template Dockerfile
 

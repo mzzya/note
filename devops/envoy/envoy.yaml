@@ -7,40 +7,81 @@ admin:
       port_value: 9901
 static_resources:
   listeners:
-    - name: listener_0
+    - name: listener_1
       address:
-        socket_address:
-          protocol: TCP
-          address: 0.0.0.0
-          port_value: 10000
+        socket_address: { address: 0.0.0.0, port_value: 10001 }
       filter_chains:
         - filters:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
-                "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 stat_prefix: ingress_http
+                codec_type: AUTO
+                tracing:
+                  provider:
+                    name: envoy.tracers.zipkin
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.config.trace.v2.ZipkinConfig
+                      collector_cluster: jaeger
+                      collector_endpoint: "/api/v2/spans"
+                      shared_span_context: false
+                      collector_endpoint_version: HTTP_JSON
                 route_config:
                   name: local_route
                   virtual_hosts:
                     - name: local_service
                       domains: ["*"]
                       routes:
-                        - match:
-                            prefix: "/"
+                        - match: { prefix: "/" }
+                          route: { cluster: some_service }
+                http_filters:
+                  - name: envoy.filters.http.router
+    - name: listener_0
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 10000 }
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                codec_type: AUTO
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
                           route:
-                            host_rewrite: www.baidu.com
-                            cluster: service_baidu
+                            {
+                              host_rewrite_literal: www.baidu.com,
+                              cluster: service_google,
+                            }
                 http_filters:
                   - name: envoy.filters.http.router
   clusters:
-    - name: service_baidu
-      connect_timeout: 0.25s
+    - name: some_service
+      connect_timeout: 1.25s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: some_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: docker.for.mac.host.internal
+                      port_value: 1234
+    - name: service_google
+      connect_timeout: 10.25s
       type: LOGICAL_DNS
       # Comment out the following line to test on v6 networks
       dns_lookup_family: V4_ONLY
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: service_baidu
+        cluster_name: service_google
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -51,5 +92,18 @@ static_resources:
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:
-          "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
           sni: www.baidu.com
+    - name: jaeger
+      connect_timeout: 1s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: jaeger
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: docker.for.mac.host.internal
+                  port_value: 9411
