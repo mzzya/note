@@ -88,3 +88,50 @@ public interface Annotation {
 }
 
 ```
+
+## spring-boot
+
+
+### 热更新、热交换、hotswapping
+
+#### idea
+
+- 方法一
+右上角 项目名称启动框 点击`Edit Configurations...`,`On 'Upadate' action`和`On frame deactivation`改成
+`Update classes and resources`
+- 方法二
+Command/Ctl + , `Build、Execution、Deployment` -> `Compiler` ->勾选 `Buildk project automatically`
+Command/Ctl + Shift + A或者导航栏`Help`->`Find Action`->`Registry...`->勾选 `compiler.automake.allow.when.app.running`
+
+#### mvn或gradle运行方式配置
+
+有几种热重装选项。推荐的方法是使用spring-boot-devtools，因为它提供了其他开发时功能，例如对快速应用程序重新启动和LiveReload的支持，以及合理的开发时配置（例如模板缓存）。
+
+##### maven
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <optional>true</optional>
+    </dependency>
+</dependencies>
+```
+
+##### gradler
+
+```groovy
+dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+}
+```
+
+- [官-热更新](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto-hotswapping)
+- [管-开发工具配置](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#using-boot-devtools)
+
+
+## 相关资料
+
+- [spring官方文档](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
+- [spring-boot官方文档](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/)
