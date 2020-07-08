@@ -1,7 +1,8 @@
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags=jsoniter -ldflags "-s -w" -o ./app ./main.go
-docker rm -f envoy_app
+docker rm -f envoy_app envoy_app_1
 docker build -t envoy_app:v1 -f ./dockerfile_app .
 docker run -itd --name envoy_app -p 1234:1234 envoy_app:v1
+docker run -itd --name envoy_app_1 -p 1235:1234 envoy_app:v1
 
 docker rm -f envoy
 docker rmi envoy:v1

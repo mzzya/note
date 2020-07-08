@@ -12,6 +12,14 @@ static_resources:
         socket_address: { address: 0.0.0.0, port_value: 10001 }
       filter_chains:
         - filters:
+            - name: envoy.filters.network.local_ratelimit
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.local_ratelimit.v3.LocalRateLimit
+                stat_prefix: local_ratelimit
+                token_bucket:
+                  max_tokens: 1
+                  tokens_per_fill: 1
+                  fill_interval: 10s
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
@@ -74,6 +82,11 @@ static_resources:
                     socket_address:
                       address: docker.for.mac.host.internal
                       port_value: 1234
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: docker.for.mac.host.internal
+                      port_value: 1235
     - name: service_google
       connect_timeout: 10.25s
       type: LOGICAL_DNS
@@ -101,9 +114,9 @@ static_resources:
       load_assignment:
         cluster_name: jaeger
         endpoints:
-        - lb_endpoints:
-          - endpoint:
-              address:
-                socket_address:
-                  address: docker.for.mac.host.internal
-                  port_value: 9411
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: docker.for.mac.host.internal
+                      port_value: 9411
