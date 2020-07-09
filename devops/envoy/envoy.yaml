@@ -15,7 +15,7 @@ static_resources:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-                stat_prefix: ingress_http
+                stat_prefix: envoy_app_http
                 codec_type: AUTO
                 server_name: helloworld
                 local_reply_config:
@@ -49,7 +49,7 @@ static_resources:
                       domains: ["*"]
                       routes:
                         - match: { prefix: "/" }
-                          route: { cluster: some_service }
+                          route: { cluster: envoy_app }
                   request_headers_to_add:
                     - header:
                         key: hello
@@ -65,12 +65,12 @@ static_resources:
                       abort:
                         http_status: 503
                         percentage:
-                          numerator: 0
+                          numerator: 50
                           denominator: HUNDRED
                       delay:
                         fixed_delay: 3s
                         percentage:
-                          numerator: 0
+                          numerator: 50
                           denominator: HUNDRED
                   - name: envoy.filters.http.compressor
                     typed_config:
@@ -98,7 +98,7 @@ static_resources:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-                stat_prefix: ingress_http
+                stat_prefix: proxy_baidu_http
                 codec_type: AUTO
                 route_config:
                   name: local_route
@@ -110,17 +110,17 @@ static_resources:
                           route:
                             {
                               host_rewrite_literal: www.baidu.com,
-                              cluster: service_google,
+                              cluster: service_baidu,
                             }
                 http_filters:
                   - name: envoy.filters.http.router
   clusters:
-    - name: some_service
+    - name: envoy_app
       connect_timeout: 1.25s
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: some_service
+        cluster_name: envoy_app
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -133,14 +133,27 @@ static_resources:
                     socket_address:
                       address: envoy_app_1
                       port_value: 1235
-    - name: service_google
+    - name: envoy_app_2
+      connect_timeout: 1.25s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: envoy_app_2
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: envoy_app_2
+                      port_value: 1236
+    - name: service_baidu
       connect_timeout: 10.25s
       type: LOGICAL_DNS
       # Comment out the following line to test on v6 networks
       dns_lookup_family: V4_ONLY
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: service_google
+        cluster_name: service_baidu
         endpoints:
           - lb_endpoints:
               - endpoint:
