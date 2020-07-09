@@ -1,5 +1,5 @@
 docker run -d -p 3000:3000 --name=grafana grafana/grafana:6.5.2
-docker run -d --restart always --name jaeger \
+docker run -d --restart always --network net --name jaeger \
   -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
   -p 5775:5775/udp \
   -p 6831:6831/udp \
