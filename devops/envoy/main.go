@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -66,7 +65,7 @@ func main() {
 			Str("ServerName", serviceName).
 			Str("host", os.Getenv("HOSTNAME")).Msg("debug msg")
 		//链路跟踪
-		spanCtx, err := opentracing.GlobalTracer().Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(c.Request.Header))
+		spanCtx, _ := opentracing.GlobalTracer().Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(c.Request.Header))
 		var span opentracing.Span
 		if spanCtx == nil {
 			span = opentracing.StartSpan(operationName)
@@ -78,15 +77,11 @@ func main() {
 		span.SetTag("app_req_id", uidStr)
 		span.SetTag("app_X-Request-Id", c.GetHeader("X-Request-Id"))
 		span.LogKV("log1", "log1value")
-		//输出
-		if err != nil {
-			c.String(http.StatusBadRequest, "error:%s", err)
-			return
-		}
+
 		header := c.Request.Header
 		header.Set("a-hostName", os.Getenv("HOSTNAME"))
-		headerBts, _ := json.Marshal(header)
-		c.String(http.StatusOK, "%s", headerBts)
+		// headerBts, _ := json.Marshal(header)
+		c.JSON(http.StatusOK, header)
 	})
 	g.Run(fmt.Sprintf(":%d", *port))
 }

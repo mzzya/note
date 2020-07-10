@@ -1,0 +1,73 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: opensearch-cn-qingdao.aliyuncs.com
+spec:
+  hosts:
+    - opensearch-cn-qingdao.aliyuncs.com
+  ports:
+    - number: 80
+      name: http
+      protocol: HTTP
+  location: MESH_EXTERNAL
+  resolution: DNS
+# ---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: ServiceEntry
+# metadata:
+#   name: www.baidu1111.com
+# spec:
+#   hosts:
+#     - www.baidu1111.com
+#   ports:
+#     - number: 80
+#       name: http
+#       protocol: HTTP
+#   location: MESH_EXTERNAL
+#   resolution: DNS
+# apiVersion: networking.istio.io/v1alpha3
+# kind: EnvoyFilter
+# metadata:
+#   name: request-headers-filter
+#   # namespace: istio-system
+# spec:
+#   configPatches:
+#     - applyTo: HTTP_FILTER
+#       match:
+#         listener:
+#           filterChain:
+#             sni: "opensearch-cn-*.aliyuncs.com"
+#             filter:
+#               name: "envoy.http_connection_manager"
+#               subFilter:
+#                 name: "envoy.router"
+#       patch:
+#         operation: INSERT_BEFORE
+#         value:
+#           name: envoy.lua
+#           config:
+#             http_protocol_options:
+#               header_key_format:
+#                 proper_case_words: {}
+#             inlineCode: |
+#               function envoy_on_request(request_handle)
+#                 request_handle:headers():add("QWE", "abc")
+#               end
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: normalize-headers
+spec:
+  configPatches:
+    - applyTo: CLUSTER
+      match:
+        context: SIDECAR_OUTBOUND
+        cluster:
+          service: opensearch-cn-qingdao.aliyuncs.com
+      patch:
+        operation: MERGE
+        value:
+          http_protocol_options:
+            header_key_format:
+              proper_case_words: {}
