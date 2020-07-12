@@ -2,11 +2,12 @@
 
 minikube start \
     --alsologtostderr \
+    --base-image="kicbase/stable:v0.0.10" \
     --memory=16384 --cpus=4 --nodes=1 \
     --extra-config=kubelet.authentication-token-webhook=true \
     --image-mirror-country=cn \
     --registry-mirror="https://o40mvhma.mirror.aliyuncs.com" \
-    --kubernetes-version='1.18.2'
+    --kubernetes-version='1.18.3'
 
 
 #win10失败情况一 hyper未启动 解决办法
