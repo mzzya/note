@@ -1,0 +1,47 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validating-webhook
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMzVENDQWNXZ0F3SUJBZ0lRRlZPWHRtWDAvWXJOWG9IMy9jbktoVEFOQmdrcWhraUc5dzBCQVFzRkFEQVkKTVJZd0ZBWURWUVFLRXcxamJIVnpkR1Z5TG14dlkyRnNNQjRYRFRJd01EY3lNVEV5TlRBek9Wb1hEVE13TURjeApPVEV5TlRBek9Wb3dHREVXTUJRR0ExVUVDaE1OWTJ4MWMzUmxjaTVzYjJOaGJEQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNK1NzQitNSWRTODNCME1qS2g0YnM1azBGRXFhMFY5WW5IbjlEbUQKb1grL3NXWEdoTFZlS1JIK2l5a1JTOFBzWXJvV2c4aVZ2NG1aSm5CZWlLdXFMbzZFd2Y1akJCSTUzMkhIL3lNUApDOHdmRHUyeWlvSC9UdW1hdmRDWWovTnorbnU4QTlCZllkbU1ETHhiOThMKzNpNjI2YkNXbDYvQVg2QjRlYlluCnBYK1N5azVEUUhvK0RLbXQzMkZQR0JERERGZHYxdmxsd3JBNGZFejZjVmsvenZsTFNMYWhEL01lT0dMZmd2b3MKU0owUVNQWmY4NzYxWVJoVjBCNDArbHc0VnZjam5yVWZyNnN6K0tWYzRHUlBLbHVYSGtwanFSUnY0TndyNnRxSgpjMkg0VEN0Q053SHlRUGRWSmpmUVNXY3kvVTBYOFZwOCtZbG80ZFBKWTVlMUgzRUNBd0VBQWFNak1DRXdEZ1lEClZSMFBBUUgvQkFRREFnSUVNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUIKQUJ3M2p1Y2dYNHB1a0VOdnBHczB6MmRmcjJlTkFaRnRjNkdEam9RNFJTTkRoY255dTYyZHE4R1ZGRUF4eFNIZgpMUCtYNUp1ZU9OZ001ajVpRlQ1L3RoWWowR0ZTdkM2K0xScDFsbmh2b2hNVUhOOW9vNytYODFxL0c4NVhNMUVlCnNyWTdaZWNhNE9XNkF3azlYRWQ1cXZjK0JaRmFSdDh6Qy90VE9uN2FhYWZrTnBHNytlS3hpUnFncnNVaEppdkkKbzNUOVVmcVJzU01qY0NiT2pkV3QrbGY2aWYxeVpVQkJNQW4zZEF3N1lTa3pKRzNwbmxzdThxV052cllSNnZGUwpHR3pVUEp6anJKNU54c1EvY3R5K0xHekpqWXErcjdwZmtMTnVYb3dwTU5HMCttbEREYjVDaDRwNU5WYW56WUIyCkNWV0JrSmg3RnFQUTRZeis1UUFDMFNNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    service:
+      name: validating-webhook-svc
+      namespace: default
+      path: /validate
+      port: 443
+  failurePolicy: Fail
+  matchPolicy: Exact
+  name: validation.istio.io
+  namespaceSelector: {}
+  objectSelector: {}
+  rules:
+  - apiGroups:
+    - '*'
+    apiVersions:
+    - '*'
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - 'deployment'
+    - 'pods'
+    scope: '*'
+  sideEffects: None
+  timeoutSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: validating-webhook-svc
+  namespace: default
+spec:
+  ports:
+  - name: validating-webhook
+    port: 443
+    protocol: TCP
+  sessionAffinity: None
+  type: ClusterIP
