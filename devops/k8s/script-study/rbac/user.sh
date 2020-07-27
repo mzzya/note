@@ -14,3 +14,9 @@ kubectl config set-credentials wy --client-certificate=/Users/wangyang/blog/容�
 kubectl config set-context minikube-wy --cluster=minikube --user=wy
 
 cat ~/.kube/config
+
+# 从证书内导出公钥
+openssl x509 -outform PEM -in ./ca.pem -pubkey -noout -out ca-pub.pem
+
+# 从证书内到处CSR
+
