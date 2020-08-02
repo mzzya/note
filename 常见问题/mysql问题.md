@@ -144,6 +144,15 @@ SELECT @@transaction_isolation
 
 REPEATABLE READ以上会触发 gap锁
 
+## 快照读、当前读
+
+- 快照读
+  - select * from table where ?;
+- 当前读
+  - lock in share mode
+  - for update
+  - insert update delete
+
 ## 锁机制
 
 - 表级锁：操作对象是数据表。MySQL大多数锁策略都支持，开销小，加锁快。不会出现死锁。锁定粒度大，发生锁冲突的概率最高，并发度最低。

@@ -115,7 +115,8 @@ go_gc_duration_seconds_count 8
 
 ### 直方图和摘要区别
 
-官方解释 https://prometheus.io/docs/practices/histograms/
+- 推荐知乎 https://zhuanlan.zhihu.com/p/76904793
+- 官方解释 https://prometheus.io/docs/practices/histograms/
 
 ## 查询
 
