@@ -2,8 +2,8 @@
 
 minikube start \
     --alsologtostderr \
-    --base-image="kicbase/stable:v0.0.10" \
-    --memory=16384 --cpus=4 --nodes=1 \
+    --base-image="kicbase/stable:v0.0.11" \
+    --memory=8192 --cpus=4 --nodes=1 \
     --extra-config=kubelet.authentication-token-webhook=true \
     --image-mirror-country=cn \
     --registry-mirror="https://o40mvhma.mirror.aliyuncs.com" \

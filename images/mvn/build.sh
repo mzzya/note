@@ -15,4 +15,4 @@ docker build --no-cache -t ${image_full_name} .
 
 docker push ${image_full_name}
 
-# rm Dockerfile
+rm Dockerfile
