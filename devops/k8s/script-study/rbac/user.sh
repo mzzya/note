@@ -20,3 +20,7 @@ openssl x509 -outform PEM -in ./ca.pem -pubkey -noout -out ca-pub.pem
 
 # 从证书内到处CSR
 
+
+# 从https 443端口查看证书信息
+
+openssl s_client -connect  *.*.com:443
