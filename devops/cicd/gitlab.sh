@@ -14,7 +14,7 @@ docker run -d --name gitlab-runner --privileged --restart always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /Users/Shared/gitlab-runner/config:/etc/gitlab-runner \
   -v /Users/Shared/gitlab-runner/cache:/cache \
-  gitlab/gitlab-runner:alpine-v12.10.0
+  gitlab/gitlab-runner:alpine-v13.1.3
 
 GROUP_NAME="example" #组名
 #标准构建分支
@@ -24,7 +24,7 @@ for branch in ${branchs[@]}; do
   #注册
   docker run --rm \
     -v /Users/Shared/gitlab-runner-${GROUP_NAME}/config:/etc/gitlab-runner \
-    gitlab/gitlab-runner:alpine-v12.4.1 register \
+    gitlab/gitlab-runner:alpine-v13.1.3 register \
     --tag-list "${GROUP_NAME}-${branch}" \
     --non-interactive \
     --registration-token "your gitlab token" \

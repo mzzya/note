@@ -29,7 +29,7 @@ SMB-docker-Linux-Shared
 - daemon.json 请提前配置镜像源加速地址
 
 ```shell
-RUNNER_IMAGE="gitlab/gitlab-runner:alpine-v12.9.0"
+RUNNER_IMAGE="gitlab/gitlab-runner:alpine-v13.1.3"
 GROUP_NAME="smb" #组名
 docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
         -v /var/run/docker.sock:/var/run/docker.sock \
@@ -42,7 +42,7 @@ docker run -d --name gitlab-runner-${GROUP_NAME} --privileged --restart always \
 ## 注册4个runner worker
 
 ```shell
-RUNNER_IMAGE="gitlab/gitlab-runner:alpine-v12.9.0"
+RUNNER_IMAGE="gitlab/gitlab-runner:alpine-v13.1.3"
 GROUP_NAME="smb" #组名
 #标准构建分支
 branchs=('dev' 'test' 'uat' 'prd')
@@ -56,7 +56,7 @@ for branch in ${branchs[@]}; do
     --non-interactive \
     --registration-token "your gitlab token" \
     --run-untagged="false" \
-    --limit=1 \
+    --limit=10 \
     --locked="false" \
     --custom_build_dir-enabled="true" \
     --access-level "not_protected" \
