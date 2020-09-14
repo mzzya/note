@@ -108,6 +108,15 @@ public interface Annotation {
 </dependencies>
 ```
 
+
+### 集成redis缓存
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-caching
+
+https://docs.spring.io/spring/docs/5.2.8.RELEASE/spring-framework-reference/integration.html#cache
+
+###
+
 - [官-热更新](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto-hotswapping)
 - [管-开发工具配置](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#using-boot-devtools)
 
