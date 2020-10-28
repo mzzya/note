@@ -75,3 +75,11 @@ annotations:
 ```
 
 [官方文档](https://helm.sh/docs/topics/charts/)
+
+
+## 关键知识
+
+- _helper.tpl,template,include用法和区别
+  - https://helm.sh/docs/chart_template_guide/named_templates/#declaring-and-using-templates-with-define-and-template
+
+## 常用命令

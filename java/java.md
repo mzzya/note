@@ -111,6 +111,12 @@ public interface Annotation {
 
 ### 集成redis缓存
 
+- @Cacheable：触发​​缓存填充。
+- @CacheEvict：触发​​缓存逐出。
+- @CachePut：更新缓存，而不会干扰方法的执行。
+- @Caching：重新组合要在一个方法上应用的多个缓存操作。
+- @CacheConfig：在类级别共享一些与缓存相关的常见设置。
+
 https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-caching
 
 https://docs.spring.io/spring/docs/5.2.8.RELEASE/spring-framework-reference/integration.html#cache
