@@ -209,26 +209,14 @@ Assert类型
          $a.setValid( false );
      end
      ```
- 启动 drool-wb
- =
 
-docker run -p 8080:8080 -p 8001:8001 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z -d --name drools-wb jboss/drools-workbench-showcase:7.48.0.Final
+启动
 
- 启动 kie-server
- =
- docker run -p 8180:8080 -d --name kie-server --link drools-wb:kie-wb jboss/kie-server-showcase:7.48.0.Final
+```sh
+docker run -p 8180:8080 -d --name kie-server jboss/kie-server:7.48.0.Final
 
-
- docker run -p 8080:8080 -p 8001:8001 -d --name drools-wb jboss/drools-workbench-showcase
-
- docker run -p 8180:8080 -d --name kie-server --link drools-wb:kie-wb jboss/kie-server-showcase
-
-
- docker run -p 8180:8080 -d --name kie-server jboss/kie-server:7.48.0.Final
-docker run -p 8080:8080 -p 8001:8001 -p 9999:9999 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z --name jbpm-workbench --link kie-server  jboss/business-central-workbench-showcase:7.48.0.Final
-
- docker run -p 8080:8080 -p 8001:8001 -p 9999:9999 -e JAVA_OPTS='-Xms256m -Xmx2048m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=512m -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9999 -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false' -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z --name jbpm-workbench --link kie-server  jboss/business-central-workbench-showcase:7.48.0.Final
-
+docker run -p 8080:8080 -p 8001:8001 -p 9990:9990 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z --name jbpm-wb --link kie-server jboss/business-central-workbench-showcase:7.48.0.Final
+```
  Project面板中的Asset说明
  ===
  大类
@@ -379,3 +367,12 @@ groupb自动激活后会触发groupa的激活，两组规则 按照 定义顺序
 not(String($s.skuCodes not contains this.toString()) from ("$param".split(":")))
 
 ["示例表格"](assets/drool-rule.xlsx)
+
+
+## jmx
+
+### 启动visualvm
+
+jvisualvm -cp:a ~/Downloads/wildfly-19.1.0.Final/bin/client/jboss-cli-client.jar  -J-Dmodule.path=~/Downloads/wildfly-19.1.0.Final/modules
+
+admin@service:jmx:remote+http://0.0.0.0:9990
