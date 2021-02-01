@@ -1,3 +1,5 @@
 FROM $BASE_IMAGE
 
-RUN apk add openjdk8 ttf-dejavu fontconfig && rm -rf /var/cache/apk/*
+RUN apk update \
+    && apk upgrade \
+    && apk add openjdk8 ttf-dejavu fontconfig && rm -rf /var/cache/apk/*

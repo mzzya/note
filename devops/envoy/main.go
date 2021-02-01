@@ -8,13 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/hellojqk/simple/pkg/util"
 	"github.com/opentracing/opentracing-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/uber/jaeger-client-go"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
-	"github.com/uber/jaeger-client-go/zipkin"
 )
 
 var port *int = flag.Int("port", 1234, "help message for flagname")
@@ -24,30 +20,30 @@ var operationName = "app"
 func init() {
 	//日志
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	//链路跟踪配置
-	cfg, err := jaegercfg.FromEnv()
-	if err != nil {
-		panic(err)
-	}
-	cfg.ServiceName = serviceName
-	cfg.Sampler.Type = jaeger.SamplerTypeConst
-	cfg.Sampler.Param = 1
-	cfg.Reporter.LocalAgentHostPort = "jaeger:6831"
-	options := make([]jaegercfg.Option, 0, 4)
-	options = append(options, jaegercfg.Logger(jaeger.StdLogger))
+	// //链路跟踪配置
+	// cfg, err := jaegercfg.FromEnv()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// cfg.ServiceName = serviceName
+	// cfg.Sampler.Type = jaeger.SamplerTypeConst
+	// cfg.Sampler.Param = 1
+	// cfg.Reporter.LocalAgentHostPort = "jaeger:6831"
+	// options := make([]jaegercfg.Option, 0, 4)
+	// options = append(options, jaegercfg.Logger(jaeger.StdLogger))
 
-	//zipkin支持
-	zipkinPropagator := zipkin.NewZipkinB3HTTPHeaderPropagator()
-	options = append(options, jaegercfg.Injector(opentracing.HTTPHeaders, zipkinPropagator))
-	options = append(options, jaegercfg.Extractor(opentracing.HTTPHeaders, zipkinPropagator))
-	options = append(options, jaegercfg.ZipkinSharedRPCSpan(true))
+	// //zipkin支持
+	// zipkinPropagator := zipkin.NewZipkinB3HTTPHeaderPropagator()
+	// options = append(options, jaegercfg.Injector(opentracing.HTTPHeaders, zipkinPropagator))
+	// options = append(options, jaegercfg.Extractor(opentracing.HTTPHeaders, zipkinPropagator))
+	// options = append(options, jaegercfg.ZipkinSharedRPCSpan(true))
 
-	tracer, _, err := cfg.NewTracer(options...)
-	if err != nil {
-		panic(err)
-	}
-	util.PrintJSONWithColor(cfg)
-	opentracing.SetGlobalTracer(tracer)
+	// tracer, _, err := cfg.NewTracer(options...)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// util.PrintJSONWithColor(cfg)
+	// opentracing.SetGlobalTracer(tracer)
 }
 
 func main() {

@@ -19,6 +19,19 @@
     - 有浏览器兼容性问题
 - text-indent 文字首行缩进
 
+多行时
+
+```css
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    word-break: break-all;
+    /* word-wrap又叫做overflow-wrap： */
+    overflow-wrap: break-word;
+    -webkit-box-orient: vertical;
+```
+
 
 - white-space
   - normal 默认。空白会被浏览器忽略。

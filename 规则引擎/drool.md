@@ -11,7 +11,7 @@
   - 某商品限购10件
 
 实际需求分析
-- 
+-
 - `优惠券规则`单独定义逻辑 有适用商品范围和类目限制
 - `关于促销` 有适用商品范围和类目限制
   - `满减` 满130-40 满200-70
@@ -23,7 +23,7 @@
 - 我们要做的
   - 促销信息在我们后台维护
   - 促销勾选后类目和商品Id后计算出促销对应的Id集合 和商品对应的促销ID集合
-  - 
+  -
 
 - 促销信息定义
   - ID 促销ID
@@ -40,7 +40,7 @@
     - Condition 满减 100-20;200-40;300-80;
     - Condition 打折 1-0.9;2-0.8;3-0.7;
     - Condition 没满100-10块
-  - 
+  -
 
 规则引擎介绍
 =
@@ -74,7 +74,7 @@
 
 
 给出的docker镜像有
-- Drools Workbench    
+- Drools Workbench
 - Drools Workbench Showcase   ---->即 `Business Central` 设计决策和其他工件
 
 
@@ -142,11 +142,11 @@ Assert菜单选项说明
 起个名字
 --
 - Knowledge Representation and Reasoning `知识表示与推理`
-  
+
   KRR是关于我们如何以符号形式表示我们的知识，即我们如何描述某些东西。推理是关于我们如何利用这些知识进行思考。基于系统的面向对象语言（如C ++，Java和C＃）具有称为类的数据定义，用于描述建模实体的组成和行为。
-  
+
   您可能已经听过讨论将正向链接（反应性和数据驱动）的优点与反向链接（被动和查询驱动）进行比较。存在许多其他类型的推理技术，每种推理技术都扩大了我们可以声明性地解决的问题的范围。仅举几例：不完美推理（模糊逻辑，确定性因素），可废止逻辑，信念系统，时间推理和相关性。您无需了解所有这些术语即可理解和使用Drools。他们只是想知道研究主题的范围，实际上更广泛，并随着研究人员推动新的界限而不断发展。
-  
+
   KRR通常被称为人工智能的核心。即使使用像神经网络这样的生物学方法来模拟大脑并且更多地关注模式识别而不是思考，它们仍然建立在KRR理论的基础之上。我对Drools的第一次努力是以工程为导向，因为我没有正式的培训或对KRR的理解。学习KRR让我获得了更广泛的理论背景，更好地理解我所做的和我要去的地方，因为它为我们的Drools R＆D提供了几乎所有理论方面的支持。它确实是一个巨大而引人入胜的主题，它将为那些花时间学习的人带来红利。我知道它确实存在并且仍然适合我。Bracham和Levesque写了一篇开创性的作品，名为“知识表示和推理” 对于想要建立坚实基础的人来说，这是必读的。我还会推荐Russel和Norvig的书“人工智能，一种现代方法”，它也涵盖了KRR。
 - Rules Engines and Production Rule Systems (PRS) `规则引擎和生产规则系统（PRS）`
 
@@ -187,10 +187,10 @@ Assert类型
      - 选择 `DRL file` 添加规则文件
      ```
      package com.myspace.demo;
-     
+
      import com.myspace.demo.model.Goods;
      import com.myspace.demo.model.RuleMsg;
-     
+
      rule "Is of valid goods price"
          salience -50
      when
@@ -199,30 +199,36 @@ Assert类型
      then
          $a.setValid( false );
      end
-     
+
      rule "Is of valid goods category"
-     
+
      when
          Goods( categoryId< 1 )
          $a : RuleMsg()
      then
          $a.setValid( false );
      end
-     ``` 
+     ```
  启动 drool-wb
- =   
- 
-docker run -p 8080:8080 -p 8001:8001 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z -d --name drools-wb jboss/drools-workbench-showcase:7.17.0.Final
- 
+ =
+
+docker run -p 8080:8080 -p 8001:8001 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z -d --name drools-wb jboss/drools-workbench-showcase:7.48.0.Final
+
  启动 kie-server
  =
- docker run -p 8180:8080 -d --name kie-server --link drools-wb:kie-wb jboss/kie-server-showcase:7.17.0.Final
- 
- 
+ docker run -p 8180:8080 -d --name kie-server --link drools-wb:kie-wb jboss/kie-server-showcase:7.48.0.Final
+
+
  docker run -p 8080:8080 -p 8001:8001 -d --name drools-wb jboss/drools-workbench-showcase
- 
+
  docker run -p 8180:8080 -d --name kie-server --link drools-wb:kie-wb jboss/kie-server-showcase
- 
+
+
+ docker run -p 8180:8080 -d --name kie-server jboss/kie-server:7.48.0.Final
+docker run -p 8080:8080 -p 8001:8001 -p 9999:9999 -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z --name jbpm-workbench --link kie-server  jboss/business-central-workbench-showcase:7.48.0.Final
+
+ docker run -p 8080:8080 -p 8001:8001 -p 9999:9999 -e JAVA_OPTS='-Xms256m -Xmx2048m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=512m -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9999 -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false' -v ~/git/drools:/opt/jboss/wildfly/bin/.niogit:Z --name jbpm-workbench --link kie-server  jboss/business-central-workbench-showcase:7.48.0.Final
+
  Project面板中的Asset说明
  ===
  大类
@@ -233,7 +239,7 @@ docker run -p 8080:8080 -p 8001:8001 -v ~/git/drools:/opt/jboss/wildfly/bin/.nio
  - Decision 决策|策略|规则设计
  - Other 包啥的
  - Optimization 配置啥的
- 
+
  Decision
  ==
  - Decision Table (Spreadsheet) 决策表（电子表格形式）
@@ -250,12 +256,12 @@ docker run -p 8080:8080 -p 8001:8001 -v ~/git/drools:/opt/jboss/wildfly/bin/.nio
  - Score Card (Spreadsheet) 积分卡（电子表格形式）
  - Test Scenario 测试方案（表格形式）
  - Test Scenario (Legacy) 测试方案（旧的方式）
- 
+
 
 注：
 谷歌机翻：Guided 向导 指导 引导
- 
-  
+
+
 Guided Decision Table 向导型决策表
 ==
 - Hit Policy 命中策略
@@ -263,7 +269,7 @@ Guided Decision Table 向导型决策表
   - Rule Order 同上 只是不会警告
   - Resolved Hit 根据优先级命中
   - First Hit 将应用列表中首先满足的折扣，并忽略其他折扣
-  - Unique Hit 决策表中 每行规则唯一命中1次 
+  - Unique Hit 决策表中 每行规则唯一命中1次
 - Add Column 添加列
   - Add a Condition 添加条件
   - Add a Condition BRL fragment 添加条件BRL片段
@@ -285,7 +291,7 @@ Guided Decision Table 向导型决策表
 - `when` 后跟 判断主体 相当于 if后紧跟内容 截止到{}
 - `then` 相当于if后紧跟的{} 注意 没有else或else if
 - `and or` 且 或
-- `exists` 存在事实 必须放在第一判断位置(待验证是上下行还是单行内外) 
+- `exists` 存在事实 必须放在第一判断位置(待验证是上下行还是单行内外)
 - `not` 跟exists相反 不纯在的事实
 - `forall` 待完善
 - `from` 迭代器 比较两个集合ListA,ListB,求集合ListA是否包含集合ListB中的全部元素，java内置的有containsAll好像用不了，折中方法 以String集合为例 not(String(ListA not contains this.toString()) from ListB) 双重否定得ListA一定包含ListB的每个元素
@@ -295,35 +301,35 @@ Guided Decision Table 向导型决策表
 
 
 # Decision Table (Spreadsheet) 决策表（电子表格形式）
-决策表的电子表格可以包含多个RuleTable区域，但只包含一个RuleSet区域。  
-建议一个包只用1个xlsx表格，因为多个很容易发生规则等定义的冲突。  
-RuleSet电子表格的区域定义要全局应用于同一包（不仅是电子表格）中的所有规则的元素，例如规则集名称或通用规则属性。  
+决策表的电子表格可以包含多个RuleTable区域，但只包含一个RuleSet区域。
+建议一个包只用1个xlsx表格，因为多个很容易发生规则等定义的冲突。
+RuleSet电子表格的区域定义要全局应用于同一包（不仅是电子表格）中的所有规则的元素，例如规则集名称或通用规则属性。
 RuleTable区域定义实际规则（行）以及在指定规则集中构成该规则表的条件，操作和其他规则属性（列）。
 
 ### RuleSet
-`RuleSet` 定义当前规则的包名 com.colipu.hello.OrderCart  
-`Sequetial` bool true时表格中的rule集合在转换成dsl规则语言时将从上至下添加 salience ,**表格中单独定义的salience同时失效**  
-`SequentialMaxPriority` salience的最大值设定 默认为65535  
+`RuleSet` 定义当前规则的包名 com.colipu.hello.OrderCart
+`Sequetial` bool true时表格中的rule集合在转换成dsl规则语言时将从上至下添加 salience ,**表格中单独定义的salience同时失效**
+`SequentialMaxPriority` salience的最大值设定 默认为65535
 `SequentialMinPriority` salience的最小值设定 默认为0
 
 举例：
 
-Sequential true   
-SequentialMaxPriority 10  
-SequentialMinPriority 2  
-如果有8个rule 那么 转换时自动添加 salience 10  salience 9 ... salience 3  
+Sequential true
+SequentialMaxPriority 10
+SequentialMinPriority 2
+如果有8个rule 那么 转换时自动添加 salience 10  salience 9 ... salience 3
 如果有20个rule 那么 报错 因为设定的范围不够
 
-**注意**  
-使用测试时 Audit log中的打印日志顺序可能不正确。  
+**注意**
+使用测试时 Audit log中的打印日志顺序可能不正确。
 
-为true，执行顺序从上至下   
+为true，执行顺序从上至下
 但是如果在输入对象中加一个List,每个规则记录Add一个标识，可以确认是按顺序执行的。
 
 为false,执行顺序按salience 从大到小执行，相同等级的先定义先执行。
 
 `EscapeQuotes` 省略或true，转义引号。
- 
+
 `Import` 导入对象 com.colipu.hello.SaleGroupInfo,java.util.Arrays,java.util.List
 
 `Variables` 全局变量 待完善。。。
@@ -346,12 +352,12 @@ When this option is set to true, the rule cannot be reactivated (looped) if a co
 当将此选项设置为true，如果规则的结果重新触发先前满足的条件，则无法重新激活（循环）规则。
 
 `ACTIVATION-GROUP` 设置激活规则组名称
-主要作用 在同一个组中的将按照定义时顺序执行，满足一次立即退出。  
+主要作用 在同一个组中的将按照定义时顺序执行，满足一次立即退出。
 **如果不分组，所有满足条件的规则都会被执行！！！！**
 
-`AGENDA-GROUP` 规则分组 例如分组：groupa  
-`RULEFLOW-GROUP` 当关联的分组激活时触发当前规则或规则组 例如：groupa  
-`AUTO-FOCUS` 自动激活当前组  
+`AGENDA-GROUP` 规则分组 例如分组：groupa
+`RULEFLOW-GROUP` 当关联的分组激活时触发当前规则或规则组 例如：groupa
+`AUTO-FOCUS` 自动激活当前组
 
 情况一
 AUTO-FOCUS | AGENDA-GROUP | RULEFLOW-GROUP

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #基础镜像
-base_image="hellojqk/alpine:3.12.0"
+base_image="hellojqk/alpine:3.12.3"
 
 cp ./Template Dockerfile
 

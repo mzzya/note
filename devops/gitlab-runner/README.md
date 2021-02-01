@@ -29,3 +29,9 @@ kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.
 helm version --tiller-namespace tr
 
 helm install --namespace tr --name gitlab-runner -f ./values.yaml gitlab/gitlab-runner --tiller-namespace tr
+
+
+## 模板语法
+
+https://masterminds.github.io/sprig/
+https://godoc.org/text/template

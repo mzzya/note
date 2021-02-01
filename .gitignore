@@ -3,3 +3,4 @@ vendor
 kubectl
 .vscode
 *.exe
+app
