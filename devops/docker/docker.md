@@ -19,7 +19,7 @@ docker run --restart=always --name mysql -p 3306:3306 -p 33060:33060 -e MYSQL_RO
 ```
 
 ```shell
-docker run --restart=always --name mongo -p 27017:27017 -v ~/DockerVolumes/mongo:/data/db -d mongo:4.2.3
+docker run --restart=always --name mongo -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=123123  -v ~/DockerVolumes/mongo:/data/db -d mongo:4.4.4
 ```
 
 ## [我的收藏](https://hub.docker.com/u/hellojqk/starred)
