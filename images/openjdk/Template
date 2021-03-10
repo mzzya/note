@@ -3,17 +3,7 @@ FROM $BASE_IMAGE
 # 指定上海时区
 ENV TZ=Asia/Shanghai
 
-# 添加软件加速源
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && apt install apt-transport-https ca-certificates
 
-# 添加CA证书和时期
-# bash shell解释器
-# busybox-extras 包含 telnet等
-# curl
-# bind-tools 包含 dig
-RUN apk update \
-    && apk upgrade \
-    && apk add -U --no-cache ca-certificates tzdata \
-    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
-    && apk add -U --no-cache bash bash-doc bash-completion \
-    && apk add ttf-dejavu fontconfig && rm -rf /var/cache/apk/*
+COPY ./sources.list /etc/apt/sources.list
