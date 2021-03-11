@@ -4,3 +4,5 @@ kubectl
 .vscode
 *.exe
 app
+activiti/ui/wars
+*.jar
