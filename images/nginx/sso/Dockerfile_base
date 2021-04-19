@@ -1,4 +1,10 @@
 FROM nginx:1.19.8-alpine
+
+# 指定上海时区
+ENV TZ=Asia/Shanghai
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /app
 
 COPY ./start.sh /start.sh
