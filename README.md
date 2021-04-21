@@ -14,7 +14,6 @@
 - [mysql问题](常见问题/mysql问题.md)
 - [docker问题](常见问题/docker问题.md)
 
-## 正在输出
 
-- [k8s资源和脚本文件介绍](devops/k8s/k8s.md)
-- react&taro
+## 杂记
+- chrome 历史版本 https://www.slimjet.com/chrome/google-chrome-old-version.php
