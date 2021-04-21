@@ -77,7 +77,12 @@ func main() {
 		header := c.Request.Header
 		header.Set("a-hostName", os.Getenv("HOSTNAME"))
 		// headerBts, _ := json.Marshal(header)
-		c.JSON(http.StatusOK, header)
+		c.JSON(http.StatusOK, gin.H{"header": header,
+			"request":    c.Request.URL,
+			"RemoteAddr": c.Request.RemoteAddr,
+			"RequestURI": c.Request.RequestURI,
+			"ClientIP":   c.ClientIP(),
+		})
 	})
 	g.Run(fmt.Sprintf(":%d", *port))
 }
