@@ -136,3 +136,7 @@ https://docs.spring.io/spring/docs/5.2.8.RELEASE/spring-framework-reference/inte
 ### JMX
 
 JMX（Java Management Extensions，即Java管理扩展）是一个为应用程序、设备、系统等植入管理功能的框架。JMX可以跨越一系列异构操作系统平台、系统体系结构和网络传输协议，灵活的开发无缝集成的系统、网络和服务管理应用。
+
+```sh
+-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8899 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=8899
+```
