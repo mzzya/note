@@ -106,6 +106,24 @@ jvm最大堆内存为500+m，不是我们预想的2Gi-。
 
 jvm最大堆内存为1.7Gi+
 
+`jps -mlvV`查看运行的java程序信息
+
+```log
+323 sun.tools.jps.Jps -mlvV -Dapplication.home=/usr/local/openjdk-8 -Xms8m
+6 ./app.jar --server.port=80 -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=31999 -Dcom.sun.management.jmxremote.port=31999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.profiles.active=test -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:MaxRAMPercentage=80.0 -XX:MinRAMPercentage=80.0 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=31998
+```
+
+`jinfo -flags pid`查看指定java程序的jvm参数
+
+```log
+Attaching to process ID 6, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.252-b09
+Non-default VM flags: -XX:CICompilerCount=2 -XX:InitialHeapSize=33554432 -XX:+ManagementServer -XX:MaxHeapSize=1719664640 -XX:MaxNewSize=573046784 -XX:MaxRAMPercentage=null -XX:MinHeapDeltaBytes=524288 -XX:MinRAMPercentage=null -XX:NewSize=11010048 -XX:OldSize=22544384 -XX:+PrintCommandLineFlags -XX:+PrintVMOptions -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC
+Command line:  -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=31999 -Dcom.sun.management.jmxremote.port=31999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.profiles.active=test -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:MaxRAMPercentage=80.0 -XX:MinRAMPercentage=80.0 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=31998
+```
+
 ### 思考
 
 会不会像安卓手机那样，给的内存大，占用的也大？待实验
