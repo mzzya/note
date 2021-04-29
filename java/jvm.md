@@ -110,6 +110,47 @@ jvm最大堆内存为1.7Gi+
 
 会不会像安卓手机那样，给的内存大，占用的也大？待实验
 
+
+## 远程调试
+
+```sh
+# jvm启动参数 不需要调试时不要添加（也可以通过idea获取其他版本参数配置，下图有说明）
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=31998
+```
+
+```yaml
+# k8s容器配置方法
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tr-test-image2html-api
+spec:
+  spec:
+    containers:
+      - env:
+          - name: JAVA_OPTS
+            value: -Dspring.profiles.active=test -XX:+PrintVMOptions -XX:+PrintCommandLineFlags -XX:MaxRAMPercentage=80.0 -XX:MinRAMPercentage=80.0 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=31998
+        ports:
+          - containerPort: 31998
+            name: debug
+            protocol: TCP
+
+```
+
+```sh
+#使用 kubectl port-forward 命令将容器端口映射到本地
+kubectl port-forward 你的容器名 31998
+```
+
+然后打开idea，选择对应项目，切换到对应版本的代码分支。
+
+`Edit Configurations` -> `Templates` -> `remote` -> `Create configuration`，将`Port`改为`31998`。
+
+![remote-debug1](../assets/java/remote-debug1.png)
+![remote-debug1](../assets/java/remote-debug2.png)
+
+这样就可以愉快的修BUG了
+
 ## 参考资料
 
 - oracle java8 relnotes
