@@ -1,6 +1,6 @@
 # jvm 基于 java8u252
 
-网上搜索jvm调优有些博客比较陈旧，在容器化方面的介绍较少，本文主要从官方文档中摘要总结k8s上jvm调优测试。
+网上搜索jvm调优有些博客比较陈旧，在容器化方面的介绍较少，在参考了n多博客的内容后做个总结。
 
 如未特殊说明 k8s容器配置参数如下
 
@@ -25,7 +25,7 @@ java -XshowSettings:vm -version
 jmap -heap -pid
 ```
 
-容器化后，看别人博客常见添加的一个参数`-XX:+UseContainerSupport`启用容器支持，但这个参数在后期的版本已经默认支持了，无需指定。
+容器化后，常见添加的一个参数`-XX:+UseContainerSupport`启用容器支持，但这个参数在后期的版本已经默认支持了，无需指定。
 
 ```sh
 # 查看容器化参数状态
@@ -36,7 +36,7 @@ bool UseContainerSupport                       = true                           
 
 ## 堆内存
 
-常见的短参数，通过`java -X`命令可以查看基础参数
+通过`java -X`命令可以查看基础参数
 
 - -Xmn 为年轻代（新生代）设置初始和最大堆大小（以字节为单位）
 - -Xms 设置初始 Java 堆大小
@@ -51,7 +51,7 @@ bool UseContainerSupport                       = true                           
 - -XX:MaxRAMPercentage 同 Xmx
   - 仅当物理服务器（或容器）中的总可用内存大小`大于`250MB（大约）时，此参数才成效，意思是最大堆大小为这么多，同时`MinRAMPercentage`参数失效。
 
-更详细的距离介绍见参考资料 `InitialRAMPercentage，MinRAMPercentage，MaxRAMPercentage`
+更详细的介绍见[参考资料](#参考资料)
 
 因为我们的业务容器一般不会限制最大可用内存小于250M的情况，因此下面主要针对`InitialRAMPercentage`和`MaxRAMPercentage`参数讲解。
 
@@ -149,7 +149,27 @@ kubectl port-forward 你的容器名 31998
 ![remote-debug1](../assets/java/remote-debug1.png)
 ![remote-debug1](../assets/java/remote-debug2.png)
 
-这样就可以愉快的修BUG了
+这样就可以愉快的修BUG了，建议断点时先根据日志缩小一下范围和条件。
+
+### 如何找到当前运行的代码分支
+
+- 构建时将`commit sha`当做镜像标签
+- 构建时将`commit sha`通过构建参数传入环境变量
+  - 如果觉得构建参数麻烦可以直接用`sed`命令替换
+
+```Dockerfile
+# Dockerfile
+# 将镜像标签写入镜像的环境变量,后端服务按需使用
+ARG APP_IMAGE_TAG
+ENV APP_IMAGE_TAG $APP_IMAGE_TAG
+```
+
+```sh
+export |grep "APP_IMAGE_TAG"
+declare -x APP_IMAGE_TAG="b4250250-202103291126"
+```
+
+即可获得当前运行的代码版本是`b4250250`。
 
 ## 参考资料
 
