@@ -129,7 +129,11 @@ Command line:  -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremo
 会不会像安卓手机那样，给的内存大，占用的也大？待实验
 
 
-## 远程调试
+## debug
+
+建议优先使用`Arthas`抓取方法参数解决问题，如何使用`Arthas`参考阿里云栖号的这篇文章[如何使用 Arthas 提高日常开发效率？](https://mp.weixin.qq.com/s/FBZyiRXcz__GDA-vXNsxBg)。
+
+### java自带远程调试
 
 ```sh
 # jvm启动参数 不需要调试时不要添加（也可以通过idea获取其他版本参数配置，下图有说明）
@@ -195,3 +199,7 @@ declare -x APP_IMAGE_TAG="b4250250-202103291126"
  - https://www.oracle.com/java/technologies/javase/8all-relnotes.html
 - InitialRAMPercentage，MinRAMPercentage，MaxRAMPercentage
   - https://community.oracle.com/tech/developers/discussion/4478075/difference-between-initialrampercentage-minrampercentage-maxrampercentage
+- 如何使用 Arthas 提高日常开发效率？
+  - https://mp.weixin.qq.com/s/FBZyiRXcz__GDA-vXNsxBg
+- Arthas 用户文档
+  - http://arthas.gitee.io/
