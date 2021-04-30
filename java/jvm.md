@@ -201,5 +201,7 @@ declare -x APP_IMAGE_TAG="b4250250-202103291126"
   - https://community.oracle.com/tech/developers/discussion/4478075/difference-between-initialrampercentage-minrampercentage-maxrampercentage
 - 如何使用 Arthas 提高日常开发效率？
   - https://mp.weixin.qq.com/s/FBZyiRXcz__GDA-vXNsxBg
+- 远程调试
+  - https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/
 - Arthas 用户文档
   - http://arthas.gitee.io/
