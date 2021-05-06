@@ -2,6 +2,11 @@
 
 ## 常见名词
 
+- `JAVA SE`
+  - Java Standard Edition Java标准版
+- `JIT`
+  - just-in-time compilation 即时编译（动态编译）。
+  - 相应的概念有`AOT` ahead-of-time compilation 事前编译（静态编译）。
 - `JDBC`
   - Java Database Connectivity Java数据库连接
 - `AOP`
@@ -131,7 +136,7 @@ https://docs.spring.io/spring/docs/5.2.8.RELEASE/spring-framework-reference/inte
 
 - [spring官方文档](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
 - [spring-boot官方文档](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/)
-- [java se规范](https://docs.oracle.com/javase/specs/index.html)
+- [java SE规范](https://docs.oracle.com/javase/specs/index.html)
 
 ### JMX
 
