@@ -131,7 +131,7 @@ https://docs.spring.io/spring/docs/5.2.8.RELEASE/spring-framework-reference/inte
 
 - [spring官方文档](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
 - [spring-boot官方文档](https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/)
-
+- [java se规范](https://docs.oracle.com/javase/specs/index.html)
 
 ### JMX
 
