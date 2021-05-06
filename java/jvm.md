@@ -193,6 +193,13 @@ declare -x APP_IMAGE_TAG="b4250250-202103291126"
 
 即可获得当前运行的代码版本是`b4250250`。
 
+
+## jmx
+
+```sh
+-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=31999 -Dcom.sun.management.jmxremote.port=31999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+```
+
 ## 参考资料
 
 - oracle java8 relnotes

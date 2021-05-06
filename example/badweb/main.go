@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var g = gin.Default()
+var g = gin.New()
 
 type RequestURI struct {
 	Second     int `json:"second" uri:"second" form:"second"`
@@ -25,6 +25,11 @@ func main() {
 	var port int
 	flag.IntVar(&port, "p", 8899, "端口号，默认为8899")
 	flag.Parse()
+
+	g.GET("/s", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "哈哈哈")
+	})
+
 	timeOutGroup := g.Group("/timeout")
 
 	timeOutGroup.GET("/:second", func(c *gin.Context) {
