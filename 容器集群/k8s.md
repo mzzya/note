@@ -4,6 +4,14 @@
 参考资料：https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
 
 
+2. curl 参数 排查网络问题
+https://curl.se/docs/manpage.html
+
+```sh
+curl 'your_url'   -H 'Content-Type: application/json'   -H 'your_cookie'  -o /dev/null -w '%{size_header}\n'
+```
+
+
 ```yaml
 # 示例一
 # http response信息中添加公共头部
