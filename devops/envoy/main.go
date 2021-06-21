@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var port *int = flag.Int("port", 1234, "help message for flagname")
+var port *int = flag.Int("port", 10086, "help message for flagname")
 var serviceName = "envoy_app"
 var operationName = "app"
 
@@ -84,5 +84,5 @@ func main() {
 			"ClientIP":   c.ClientIP(),
 		})
 	})
-	g.Run(fmt.Sprintf(":%d", *port))
+	g.Run(fmt.Sprintf("localhost:%d", *port))
 }
