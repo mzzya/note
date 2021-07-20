@@ -7,7 +7,7 @@ from numpy import math
 from requests import request
 
 kubeConf = "kubectl --kubeconfig ~/.kube/test.yaml "
-kubeNs = " -n web "
+kubeNs = " -n tr "
 
 deployList = []
 
@@ -45,6 +45,8 @@ def getNum(res: str):
     return int(res)
 
 
+print("**mem****", "推荐",
+      "使用", "申请", "pod名称", "deployment名称")
 for podInfo in podsInfo[1].split('\n'):
     pod = re.findall(r"[^\s]\S+", podInfo)
     reqInfo = findReq(pod[0])
