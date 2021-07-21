@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -13,7 +14,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var port *int = flag.Int("port", 10086, "help message for flagname")
+var port *int = flag.Int("port", 10086, "help message for port")
+
+var sleep *int64 = flag.Int64("sleep", 0, "help message for sleep")
+
 var serviceName = "envoy_app"
 var operationName = "app"
 
@@ -84,5 +88,6 @@ func main() {
 			"ClientIP":   c.ClientIP(),
 		})
 	})
-	g.Run(fmt.Sprintf("localhost:%d", *port))
+	time.Sleep(time.Duration(*sleep) * time.Second)
+	g.Run(fmt.Sprintf(":%d", *port))
 }
