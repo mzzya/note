@@ -26,7 +26,7 @@ def exists(ary, key: str):
     return False
 
 
-def findReq(podInfo):
+def findReq(deployList, podInfo):
     for deploy in deployList:
         if podInfo.find(deploy[0]) == 0:
             return deploy
@@ -38,6 +38,8 @@ def getNum(res: str):
         return int(res.replace("m", ""))
     if res.find("Mi") != -1:
         return int(res.replace("Mi", ""))
+    if res.find("Gi") != -1:
+        return int(res.replace("Gi", ""))*1000
     return int(res)*1000
 
 
@@ -48,13 +50,15 @@ for ns in nsInfo[1].split('\n'):
         continue
     cmd = kubeConf +\
         "get deploy -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,replicas:.spec.replicas,request-cpu:.spec.template.spec.containers[0].resources.requests.cpu,request-memory:.spec.template.spec.containers[0].resources.requests.memory -n "+ns
+    # print(cmd)
     allocInfo = subprocess.getstatusoutput(cmd)
 
     deployList = []
 
     for aInfo in allocInfo[1].split('\n'):
         a = re.findall(r"[^\s]+", aInfo)
-        deployList.append((a[0], a[2], a[3]))
+        # print("deployList", a)
+        deployList.append(a)
 
     podsInfo = subprocess.getstatusoutput(
         kubeConf+"top pods --use-protocol-buffers --no-headers --sort-by=memory -n "+ns)
@@ -63,20 +67,22 @@ for ns in nsInfo[1].split('\n'):
             break
         pod = re.findall(r"[^\s]+", podInfo)
         # print("pod", pod, pod[0])
-        reqInfo = findReq(pod[0])
+        reqInfo = findReq(deployList, pod[0])
         if reqInfo == ():
             break
-        reqCpu = getNum(reqInfo[1])
-        reqMem = getNum(reqInfo[2])
+        # print("reqInfo", reqInfo, pod)
+        reqCpu = getNum(reqInfo[3])
+        reqMem = getNum(reqInfo[4])
         usedCpu = getNum(pod[1])
         usedMem = getNum(pod[2])
-        # if usedMem > reqMem:
         if usedMem > 100:
             newMem = (math.floor(usedMem/100))*100
         if newMem <= 0:
             newMem = 100
         if usedMem <= 20:
             newMem = 20
+        if reqMem > 1000 or newMem < 101:
+            continue
         print("**mem****", newMem,
               usedMem, reqMem, pod[0], reqInfo[0])
         # print(kubeConf+kubeNs +
