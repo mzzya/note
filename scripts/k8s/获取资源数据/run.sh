@@ -15,3 +15,6 @@ for d in $deploy; do
     # exit 0
     # kubectl --kubeconfig ~/.kube/test.yaml get deploy -n tr $d -o json >$d.json
 done
+
+# 删除所有Evicted状态pod
+# kubectl get pods|grep Evicted|awk '{print $1}'|while read line; do kubectl delete pod $line; done

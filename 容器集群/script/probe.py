@@ -11,10 +11,10 @@ from numpy import math
 
 from requests import request
 
-kubeConf = "kubectl --kubeconfig ~/.kube/prd.yaml -n web "
+kubeConf = "kubectl --kubeconfig ~/.kube/test.yaml -n web "
 
 deployList = subprocess.getstatusoutput(
-    kubeConf+"get deploy -o=custom-columns=name:.metadata.name,containerName:.spec.template.spec.containers[0].name,readinessProbe:.spec.template.spec.containers[0].readinessProbe,livenessProbe:.spec.template.spec.containers[0].livenessProbe,startupProbe:.spec.template.spec.containers[0].startupProbe|grep actuator|grep 8888|grep prd-ecpublic")
+    kubeConf+"get deploy -o=custom-columns=name:.metadata.name,containerName:.spec.template.spec.containers[0].name,readinessProbe:.spec.template.spec.containers[0].readinessProbe,livenessProbe:.spec.template.spec.containers[0].livenessProbe,startupProbe:.spec.template.spec.containers[0].startupProbe|grep actuator|grep 8888")
 
 for deployInfo in deployList[1].split('\n'):
     deploy = re.findall(r"[^\s]\S+", deployInfo)
