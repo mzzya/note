@@ -1,0 +1,11 @@
+FROM hellojqk/alpine:3.12.3
+
+WORKDIR /app
+
+ARG APP_IMAGE_TAG
+
+ENV APP_IMAGE_TAG $APP_IMAGE_TAG
+
+COPY ./app /app/
+
+ENTRYPOINT ["./app"]
