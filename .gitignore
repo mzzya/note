@@ -6,3 +6,6 @@ kubectl
 app
 activiti/ui/wars
 *.jar
+*.gz
+scripts/k8s/获取资源数据/dump_file
+*.log

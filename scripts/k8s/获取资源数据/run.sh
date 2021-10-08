@@ -17,4 +17,4 @@ for d in $deploy; do
 done
 
 # 删除所有Evicted状态pod
-# kubectl get pods|grep Evicted|awk '{print $1}'|while read line; do kubectl delete pod $line; done
+# kubectl get pods -A|grep Evicted|awk '{print "kubectl -n "$1" delete pod "$2}'|while read line;do eval $line;done
