@@ -85,22 +85,22 @@ loop.close()
 for project in projectData:
     try:
         packageInfo = findLibraryInfo(
-            project['html'], 'com.microsoft.sqlserver', getDependencyRegex)
+            project['html'], 'com.alibaba.cloud', getDependencyRegex)
         if packageInfo == None:
-            print(project["id"], project["url"], 'None')
+            # print(project["id"], project["url"], 'None')
             continue
         print(project["id"], project["url"], packageInfo[1:3])
     except:
         print("发生了异常", project)
 
-print("====================分界线====================")
-for project in projectData:
-    try:
-        packageInfo = findLibraryInfo(
-            project['html'], 'org.springframework.boot', getParentRegex)
-        if packageInfo == None:
-            print(project["id"], project["url"], 'None')
-            continue
-        print(project["id"], project["url"], packageInfo[1:3])
-    except:
-        print("发生了异常", project)
+# print("====================分界线====================")
+# for project in projectData:
+#     try:
+#         packageInfo = findLibraryInfo(
+#             project['html'], 'org.springframework.boot', getParentRegex)
+#         if packageInfo == None:
+#             print(project["id"], project["url"], 'None')
+#             continue
+#         print(project["id"], project["url"], packageInfo[1:3])
+#     except:
+#         print("发生了异常", project)

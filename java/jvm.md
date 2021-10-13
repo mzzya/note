@@ -212,3 +212,12 @@ declare -x APP_IMAGE_TAG="b4250250-202103291126"
   - https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/
 - Arthas 用户文档
   - http://arthas.gitee.io/
+
+
+## full gc 排查
+
+增加gc.log
+
+```sh
+-Xloggc:./gc.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCID -XX:+PrintGCTaskTimeStamps -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+PrintHeapAtGCExtended -XX:+PrintJNIGCStalls -XX:+PrintParallelOldGCPhaseTimes -XX:+PrintReferenceGC
+```

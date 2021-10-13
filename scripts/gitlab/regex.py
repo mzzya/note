@@ -36,7 +36,7 @@ def findLibraryInfo(pomStr, libraryStr, getRegexStr):
 # print(pomInfo)
 
 
-packageInfo = findLibraryInfo(
-    pomInfo, 'org.springframework.boot', getParentRegex)
+# packageInfo = findLibraryInfo(
+#     pomInfo, 'org.springframework.boot', getParentRegex)
 
-print(packageInfo)
+# print(packageInfo)
