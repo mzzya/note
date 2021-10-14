@@ -19,6 +19,7 @@ kubeNs = " -n tr "
 pvcName = "test-k8s-podtemp"
 
 
+# 获取deploy列表
 def getDeployList():
     cmdStr = kubeConf + " get deploy"+kubeNs+" -o json"
     # print("cmdStr", cmdStr)
@@ -27,20 +28,20 @@ def getDeployList():
     list = listObj["items"]
     return list
 
-
+# 执行pod shell指令
 def getPodsCmdResult(podName, ns, cmd):
     cmdStr = kubeConf + " exec "+podName+" -n " + ns + " -- " + cmd
     result = subprocess.getstatusoutput(cmdStr)
     return result
 
-
+## kubectl apply 执行
 def apply(content):
     print(content)
     cmdStr = kubeConf + " apply -f "+filePath
     result = subprocess.getstatusoutput(cmdStr)
     return result
 
-
+# 获取pod列表
 def getPodList():
     cmdStr = kubeConf + " get pods"+kubeNs+" -o json"
     # print("cmdStr", cmdStr)
@@ -49,7 +50,7 @@ def getPodList():
     list = listObj["items"]
     return list
 
-
+# 打印pod列表
 def printPods(list):
     for pod in list:
         print(pod["metadata"]["name"], pod["metadata"]["namespace"])
@@ -60,8 +61,11 @@ deployMap = {}
 for deploy in getDeployList():
     deployMap[deploy["metadata"]["name"]] = deploy
 
+# 没有appName的pod列表，也就是非ci部署的列表
 noAPPNamePodList = []
+# 不是deploy类型的pod列表
 noDeployPodList = []
+# 没有/app/log目录的pod列表
 noLogFolderPodList = []
 
 # 想要合并的Env列表，根据name判重
@@ -98,7 +102,7 @@ pvcVolumeMounts = [{
     "subPathExpr": "$(POD_NAME)/xxljob_log/"
 }]
 
-
+# 合并对象集合
 def mergeObjectList(oldList, newList, fields, replace):
     for newIdx, new in enumerate(newList):
         contain = False
@@ -146,12 +150,15 @@ for pod in getPodList():
         continue
     print("\n\n\n\n符合条件的容器", pod["metadata"]["name"], pod["metadata"]
           ["namespace"], deployName)
+
+    #更新ENV字段
     podEnvList = deployMap[deployName]["spec"]["template"]["spec"]["containers"][0]["env"]
     # print(podEnvList)
     mergeObjectList(podEnvList, podEnvs, ["name"], True)
     # print(podEnvList)
     deployMap[deployName]["spec"]["template"]["spec"]["containers"][0]["env"] = podEnvList
 
+    #更新volumes字段
     volumes = []
     if deployMap[deployName]["spec"]["template"]["spec"].get("volumes"):
         volumes = deployMap[deployName]["spec"]["template"]["spec"]["volumes"]
@@ -163,6 +170,7 @@ for pod in getPodList():
     print("新的", volumes, "\r\n")
     deployMap[deployName]["spec"]["template"]["spec"]["volumes"] = volumes
 
+    #更新volumeMounts字段
     volumeMounts = []
     if deployMap[deployName]["spec"]["template"]["spec"]["containers"][0].get("volumeMounts"):
         volumeMounts = deployMap[deployName]["spec"]["template"]["spec"]["containers"][0]["volumeMounts"]
@@ -171,21 +179,25 @@ for pod in getPodList():
     print("新的", volumeMounts, "\r\n")
     deployMap[deployName]["spec"]["template"]["spec"]["containers"][0]["volumeMounts"] = volumeMounts
 
+    #生成最新的可更新的json文件
     deployJsonStr = json.dumps(deployMap[deployName])
-
     filePath = "./temp/"+deployName+".json"
     # 将更新文件写入到临时目录
     newJsonFile = open("./temp/"+deployName+".json", "w", encoding="utf8")
     newJsonFile.write(deployJsonStr)
     newJsonFile.close()
 
-    # 下面是直接更新脚本
-    applyResult = apply(filePath)
-    if applyResult[0] == 1:
-        print("更新失败", deployName, applyResult)
-        break
-    print("更新成功", deployName)
-    # break
+    # 注意解开下方注释，执行前需要先确认输出日志和文件是否实际正常
+    # 注意解开下方注释，执行前需要先确认输出日志和文件是否实际正常
+    # 注意解开下方注释，执行前需要先确认输出日志和文件是否实际正常
+
+    # # 使用json文件执行更新
+    # applyResult = apply(filePath)
+    # if applyResult[0] == 1:
+    #     print("更新失败", deployName, applyResult)
+    #     break
+    # print("更新成功", deployName)
+
 
 # print("未找到appName")
 # printPods(noAPPNamePodList)
