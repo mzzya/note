@@ -9,3 +9,4 @@ activiti/ui/wars
 *.gz
 scripts/k8s/获取资源数据/dump_file
 *.log
+容器集群/script/temp
