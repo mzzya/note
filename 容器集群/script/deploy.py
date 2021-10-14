@@ -9,8 +9,6 @@ import os
 
 os.makedirs(name="./temp", exist_ok=True)
 
-path = "./"
-
 # 指定k8s集群配置文件
 kubeConf = "kubectl --kubeconfig ~/.kube/test.yaml "
 
