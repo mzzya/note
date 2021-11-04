@@ -5,9 +5,9 @@
 通过进入nginx controller pod可以查看nginx 配置文件。
 
 ```nginx
-	## start server testssoapi.colipu.com
+	## start server *.com
 	server {
-		server_name testssoapi.colipu.com ;
+		server_name *.com ;
 
 		listen 80  ;
 
@@ -26,7 +26,7 @@
 		}
 
 	}
-	## end server testssoapi.colipu.com
+	## end server *.com
 ```
 
 比较重要的几个参数
