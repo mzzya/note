@@ -74,7 +74,7 @@ nginx文档 http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_
 prd-k8s-log 查看域名的请求相应耗时分布。
 
 ```sql
-* and host: "ssoapi.colipu.com" |select ceil(request_time) latency,count(1) qty group by latency order by latency asc
+* |select ceil(request_time) latency,count(1) qty group by latency order by latency asc
 ```
 
 
