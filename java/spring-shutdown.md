@@ -97,6 +97,8 @@ Process finished with exit code 130 (interrupted by signal 2: SIGINT)
   - 如果有正在执行中的耗时请求，30秒到期后将被强制停止。
   - 此时如果有新的请求，会直接`ERR_CONNECTION_REFUSED`拒绝请求。
 
+### 注意：如果你模拟接口超时用的是`thread.sleep()`会在退出时发送发生线程异常，导致服务报错
+
 ## 总结
 
 以下是基于直连本地服务的结论，如果使用了nginx等中间网关，网关的重试机制和超时控制会有不同的相应，后面讲k8s ingress再介绍。
