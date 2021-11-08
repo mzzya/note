@@ -5,9 +5,9 @@
 通过进入nginx controller pod可以查看nginx 配置文件。
 
 ```nginx
-	## start server testssoapi.colipu.com
+	## start server *.com
 	server {
-		server_name testssoapi.colipu.com ;
+		server_name *.com ;
 
 		listen 80  ;
 
@@ -26,7 +26,7 @@
 		}
 
 	}
-	## end server testssoapi.colipu.com
+	## end server *.com
 ```
 
 比较重要的几个参数
@@ -74,7 +74,7 @@ nginx文档 http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_
 prd-k8s-log 查看域名的请求相应耗时分布。
 
 ```sql
-* and host: "ssoapi.colipu.com" |select ceil(request_time) latency,count(1) qty group by latency order by latency asc
+* |select ceil(request_time) latency,count(1) qty group by latency order by latency asc
 ```
 
 
