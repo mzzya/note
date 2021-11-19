@@ -144,6 +144,26 @@ JMX（Java Management Extensions，即Java管理扩展）是一个为应用程�
 
 ### proxy
 
-```sh
+具体ip和端口以实际的代理工具为准
+
+可以通过设置环境变量`JAVA_TOOL_OPTIONS`为
+
+```env
 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8899 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=8899
+```
+
+mac下 `export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=8899 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=8899"`
+
+```java
+// java的 httpclient需要通过以下配置
+HttpClient httpClient = HttpClientBuilder.create()
+                .useSystemProperties()
+                .build();
+```
+
+如果是https的抓包，还需要用java的 `keytool` 将代理工具的整数导入到jre的证书库中。
+
+```sh
+keytool -list -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -noprompt
+keytool -importcert -alias whistle -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -noprompt -file ~/Downloads/rootCA.crt
 ```
