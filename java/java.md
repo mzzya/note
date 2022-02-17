@@ -167,3 +167,69 @@ HttpClient httpClient = HttpClientBuilder.create()
 keytool -list -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -noprompt
 keytool -importcert -alias whistle -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -noprompt -file ~/Downloads/rootCA.crt
 ```
+
+## 日期格式化
+
+默认情况下
+
+- Date 2021-12-02T07:53:16.540+00:00
+- LocalDateTime 2021-12-02T15:53:16.54
+
+### 方式一
+
+对 Date和LocalDateTime都生效
+
+```java
+@JsonFormat(pattern = "yyyy-MM-dd HH")
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+```
+
+如果是Date需要指定 timezone属性或配合全局`spring.jackson.time-zone`
+
+只能解决response，不能解决request
+
+### 方式二
+
+仅对Date生效
+
+```yaml
+spring:
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: "GMT+8"
+```
+
+
+## actuator
+
+[tomcat指标额外说明](https://docs.spring.io/spring-boot/docs/2.3.12.RELEASE/reference/html/production-ready-features.html#production-ready-metrics-meter)
+
+```yaml
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true #设置后在prometheus中才显示tomcat更多指标(tomcat线程占用量，等待量等)
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:8888}
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "nacosconfig"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    defaults:
+      enabled: false
+    redis:
+      enabled: true
+    db:
+      enabled: true
+
+```
