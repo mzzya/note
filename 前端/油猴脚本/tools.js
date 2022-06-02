@@ -6,6 +6,8 @@
 // @author       author
 // @match        http*://item.jd.com/*
 // @match        http*://detail.tmall.com/*
+// @match        http*://chaoshi.detail.tmall.com/*
+// @match        http*://detail.tmall.hk/*
 // @grant        GM_cookie
 // @grant        GM_setClipboard
 // @grant        GM_setValue
@@ -36,6 +38,16 @@
         console.log("tools", message, ...optionalParams)
     }
 
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURIComponent(r[2]);
+        }
+        return null;
+    }
+
+
     let container = document.createElement('div');
     container.innerHTML = ` <div id="clpContainer" style="position: fixed;z-index: 999999;right: 10px; top:50px;">
     <div style="position:absolute;right:0px;display:flex;width: 345px;justify-content: space-between;">
@@ -53,6 +65,7 @@
         overflow: scroll;
         font-size: 12px;
         border: 1px solid #a7dce5;
+        background-color: #daf9fe;
     }
     #clpBatchDiv {
         display: none;
@@ -78,8 +91,10 @@
             <button id="clpBatchStart">开始抓取</button>
         </div>
 </div>`
-    var productCode = "抓取商品图片信息"
     $("body").on("click", "#clpBatchDownload", function () {
+        if (!checkLogin()) {
+            return;
+        }
         var display = $("#clpBatchDiv").css("display");
         $("#clpBatchDiv").css("display", display == "flex" ? "none" : "flex")
     })
@@ -90,8 +105,48 @@
             appendTip(`请输入要抓取的商品编码和链接`);
             return;
         }
+        var list = content.split("\n")
+        if (!list) {
+            appendTip(`输入的内容不正确`);
+            return
+        }
+        var productList = []
+        for (let i = 0; i < list.length; i++) {
+            const line = list[i].trim();
+            if (!line) {
+                appendTip(`输入的第${i + 1}行为空，将跳过`);
+                continue;
+            }
+            var lineInfo = line.split(' ')
+            if (lineInfo.length != 2) {
+                appendTip(`输入的第${i + 1}行未能同时解析到编码和下载链接`);
+                continue;
+            }
+            var code = lineInfo[0];
+            var url = lineInfo[1];
+            if (!url) {
+                appendTip(`输入的第${i + 1}行下载链接不正确`);
+                continue;
+            }
+            url = url.replace(/\#.*/, "")
+            productList.push({ code: code, url: url })
+        }
+        appendTip(`输入的内容初步检测有效数为【${productList.length}/${list.length}】`);
+        for (let i = 0; i < productList.length; i++) {
+            const product = productList[i];
+            setTimeout(() => {
+                appendTip(`开始抓取第${i + 1}/${productList.length}个 ${product.code}`);
+                var openUrl = `${product.url}${product.url.indexOf("?") < 0 ? "?" : "&"}clpProductCode=${encodeURI(product.code)}`
+                log("openUrl", openUrl)
+                var newTap = GM_openInTab(openUrl, { active: false, setParent: true });
+
+            }, i * 20000);
+        }
     })
     $("body").on("click", "#clpDownload", function () {
+        if (!checkLogin()) {
+            return;
+        }
         var clpCode = $("#clpCode").val();
         if (!clpCode) {
             productCode = "抓取商品图片信息"
@@ -103,6 +158,14 @@
         scrollTM(tmall);
     })
     document.body.appendChild(container);
+
+    function checkLogin() {
+        var userName = $("#login-info1 .j_Username").text();
+        if (!userName) {
+            appendTip("请先登录再操作")
+        }
+        return !!userName;
+    }
 
     function appendTip(html) {
         log(html)
@@ -181,7 +244,13 @@
             // saveAs(content, `${product.code}.zip`);
             appendTip(`压缩包生成成功，开始下载`)
             saveBlob(content, `${product.code}.zip`)
-            appendTip(`下载完成`)
+            appendTip(`下载完成，文件名：${product.code}.zip`)
+            if (productCode != defaultProductCode) {
+                appendTip(`批量下载打开的窗口，即将关闭`)
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+            }
         });
     }
 
@@ -304,5 +373,15 @@
             }
             log("详情图", $(item).attr("data-id"), execRes[1])
         })
+    }
+
+    var defaultProductCode = "抓取商品图片信息"
+    var productCode = getQueryString('clpProductCode');
+    if (productCode) {
+        appendTip("批量下载打开的页面，开始自动下载")
+        appendTip(`商品编码${productCode}`)
+        scrollTM(tmall);
+    } else {
+        productCode = defaultProductCode;
     }
 })();
