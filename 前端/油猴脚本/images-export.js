@@ -1,10 +1,9 @@
 // ==UserScript==
-// @name         tools
+// @name         图片导出
 // @namespace    http://tampermonkey.net/
-// @version      0.25
-// @description  desc
-// @author       author
-// @match        http*://item.jd.com/*
+// @version      0.1
+// @description  支持tmall图片导出
+// @author       wangyang
 // @match        http*://detail.tmall.com/*
 // @match        http*://chaoshi.detail.tmall.com/*
 // @match        http*://detail.tmall.hk/*
@@ -17,11 +16,11 @@
 // @grant        GM_openInTab
 // @grant        GM_download
 // @run-at       document-end
-// @updateURL    http://localhost:5501/tools.js
-// @downloadURL  http://localhost:5501/tools.js
+// @updateURL    http://localhost:5500/images-export.js
+// @downloadURL  http://localhost:5500/images-export.js
 // @require      https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
-// @require      http://localhost:5501/helper.js
-// @require      https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/jszip/3.7.1/jszip.js
+// @require      http://localhost:5500/helper.js
+// @require      https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/jszip/3.7.1/jszip.min.js
 // @require      https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/FileSaver.js/2014-08-29/FileSaver.js
 // @connect      itemcdn.tmall.com
 // ==/UserScript==
