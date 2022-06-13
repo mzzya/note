@@ -1,12 +1,17 @@
 // ==UserScript==
 // @name         图片导出
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  支持tmall图片导出
-// @author       wangyang
+// @version      0.3
+// @description  (本脚本仅供学习开发油猴脚本使用，请勿用于商业目的)支持淘宝、天猫（含超市、国际）、京东（含超市、国际、医药）等平台商品图片导出，多平台导出时，请先登录各平台，可以提高成功率。
+// @author       hellojqk
 // @match        http*://detail.tmall.com/*
 // @match        http*://chaoshi.detail.tmall.com/*
 // @match        http*://detail.tmall.hk/*
+// @match        http*://item.taobao.com/*
+// @match        http*://item.jd.com/*
+// @match        http*://npcitem.jd.hk/*
+// @match        http*://item.yiyaojd.com/*
+// @match        http*://item.jkcsjd.com/*
 // @grant        GM_cookie
 // @grant        GM_setClipboard
 // @grant        GM_setValue
@@ -23,21 +28,88 @@
 // @require      https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/jszip/3.7.1/jszip.min.js
 // @require      https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/FileSaver.js/2014-08-29/FileSaver.js
 // @connect      itemcdn.tmall.com
+// @connect      cd.jd.com
 // ==/UserScript==
 
 
+//参考文档
 //js压缩下载文件 https://zhuanlan.zhihu.com/p/352198022
 //jszip github https://github.com/Stuk/jszip#readme
 //jscdn https://cdn.bytedance.com/
 
-// import JSZip from "jszip";
-// import { saveAs } from 'file-saver';
-
 (function () {
     'use strict';
 
+    /**
+     * 处理标题特殊符号
+     * @param {string} title
+     * @returns
+     */
+    function trimTitle(title) {
+        if (title) {
+            title = title.trim().replace(/[<>:"\/\\|?*]/g, "_").replace(/_+/g, '_');
+        }
+        if (!title) {
+            title = "抓取商品信息"
+        }
+        return title;
+    }
+
+    // 默认产品编码
+    let defaultProductCode = "";
+    // 站点类型，用于处理详情
+    let siteType = "";
+    // 处理默认产品编码
+    switch (location.host.toLowerCase()) {
+        case "item.taobao.com":
+            siteType = "tb";
+            defaultProductCode = $('#J_Title .tb-main-title').attr("data-title");
+            defaultProductCode = trimTitle(defaultProductCode)
+            break;
+        case "detail.tmall.com":
+        case "chaoshi.detail.tmall.com":
+        case "detail.tmall.hk":
+            siteType = "tmall";
+            defaultProductCode = $('input[name="title"]').val();
+            defaultProductCode = trimTitle(defaultProductCode)
+            break;
+        case "item.jd.com":
+        case "npcitem.jd.hk":
+        case "item.yiyaojd.com":
+        case "item.jkcsjd.com":
+            siteType = "jd"
+            defaultProductCode = $(".product-intro .sku-name").text()
+            defaultProductCode = trimTitle(defaultProductCode)
+            break;
+        default:
+            appendTip("不支持当前页面")
+            break;
+    }
+
+    // 下载
+    function download() {
+        appendTip("开始下载")
+        switch (siteType) {
+            case "tb":
+            case "tmall":
+                tmPageExecHandler();
+                break;
+            case "jd":
+                jdPageExecHandler();
+                break;
+            default:
+                appendTip("不支持当前页面")
+                break;
+        }
+    }
+
     let clpStartDate = new Date().valueOf();
 
+    /**
+     * 获取url参数值
+     * @param {string} name
+     * @returns
+     */
     function getQueryString(name) {
         var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
         var r = window.location.search.substr(1).match(reg);
@@ -50,7 +122,7 @@
 
     let container = document.createElement('div');
     container.id = 'clpContainer'
-    container.style = 'position: fixed;z-index: 99999999;right: 6px; top:0px;'
+    container.style = 'position: fixed;z-index: 9999999999;right: 6px; top:0px;'
     container.innerHTML = `
     <style>
         .clpShade{
@@ -133,12 +205,15 @@
     <div id="clpTip">
     </div>
     <div id="clpBatchDiv">
-        <textarea id="clpBatchContent" style="" placeholder="请按照如下格式录入:
+        <textarea id="clpBatchContent" style="" placeholder="支持淘宝、天猫（含超市、国际）、京东（含超市、国际、医药）等平台商品图片导出，多平台导出时，请先登录各平台，可以提高成功率。
+
+请按照如下格式录入:
 产品编码1 抓取连接1
 产品编码2 抓取连接2"></textarea>
         <button class="clpBtn" id="clpBatchStart">开始抓取</button>
     </div>
 </div>`
+    //批量下载
     $("body").on("click", "#clpBatchDownload", function () {
         if (!checkLogin()) {
             return;
@@ -146,6 +221,7 @@
         var display = $("#clpBatchDiv").css("display");
         $("#clpBatchDiv").css("display", display == "flex" ? "none" : "flex")
     })
+    //批量下载开始
     $("body").on("click", "#clpBatchStart", function () {
         clpStartDate = new Date().valueOf();
         var content = $("#clpBatchContent").val();
@@ -192,31 +268,51 @@
             }, i * 10000);
         }
     })
+    //下载当前页图片
     $("body").on("click", "#clpDownload", function () {
         if (!checkLogin()) {
             return;
         }
         var clpCode = $("#clpCode").val();
         if (!clpCode) {
-            productCode = "抓取商品图片信息"
+            productCode = defaultProductCode;
             appendTip(`没有输入产品编码，将使用【${productCode}】作为压缩包名称`, "red");
         } else {
             productCode = clpCode;
         }
         clpStartDate = new Date().valueOf();
-        appendTip("开始下载")
-        scrollTM(tmall);
+        download();
     })
     document.body.appendChild(container);
 
+    /**
+     * 检查登录
+     * @returns
+     */
     function checkLogin() {
-        var userName = $("#login-info1 .j_Username").text();
+        var userName = "";
+        switch (siteType) {
+            case "tb":
+                userName = $("#J_SiteNavBdL .site-nav-login-info-nick").text();
+                break;
+            case "tmall":
+                userName = $("#login-info1 .j_Username").text();
+                break;
+            case "jd":
+                userName = $("#ttbar-login .nickname").text();
+                break;
+        }
         if (!userName) {
             appendTip("请先登录再操作", "red")
         }
         return !!userName;
     }
 
+    /**
+     * 写日志
+     * @param {string} html
+     * @param {string} color
+     */
     function appendTip(html, color) {
         console.log("tools", html)
         $("#clpTip").append(`<div style="color:${color ? color : "#404040"}">${((new Date().valueOf() - clpStartDate) / 1000).toFixed(2)}秒-${html}</div>`)
@@ -226,6 +322,11 @@
     appendTip("抓取提示", "red")
 
 
+    /**
+     * 下载文件
+     * @param {Blob} blob
+     * @param {string} name
+     */
     function saveBlob(blob, name) {
         var a = document.createElement("a");
         a.download = name;
@@ -236,7 +337,7 @@
     }
 
     /**
-     * 转一张图片编码
+     * 图片url转base64
      * @param {string} imgUrl 图片url
      * @return {Promise<string>}
      */
@@ -257,13 +358,19 @@
         });
     }
 
+    /**
+     * 保存商品
+     * @param {Object} product
+     */
     async function save(product) {
         console.log("tools", product)
         appendTip("开始打包图片")
         var zip = new JSZip();
+        var isDefaultName = product.code == defaultProductCode;
         // 创建一个名为images的文件夹
-        var zipFolder = zip.folder(product.code);
-
+        var zipFolder = isDefaultName ? zip.folder(product.code) : null;
+        var mainFolder = (isDefaultName ? zipFolder : zip).folder("main");
+        var descriptionFolder = (isDefaultName ? zipFolder : zip).folder("description");
         for (let i = 0; i < product.mainList.length; i++) {
             var img = product.mainList[i];
             if (!img.url) {
@@ -273,9 +380,9 @@
             var imgData = await getBase64(img.url)
             // 3个参数分别是文件名、图片的base64编码、和base64验证
             if (i == 0) {
-                zipFolder.file(`main.${suffix}`, imgData, { base64: true });
+                mainFolder.file(`${isDefaultName ? "main" : product.code}.${suffix}`, imgData, { base64: true });
             }
-            zipFolder.file(`${i}_main.${suffix}`, imgData, { base64: true });
+            mainFolder.file(`${i}_${isDefaultName ? "main" : product.code}.${suffix}`, imgData, { base64: true });
         }
         appendTip(`${product.mainList.length}张主图打包完成`)
 
@@ -287,7 +394,7 @@
             var suffix = img.url.substring(img.url.lastIndexOf(".") + 1);
             var imgData = await getBase64(img.url)
             // 3个参数分别是文件名、图片的base64编码、和base64验证
-            zipFolder.file(`description_${i < 9 ? `0${i + 1}` : i + 1}.${suffix}`, imgData, { base64: true });
+            descriptionFolder.file(`${isDefaultName ? "description" : product.code}_${i < 9 ? `0${i + 1}` : i + 1}.${suffix}`, imgData, { base64: true });
         }
         appendTip(`${product.descList.length}张详情图打包完成`)
         appendTip(`开始生成压缩包`)
@@ -316,34 +423,31 @@
     //已经滚动了的高度
     var scrollTop = $(document).scrollTop();
 
-    // switch (location.host) {
-    //     case "detail.tmall.com":
-    //         scrollTM(tmall);
-    //         break;
-
-    //     case "item.jd.com":
-    //         scrollJD(jd);
-    //     default:
-    //         break;
-    // }
-
-    var tmDescRegex = /itemcdn.tmall.com\/desc\/icoss[^\?]+\?var=desc/igm
-    var tmDescImgRegex = /src="(https:\/\/img.alicdn.com\/imgextra\/[^"]*)"/igm
-    async function scrollTM(callback) {
+    /**
+     * 获取详情内容接口的正则
+     * @param {Regex} regex
+     * @returns
+     */
+    function getDescApiUrl(regex) {
         let descUrl = null;
         var scripts = document.getElementsByTagName("script")
         for (let i = 0; i < scripts.length; i++) {
             const item = scripts[i];
             console.log("tools", i, item.src, execRes)
-            var execRes = tmDescRegex.exec(item.src)
+            var execRes = regex.exec(item.src)
             if (!execRes) {
-                execRes = tmDescRegex.exec(item.innerText)
+                execRes = regex.exec(item.innerText)
             }
             if (execRes && execRes.length >= 0) {
                 descUrl = execRes[0]
                 break
             }
         }
+        return descUrl;
+    }
+
+    async function getDescContent(regex) {
+        let descUrl = getDescApiUrl(regex)
         if (descUrl) {
             appendTip("匹配到详情连接，尝试直接通过接口获取")
             const resp = await new Promise((resolve, reject) => {
@@ -359,25 +463,49 @@
                 });
             });
             console.log("tools", "res", descUrl, resp)
-            if (resp.status = 200) {
-                var tmDescImg;
-                var descList = []
-                var i = 0
-                while ((tmDescImg = tmDescImgRegex.exec(resp.response)) != null) {
-                    var url = tmDescImg[1]
-                    descList.push({ url: url, index: i })
-                    appendTip(`找到详情图-${i}<br/><img src="${url}" width="280"/>`)
-                    console.log("tools", "tmDescImg", url);
-                    i++;
-                }
-                if (descList.length > 1) {
-                    tmall(descList)
-                    return
-                }
-            }
-            appendTip("通过接口获取详情失败")
+            return resp;
         }
+        console.log("tools", "res", descUrl, resp)
+        return null;
+    }
+
+    /**
+     * 匹配天猫详情内容接口的正则
+     */
+    var tmDescApiUrlRegex = /itemcdn.tmall.com\/desc\/icoss[^\?]+\?var=desc/igm
+    /**
+     * 匹配天猫详情内容接口内容中商品图片的正则
+     */
+    var tmDescImageRegex = /src="(https:\/\/img.alicdn.com\/imgextra\/[^"]*)"/igm
+
+    /**
+     * 天猫页面处理函数
+     * @returns
+     */
+    async function tmPageExecHandler() {
+
+        const resp = await getDescContent(tmDescApiUrlRegex)
+
+        if (resp && resp.status == 200) {
+            var tmDescImg;
+            var descList = []
+            var i = 0
+            while ((tmDescImg = tmDescImageRegex.exec(resp.response)) != null) {
+                var url = tmDescImg[1]
+                descList.push({ url: url, index: i })
+                appendTip(`找到详情图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+                console.log("tools", "tmDescImg", url);
+                i++;
+            }
+            if (descList.length > 1) {
+                generateTmallProduct(descList)
+                return
+            }
+        }
+
+        appendTip("通过接口获取详情失败")
         console.log("tools", "尝试使用模拟滚动加载匹配")
+
         var scrollerEvent = setInterval(() => {
             //当前的页面高度
             scrollHeight = $("body").outerHeight();
@@ -385,9 +513,7 @@
             var contentLength = contentObj.html().trim().length;
             console.log("tools", "scrollHeight:" + scrollHeight + "======scrollTop:" + scrollTop + "======windowHeight:" + windowHeight + "======contentLength:" + contentLength);
             if (
-                (scrollHeight > scrollTop + windowHeight + 100 &&
-                    scrollTop < 2000 &&
-                    contentLength < 100) ||
+                (scrollHeight > scrollTop + windowHeight + 100 && scrollTop < 2000 && contentLength < 100) ||
                 !contentObj ||
                 contentLength < 10
             ) {
@@ -398,16 +524,96 @@
             } else {
                 appendTip(`商品详情加载完成，延迟1秒再处理`)
                 setTimeout(() => {
-                    if (callback) {
-                        callback();
-                    }
+                    generateTmallProduct();
                 }, 1000);
                 clearInterval(scrollerEvent);
             }
         }, delay);
     }
 
-    function scrollJD(callback) {
+
+    /**
+     * 生成天猫商品
+     * @param {Object[]} descList
+     */
+    function generateTmallProduct(descList) {
+        var product = { code: productCode, mainList: [], descList: descList ? descList : [] }
+
+        //获取主图
+        $("#J_UlThumb img").each((i, item) => {
+            var url = $(item).attr("src")
+            url = url.replace(/_\d+x\d+.*\.(jpg|webp)/, '')
+            appendTip(`找到主图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+            product.mainList.push({ url: url, index: i })
+        })
+
+        //如果没有通过接口获取到详情内容，则尝试解析页面
+        if (!descList?.length) {
+            var descCount = $("#description img").length;
+            $("#description img").each((i, item) => {
+                var url = $(item).attr("data-ks-lazyload")
+                url = url ? url : $(item).attr("src");
+                appendTip(`找到详情图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+                product.descList.push({ url: url, index: i })
+            })
+        }
+
+        appendTip(`识别到主图【${product.mainList.length}】张`)
+        appendTip(`识别到详情图【${product.descList.length}】张`)
+        save(product)
+    }
+
+    /**
+     * 匹配京东详情内容接口的正则
+     * cd.jd.com/description/channel?skuId=100035246704&mainSkuId=100035246704&charset=utf-8&cdn=2
+     */
+    var jdDescApiUrlRegex = /cd.jd.com\/description\/channel\?skuId=.+&charset=utf-8&cdn=2/igm
+
+    /**
+     * 京东页面处理函数
+     * @returns
+     */
+    async function jdPageExecHandler() {
+        const resp = await getDescContent(jdDescApiUrlRegex)
+
+        if (resp && resp.status == 200) {
+            var descList = []
+            var respData = JSON.parse(resp.response)
+            var descHtml = `<div>${respData.content}</div>`
+
+            //主要是针对商城主要产品
+            $(descHtml).find(".ssd-module-wrap .ssd-module").each((i, item) => {
+                var dataId = $(item).attr("data-id");
+                var regex = new RegExp(`.${dataId}\{.*background-image:url\\((.*)\\);.*[^\}]\}`, "igm")
+                var descImg = regex.exec(descHtml)
+                if (!descImg || descImg.length < 2) {
+                    return true;
+                }
+                var url = descImg[1]
+                descList.push({ url: url, index: i })
+                appendTip(`找到详情图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+                console.log("tools", "tmDescImg", url);
+            })
+
+            //针对京东医药等兼容处理
+            if (descList.length == 0) {
+                $(descHtml).find("img").each((i, item) => {
+                    var url = $(item).attr("data-lazyload")
+                    descList.push({ url: url, index: i })
+                    appendTip(`找到详情图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+                    console.log("tools", "tmDescImg", url);
+                })
+            }
+
+            if (descList.length > 1) {
+                generateJDProduct(descList)
+                return
+            }
+        }
+
+        appendTip("通过接口获取详情失败")
+        console.log("tools", "尝试使用模拟滚动加载匹配")
+
         var scrollerEvent = setInterval(() => {
             //当前的页面高度
             scrollHeight = $("body").outerHeight();
@@ -415,9 +621,7 @@
             var contentLength = contentObj.find(".ssd-module").length;
             console.log("tools", "scrollHeight:" + scrollHeight + "======scrollTop:" + scrollTop + "======windowHeight:" + windowHeight + "======contentLength:" + contentLength);
             if (
-                (scrollHeight > scrollTop + windowHeight + 100 &&
-                    scrollTop < 2000 &&
-                    contentLength < 2) ||
+                (scrollHeight > scrollTop + windowHeight + 100 && scrollTop < 2000 && contentLength < 2) ||
                 !contentObj ||
                 contentLength < 1
             ) {
@@ -430,33 +634,42 @@
                 //  console.log("tools",$("#description .content").html());
                 appendTip(`商品详情加载完成`)
                 setTimeout(() => {
-                    if (callback) {
-                        callback();
-                    }
+                    generateJDProduct();
                 }, 1000);
                 clearInterval(scrollerEvent);
             }
         }, delay);
     }
 
-    function tmall(descList) {
-
+    /**
+    * 生成京东商品
+    * @param {Object[]} descList
+    */
+    function generateJDProduct(descList) {
         var product = { code: productCode, mainList: [], descList: descList ? descList : [] }
-        var mainCount = $("#J_UlThumb img").length;
-        $("#J_UlThumb img").each((i, item) => {
-            var url = $(item).attr("src")
-            url = url.replace('_60x60q90.jpg', '')
-            appendTip(`找到主图-${i}<br/><img src="${url}" width="280"/>`)
+
+        //获取主图
+        $(".product-intro .lh img").each((i, item) => {
+            var url = $(item).attr("data-url");
+            url = "https://img14.360buyimg.com/n1/s800x800_" + url.replace(/\.(avif)/, '')
+            appendTip(`找到主图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
             product.mainList.push({ url: url, index: i })
         })
+
         //如果没有通过接口获取到详情内容，则尝试解析页面
         if (!descList?.length) {
-            var descCount = $("#description img").length;
-            $("#description img").each((i, item) => {
-                var url = $(item).attr("data-ks-lazyload")
-                url = url ? url : $(item).attr("src");
-                appendTip(`找到详情图-${i}<br/><img src="${url}" width="280"/>`)
+            var styleHtml = $("#J-detail-content style").html();
+            $("#J-detail-content .ssd-module-wrap .ssd-module").each((i, item) => {
+                var dataId = $(item).attr("data-id");
+                var regex = new RegExp(`.${dataId}\{.*background-image:url\\((.*)\\);.*[^\}]\}`, "igm")
+                var descImg = regex.exec(styleHtml)
+                if (!descImg || descImg.length < 2) {
+                    return true;
+                }
+                var url = descImg[1]
                 product.descList.push({ url: url, index: i })
+                appendTip(`找到详情图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
+                console.log("tools", "tmDescImg", url);
             })
         }
         appendTip(`识别到主图【${product.mainList.length}】张`)
@@ -464,32 +677,12 @@
         save(product)
     }
 
-    function jd() {
-        $(".product-intro .lh img").each((i, item) => {
-            console.log("tools", "主图", $(item).attr("data-url"))
-        })
-
-        var styleHtml = $("#J-detail-content style").html();
-        $("#J-detail-content .ssd-module-wrap .ssd-module").each((i, item) => {
-            var dataId = $(item).attr("data-id");
-            var regex = new RegExp(`.${dataId}\{.*background-image:url\\((.*)\\);.*[^\}]\}`, "igm")
-            var execRes = regex.exec(styleHtml)
-            if (execRes == null || execRes.length < 2) {
-                console.log("tools", "详情图", $(item).attr("data-id"), "抓取失败")
-            }
-            console.log("tools", "详情图", $(item).attr("data-id"), execRes[1])
-        })
-    }
-
-    var defaultProductCode = "抓取商品图片信息"
+    console.log("tools", "默认商品名称", defaultProductCode)
     var productCode = getQueryString('clpProductCode');
     if (productCode) {
         appendTip("批量下载打开的页面，开始自动下载")
         appendTip(`商品编码${productCode}`)
-        // setInterval(() => {
-        //     appendTip(`批量抓取自动打开的窗口，请勿关闭`, "red")
-        // }, 1000);
-        scrollTM(tmall);
+        download()
     } else {
         productCode = defaultProductCode;
     }
