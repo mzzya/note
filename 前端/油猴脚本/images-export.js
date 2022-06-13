@@ -433,7 +433,7 @@
         let scripts = document.getElementsByTagName("script")
         for (let i = 0; i < scripts.length; i++) {
             const item = scripts[i];
-            console.log("tools", i, item.src, execRes)
+            console.log("tools", i, item.src)
             let execRes = regex.exec(item.src)
             if (!execRes) {
                 execRes = regex.exec(item.innerText)
@@ -465,14 +465,14 @@
             console.log("tools", "res", descUrl, resp)
             return resp;
         }
-        console.log("tools", "res", descUrl, resp)
+        console.log("tools", "res", descUrl)
         return null;
     }
 
     /**
      * 匹配天猫详情内容接口的正则
      */
-    let tmDescApiUrlRegex = /itemcdn.tmall.com\/desc\/icoss[^\?]+\?let=desc/igm
+    let tmDescApiUrlRegex = /itemcdn.tmall.com\/desc\/icoss[^\?]+\?var=desc/igm
     /**
      * 匹配天猫详情内容接口内容中商品图片的正则
      */
@@ -563,7 +563,7 @@
         }
 
         appendTip(`识别到主图【${product.mainList.length}】张`)
-        appendTip(`识别到详情图【${product.descList.length}】张`)
+        appendTip(`识别到详情图【${product.descList.length}】张，获取方式：${descList?.length ? "接口" : "模拟滚动"}`)
         save(product)
     }
 
