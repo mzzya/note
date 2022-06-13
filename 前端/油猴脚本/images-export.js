@@ -542,6 +542,10 @@
         //获取主图
         $("#J_UlThumb img").each((i, item) => {
             var url = $(item).attr("src")
+            if (!url) {
+                appendTip(`获取第${i}张主图失败`, "red")
+                return
+            }
             url = url.replace(/_\d+x\d+.*\.(jpg|webp)/, '')
             appendTip(`找到主图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
             product.mainList.push({ url: url, index: i })
@@ -649,8 +653,12 @@
         var product = { code: productCode, mainList: [], descList: descList ? descList : [] }
 
         //获取主图
-        $(".product-intro .lh img").each((i, item) => {
+        $(".product-intro #spec-list .lh img").each((i, item) => {
             var url = $(item).attr("data-url");
+            if (!url) {
+                appendTip(`获取第${i}张主图失败`, "red")
+                return
+            }
             url = "https://img14.360buyimg.com/n1/s800x800_" + url.replace(/\.(avif)/, '')
             appendTip(`找到主图-${i}<br/><a href="${url}" title="${url}" target="_blank"><img src="${url}" width="280"/></a>`)
             product.mainList.push({ url: url, index: i })
@@ -682,7 +690,9 @@
     if (productCode) {
         appendTip("批量下载打开的页面，开始自动下载")
         appendTip(`商品编码${productCode}`)
-        download()
+        setTimeout(() => {
+            download()
+        }, 1000);
     } else {
         productCode = defaultProductCode;
     }
