@@ -4,7 +4,7 @@
 # kubectl get deploy -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,replicas:.spec.replicas,request-cpu:.spec.template.spec.containers[0].resources.requests.cpu,limit-cpu:.spec.template.spec.containers[0].resources.limits.cpu,request-memory:.spec.template.spec.containers[0].resources.requests.memory,limit-memory:.spec.template.spec.containers[0].resources.limits.memory,affinity:.spec.template.spec.affinity
 
 # # 查看 pod 的资源分配情况
-# kubectl get pod -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,request-cpu:.spec.containers[0].resources.requests.cpu,limit-cpu:.spec.containers[0].resources.limits.cpu,request-memory:.spec.containers[0].resources.requests.memory,limit-memory:.spec.containers[0].resources.limits.memory,node:.spec.nodeName,affinity:.spec.affinity
+# kubectl get pod -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,request-cpu:.spec.containers[0].resources.requests.cpu,limit-cpu:.spec.containers[0].resources.limits.cpu,request-memory:.spec.containers[0].resources.requests.memory,limit-memory:.spec.containers[0].resources.limits.memory,nodeName:.spec.nodeName,node:.spec.nodeName,affinity:.spec.affinity
 
 # kubectl resource-capacity --kubeconfig ~/.kube/uat.yaml
 
@@ -18,14 +18,17 @@
 #     fi
 # done
 
-for deployName in $(kubectl --kubeconfig ~/.kube/test.yaml get deploy -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,replicas:.spec.replicas,containerName:.spec.template.spec.containers[0].name,request-cpu:.spec.template.spec.containers[0].resources.requests.cpu,limit-cpu:.spec.template.spec.containers[0].resources.limits.cpu,request-memory:.spec.template.spec.containers[0].resources.requests.memory,limit-memory:.spec.template.spec.containers[0].resources.limits.memory -A | awk '{print $1","$2","$4}'); do
-    echo $deployName
+for deployName in $(kubectl --kubeconfig ~/.kube/test.yaml get deploy -o=custom-columns=name:.metadata.name,ns:.metadata.namespace,replicas:.spec.replicas,containerName:.spec.template.spec.containers[0].name,request-cpu:.spec.template.spec.containers[0].resources.requests.cpu,limit-cpu:.spec.template.spec.containers[0].resources.limits.cpu,request-memory:.spec.template.spec.containers[0].resources.requests.memory,limit-memory:.spec.template.spec.containers[0].resources.limits.memory -n tr --sort-by .spec.template.spec.containers[0].resources.requests.cpu| awk '{print $1","$2","$4","$5","$6","$7","$8}'); do
     OLD_IFS="$IFS"
     IFS=","
     deployArray=($deployName)
     IFS="$OLD_IFS"
+    if [ ${deployArray[3]} != "<none>" ];then
+        continue
+    fi
+    echo $deployName
     # echo "${deployArray[0]}=${deployArray[1]}"
-    kubectl --kubeconfig ~/.kube/test.yaml -n ${deployArray[1]} patch deploy ${deployArray[0]} -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"${deployArray[2]}\",\"resources\":{\"limits\":{\"cpu\":\"2\",\"memory\":\"2Gi\"}}}]}}}}"
+    # kubectl --kubeconfig ~/.kube/test.yaml -n ${deployArray[1]} patch deploy ${deployArray[0]} -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"${deployArray[2]}\",\"resources\":{\"limits\":{\"cpu\":\"2\",\"memory\":\"2Gi\"},\"requests\":{\"cpu\":\"20m\",\"memory\":\"256Mi\"}}}]}}}}"
 done
 
 # curl http://localhost:8888/actuator/health/liveness
