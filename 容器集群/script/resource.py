@@ -7,7 +7,7 @@ from numpy import math
 from requests import request
 
 
-kubeConf = "kubectl --kubeconfig ~/.kube/uat.yaml "
+kubeConf = "kubectl --kubeconfig ~/.kube/test.yaml "
 kubeNs = " -n tr "
 
 nsInfo = subprocess.getstatusoutput(
@@ -15,8 +15,17 @@ nsInfo = subprocess.getstatusoutput(
 
 # print(nsInfo)
 
-notExecNsList = ["ahas-sentinel-pilot",
-                 "aliyun", "appcenter", "arms", "catalog", "default", "edas", "system", "kube"]
+notExecNsList = [
+    # "ahas-sentinel-pilot",
+    # "aliyun",
+    # "appcenter",
+    # "arms",
+    # "catalog",
+    # "default",
+    # "edas",
+    # "system",
+    "kube-system"
+]
 
 
 def exists(ary, key: str):
@@ -34,6 +43,8 @@ def findReq(deployList, podInfo):
 
 
 def getNum(res: str):
+    if len(res) == 0 or res == "<none>":
+        return 0
     if res.find("m") != -1:
         return int(res.replace("m", ""))
     if res.find("Mi") != -1:
@@ -75,16 +86,19 @@ for ns in nsInfo[1].split('\n'):
         reqMem = getNum(reqInfo[4])
         usedCpu = getNum(pod[1])
         usedMem = getNum(pod[2])
-        if usedMem > 100:
-            newMem = (math.floor(usedMem/100))*100
-        if newMem <= 0:
-            newMem = 100
-        if usedMem <= 20:
-            newMem = 20
-        # if reqMem > 1000 or newMem < 101 or newMem < reqMem+200:
-        #     continue
-        print("**mem****", newMem,
-              usedMem, reqMem, pod[0], reqInfo[0])
+        if reqCpu > 50:
+            print(reqCpu, usedCpu, pod[0], reqInfo[0])
+        # newMem = reqMem
+        # if usedMem > 100:
+        #     newMem = (math.floor(usedMem/100))*100
+        # if newMem <= 0:
+        #     newMem = 100
+        # if usedMem <= 20:
+        #     newMem = 20
+        # # if reqMem > 1000 or newMem < 101 or newMem < reqMem+200:
+        # #     continue
+        # print("**mem****", newMem,
+        #       usedMem, reqMem, reqCpu, usedCpu, pod[0], reqInfo[0])
         # print(kubeConf+"-n " + ns +
         #       ' patch deploy '+reqInfo[0]+' -p "{\\\"spec\\\":{\\\"template\\\":{\\\"spec\\\":{\\\"containers\\\":[{\\\"name\\\":\\\"'+reqInfo[0] +
         #       '\\\",\\\"resources\\\":{\\\"requests\\\":{\\\"memory\\\":\\\"' +
