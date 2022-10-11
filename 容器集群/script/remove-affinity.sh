@@ -4,7 +4,7 @@ rm deploy.json
 rm -rf temp/
 mkdir temp/
 
-node update-volume.js
+node remove-affinity.js
 
 ls temp/
 

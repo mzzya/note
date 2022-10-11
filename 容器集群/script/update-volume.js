@@ -6,16 +6,23 @@ const { json } = require('stream/consumers');
 const exec = util.promisify(child_process.exec);
 // const appPath = join(__dirname, 'app');
 
+// cip        
+// cip-job    
+// cip-project
+// cip-vip    
+// cip-web    
 
-const ns = ' -n web '
-const getDeployJsonCmd = `kubectl get deploy -o json ${ns}`
+const ns = ' -n cip '
+const getDeployJsonCmd = `kubectl get deploy -o json ${ns} > deploy.json`
 
 
 const getJsonRes = async function (cmd) {
   const shellRes = await exec(cmd)
   // console.log("res", cmd, shellRes.stdout)
   const content = shellRes.stdout
-  return content
+
+  // return content
+  return fs.readFileSync("deploy.json").toString()
 }
 
 const getExecRes = async function (cmd) {
