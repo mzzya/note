@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debug2
+spec:
+  selector:
+    matchLabels:
+      app: debug2
+  template:
+    metadata:
+      labels:
+        app: debug2
+    spec:
+      containers:
+      - name: debug2
+        image: hellojqk/debug
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        command: ["sh","-c","until nslookup mydb; do echo waiting for mydb; sleep 2; done;"]

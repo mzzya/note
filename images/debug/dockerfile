@@ -1,0 +1,12 @@
+FROM openjdk:8u342-bullseye
+
+# 指定上海时区
+ENV TZ=Asia/Shanghai
+
+COPY ./sources.list /etc/apt/sources.list
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && apt install apt-transport-https ca-certificates \
+    && apt update && apt upgrade -y && apt install curl -y
+
+RUN apt install curl telnet iputils-ping -y
