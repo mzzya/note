@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #基础镜像
-base_image="alpine:3.12.3"
+base_image="alpine:3.17.2"
 
 cp ./Template Dockerfile
 
